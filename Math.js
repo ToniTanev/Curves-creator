@@ -10,7 +10,6 @@ class BezierCurve
     constructor(controlPoints)
     {
         this.controlPoints = controlPoints
-        this.n = controlPoints.size;
     }
 
     generateCurve()
@@ -25,7 +24,7 @@ class BezierCurve
     }
     generatePoint(t)
     {
-        const steps = this.n - 1;
+        const steps = this.controlPoints.size - 1;
         let prevPoints = this.controlPoints;
 
         for(let i = 0; i < steps; i++)
