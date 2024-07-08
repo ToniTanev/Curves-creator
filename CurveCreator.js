@@ -1,13 +1,14 @@
 
 import * as THREE from 'three';
-import {OrbitControls} from './three.js-master/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 
-let scene, renderer, camera;
+export let scene, renderer, camera;
+
 function init()
 {
-    renderer = new THREE.WebGLRenderer( {antialias:true} );
-    const windowH = 0.8*window.innerHeight;
-    const windowW = 0.5*window.innerWidth;
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    const windowH = 0.8 * window.innerHeight;
+    const windowW = 0.5 * window.innerWidth;
     renderer.setSize( windowW, windowH, true );
 
     document.body.appendChild( renderer.domElement );
@@ -15,15 +16,15 @@ function init()
     //document.body.style.overflow = 'hidden';
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color('white');
+    scene.background = new THREE.Color( 'white' );
 
     const aspect = windowW/windowH;
     //var camera = new THREE.OrthographicCamera( -window.innerWidth/2, window.innerWidth/2, window.innerHeight/2, -window.innerHeight/2, 1, 1000 );
     camera = new THREE.PerspectiveCamera( 60, aspect, 1, 10000 );
-    camera.position.set(0,0,50);
-    camera.lookAt(new THREE.Vector3(0,0,0));
+    camera.position.set( 0,0,50 );
+    camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
-    const ambLight = new THREE.AmbientLight('white', 0.5);
+    const ambLight = new THREE.AmbientLight( 'white', 0.5 );
     scene.add( ambLight );
 
     const light = new THREE.PointLight( 'white', 1, 0, 0 );
@@ -33,8 +34,8 @@ function init()
     const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     scene.add( directionalLight );
 
-    const geometry = new THREE.SphereGeometry( 10);
-    const material = new THREE.MeshPhongMaterial({color:0x049ef4});
+    const geometry = new THREE.SphereGeometry( 10 );
+    const material = new THREE.MeshPhongMaterial( { color: 0x049ef4 } );
     const sphere = new THREE.Mesh( geometry, material );
     scene.add( sphere );
 
@@ -57,8 +58,8 @@ function init()
 
 function createPoint(event)
 {
-    const geometry = new THREE.SphereGeometry( 1);
-    const material = new THREE.MeshLambertMaterial({color:'red'});
+    const geometry = new THREE.SphereGeometry( 1 );
+    const material = new THREE.MeshLambertMaterial( { color: 'red' } );
     const point = new THREE.Mesh( geometry, material );
 
     // calculate pointer position in normalized device coordinates
@@ -95,14 +96,14 @@ function createPoint(event)
         //worldPt.transformDirection(intersects[ 0 ].object.matrixWorld);
         //point.position.x = worldPt.x;
         //point.position.y = worldPt.y;
-        console.log(point.position.x, point.position.y, point.position.z);
+        console.log( point.position.x, point.position.y, point.position.z );
     }
 }
 function main()
 {
     init();
 
-    renderer.domElement.addEventListener("click", createPoint)
+    renderer.domElement.addEventListener( "click", createPoint )
 }
 
 main();
