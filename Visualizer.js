@@ -1,7 +1,7 @@
 
-import { scene } from "./CurveCreator";
+import { scene } from "./CurveCreator.js";
 
-function drawPolygon( points, color ) {
+export function drawPolygon( points, color ) {
 
     for(let i = 0; i < points.size - 1; i++)
     {
