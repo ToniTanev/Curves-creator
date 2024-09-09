@@ -78,8 +78,8 @@ function createPoint(event)
         mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
-        scene.add(point);
-        bezierToolContext.collectedPoints.push(point);
+        scene.add( point );
+        bezierToolContext.collectedPoints.push( point.position );
 
         const raycaster = new THREE.Raycaster();
 

@@ -1,10 +1,17 @@
+import * as THREE from 'three';
+
 function slerp( u, v, t )
 {
-    const angleBetween = u.angleTo( v );
+    // copy vectors, so that we don't modify the originals
+    const u1 = new THREE.Vector3( u.x, u.y, u.z );
+    const v1 = new THREE.Vector3( v.x, v.y, v.z );
 
-    return ( Math.sin( angleBetween * ( 1 - t ) ) * u + Math.sin( angleBetween * t ) * v ) / Math.sin( angleBetween );
+    const angleBetween = u1.angleTo( v1 );
+    const nom = u1.multiplyScalar( Math.sin( angleBetween * ( 1 - t ) ) ).add( v1.multiplyScalar( Math.sin( angleBetween * t ) ) );
+    return nom.divideScalar( Math.sin( angleBetween ) );
 }
 
+const epsilonOffset = 0.07;
 export class BezierCurve
 {
     constructor( controlPoints )
@@ -24,13 +31,13 @@ export class BezierCurve
     }
     generatePoint( t )
     {
-        const steps = this.controlPoints.size - 1;
+        const steps = this.controlPoints.length - 1;
         let prevPoints = this.controlPoints;
 
         for( let i = 0; i < steps; i++ )
         {
             const currPoints = [];
-            for( let j = 0; j < prevPoints.size - 1; j++ )
+            for( let j = 0; j < prevPoints.length - 1; j++ )
             {
                 currPoints.push( slerp( prevPoints[j], prevPoints[j + 1], t ) );
             }
@@ -38,6 +45,13 @@ export class BezierCurve
             prevPoints = currPoints;
         }
 
-        return prevPoints[0];
+        const resultPt = prevPoints[ 0 ];
+        const normalized = new THREE.Vector3( resultPt.x, resultPt.y, resultPt.z ).normalize();
+        const epsilonOffsetVec = normalized.multiplyScalar( epsilonOffset );
+
+        // slightly offset the curve points to avoid Z fight with the sphere
+        // the offset is in the direction of the sphere normal at that point
+        // the normal coincides with the curve point itself when the curve point is on the sphere which is centered at (0, 0, 0)
+        return resultPt.add( epsilonOffsetVec );
     }
 }
