@@ -2,11 +2,14 @@
 import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 import { BezierCurve } from "./Math.js";
-import { BezierCurveToolContext } from "./Context.js";
+import {BezierCurveToolContext, HermiteCurveTool} from "./Context.js";
 import { drawPolygon } from "./Visualizer.js";
 
 export let scene, renderer, camera;
-export let bezierToolContext = new BezierCurveToolContext();
+
+const bezierToolContext = new BezierCurveToolContext();
+const hermiteTool = new HermiteCurveTool();
+let activeTool = null;
 function init()
 {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -59,14 +62,10 @@ function init()
     }
 }
 
-function createPoint(event)
+function onMouseClick( event )
 {
-    if( bezierToolContext.isStarted )
+    if (activeTool != null)
     {
-        const geometry = new THREE.SphereGeometry(1);
-        const material = new THREE.MeshLambertMaterial({color: 'red'});
-        const point = new THREE.Mesh(geometry, material);
-
         // calculate pointer position in normalized device coordinates
         // (-1 to +1) for both components
         //const mouse = new THREE.Vector2;
@@ -78,9 +77,6 @@ function createPoint(event)
         mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
         mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
-        scene.add( point );
-        bezierToolContext.collectedPoints.push( point.position );
-
         const raycaster = new THREE.Raycaster();
 
         camera.updateMatrixWorld();
@@ -91,48 +87,36 @@ function createPoint(event)
         // calculate objects intersecting the picking ray
         const intersects = raycaster.intersectObjects(scene.children);
 
-        //for ( let i = 0; i < intersects.length; i ++ )
-        if (intersects.length > 0) {
-            point.position.x = intersects[0].point.x;
-            point.position.y = intersects[0].point.y;
-            point.position.z = intersects[0].point.z;
-
-            //let worldPt = intersects[ 0 ].point;
-            //worldPt.transformDirection(intersects[ 0 ].object.matrixWorld);
-            //point.position.x = worldPt.x;
-            //point.position.y = worldPt.y;
-            console.log(point.position.x, point.position.y, point.position.z);
-        }
-
-        if( bezierToolContext.collectedPoints.length === bezierToolContext.curveDegree )
+        if (intersects.length > 0)
         {
-            const curve = new BezierCurve( bezierToolContext.collectedPoints );
+            const toolFinished = activeTool.pointAdded(intersects[0].point, intersects[0].object);
 
-            const curvePoints = curve.generateCurve();
-
-            drawPolygon( curvePoints, 'green' );
-
-            bezierToolContext.clear();
+            if( toolFinished )
+            {
+                activeTool = null;
+            }
         }
     }
 }
 
 function startBezierCurve( event )
 {
-    bezierToolContext.isStarted = true;
     bezierToolContext.curveDegree = Number( document.getElementById( "bezierDegreeEdit" ).value );
+    activeTool = bezierToolContext;
 }
 
 function onKeyPressed( event )
 {
     if ( event.key === "Escape" )
     {
-        for( const point of bezierToolContext.collectedPoints )
+        if( activeTool != null )
         {
-            scene.remove(point);
-        }
+            activeTool.clearDrawn();
 
-        bezierToolContext.clear();
+            activeTool.clear();
+
+            activeTool = null;
+        }
     }
 }
 
@@ -145,7 +129,7 @@ function main()
 {
     init();
 
-    renderer.domElement.addEventListener( "click", createPoint );
+    renderer.domElement.addEventListener( "click", onMouseClick );
     document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
     document.getElementById( "bezierDegreeEdit" ).addEventListener( "change", updateBezierDegree );
     document.addEventListener( 'keydown', onKeyPressed );

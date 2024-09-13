@@ -45,13 +45,20 @@ export class BezierCurve
             prevPoints = currPoints;
         }
 
-        const resultPt = prevPoints[ 0 ];
-        const normalized = new THREE.Vector3( resultPt.x, resultPt.y, resultPt.z ).normalize();
-        const epsilonOffsetVec = normalized.multiplyScalar( epsilonOffset );
+        return prevPoints[ 0 ];
+    }
+}
 
-        // slightly offset the curve points to avoid Z fight with the sphere
-        // the offset is in the direction of the sphere normal at that point
-        // the normal coincides with the curve point itself when the curve point is on the sphere which is centered at (0, 0, 0)
-        return resultPt.add( epsilonOffsetVec );
+export function offsetPoints( curvePoints )
+{
+    // slightly offset the curve points to avoid Z fight with the sphere
+    // the offset is in the direction of the sphere normal at that point
+    // the normal coincides with the curve point itself when the curve point is on the sphere which is centered at (0, 0, 0)
+
+    for( const point of curvePoints )
+    {
+        const normalized = new THREE.Vector3(point.x, point.y, point.z).normalize();
+        const epsilonOffsetVec = normalized.multiplyScalar(epsilonOffset);
+        point.add( epsilonOffsetVec );
     }
 }
