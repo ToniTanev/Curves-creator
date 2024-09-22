@@ -80,6 +80,7 @@ export class BezierCurveTool
         else if( this.meshPoints.length > 0 )
         {
             index = this.meshPoints.length - 1;
+            point = this.meshPoints[ index ];
         }
 
         if( index !== -1 )

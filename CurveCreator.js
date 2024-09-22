@@ -62,34 +62,52 @@ function init()
     }
 }
 
+function raycastMouse( event )
+{
+    // calculate pointer position in normalized device coordinates
+    // (-1 to +1) for both components
+    //const mouse = new THREE.Vector2;
+    //mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    //mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    const mouse = new THREE.Vector2;
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
+    const raycaster = new THREE.Raycaster();
+
+    camera.updateMatrixWorld();
+
+    // update the picking ray with the camera and pointer position
+    raycaster.setFromCamera(mouse, camera);
+
+    // calculate objects intersecting the picking ray
+    return raycaster.intersectObjects(scene.children);
+}
+
 function onMouseClick( event )
 {
     if (activeTool != null)
     {
-        // calculate pointer position in normalized device coordinates
-        // (-1 to +1) for both components
-        //const mouse = new THREE.Vector2;
-        //mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        //mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-        const mouse = new THREE.Vector2;
-        const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
-
-        const raycaster = new THREE.Raycaster();
-
-        camera.updateMatrixWorld();
-
-        // update the picking ray with the camera and pointer position
-        raycaster.setFromCamera(mouse, camera);
-
-        // calculate objects intersecting the picking ray
-        const intersects = raycaster.intersectObjects(scene.children);
+        const intersects = raycastMouse( event );
 
         if (intersects.length > 0)
         {
             activeTool.pointAdded( intersects[0].point, intersects[0].object );
+        }
+    }
+}
+
+function onRightClick( event )
+{
+    if (activeTool != null)
+    {
+        const intersects = raycastMouse( event );
+
+        if (intersects.length > 0)
+        {
+            activeTool.pointRemoved( intersects[0].object );
         }
     }
 }
@@ -128,6 +146,13 @@ function onKeyPressed( event )
             activeTool = null;
         }
     }
+    else if ( event.key === "Backspace" )
+    {
+        if( activeTool )
+        {
+            activeTool.pointRemoved();
+        }
+    }
 }
 
 function updateBezierDegree( event )
@@ -140,6 +165,7 @@ function main()
     init();
 
     renderer.domElement.addEventListener( "click", onMouseClick );
+    renderer.domElement.addEventListener( "contextmenu", onRightClick );
     document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
     document.getElementById( "bezierDegreeEdit" ).addEventListener( "change", updateBezierDegree );
     document.addEventListener( 'keydown', onKeyPressed );
