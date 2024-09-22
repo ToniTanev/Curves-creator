@@ -2,12 +2,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 import { BezierCurve } from "./Math.js";
-import {BezierCurveToolContext, HermiteCurveTool} from "./Context.js";
+import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
 import { drawPolygon } from "./Visualizer.js";
 
 export let scene, renderer, camera;
 
-const bezierToolContext = new BezierCurveToolContext();
+const bezierTool = new BezierCurveTool();
 const hermiteTool = new HermiteCurveTool();
 let activeTool = null;
 function init()
@@ -89,20 +89,20 @@ function onMouseClick( event )
 
         if (intersects.length > 0)
         {
-            const toolFinished = activeTool.pointAdded(intersects[0].point, intersects[0].object);
-
-            if( toolFinished )
-            {
-                activeTool = null;
-            }
+            activeTool.pointAdded( intersects[0].point, intersects[0].object );
         }
     }
 }
 
 function startBezierCurve( event )
 {
-    bezierToolContext.curveDegree = Number( document.getElementById( "bezierDegreeEdit" ).value );
-    activeTool = bezierToolContext;
+    if( activeTool )
+    {
+        activeTool.revert();
+    }
+
+    bezierTool.curveDegree = Number( document.getElementById( "bezierDegreeEdit" ).value );
+    activeTool = bezierTool;
 }
 
 function onKeyPressed( event )
@@ -111,9 +111,19 @@ function onKeyPressed( event )
     {
         if( activeTool != null )
         {
-            activeTool.clearDrawn();
+            activeTool.revert();
 
-            activeTool.clear();
+            activeTool = null;
+        }
+    }
+    else if ( event.key === "Enter" )
+    {
+        if( activeTool != null )
+        {
+            if( !activeTool.complete() )
+            {
+                activeTool.revert();
+            }
 
             activeTool = null;
         }
@@ -122,7 +132,7 @@ function onKeyPressed( event )
 
 function updateBezierDegree( event )
 {
-    bezierToolContext.curveDegree = Number( event.target.value );
+    bezierTool.curveDegree = Number( event.target.value );
 }
 
 function main()
