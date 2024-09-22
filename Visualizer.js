@@ -27,3 +27,36 @@ export function drawPolygon( points, color )
 
     scene.add( polyline );
 }
+
+// visible vector constants
+const cylRadius = 1;
+const coneRadius = cylRadius * 2;
+const coneHeight = 2.5 * coneRadius;
+
+export function drawVector( startPt, endPt )
+{
+    const startPtCopy = startPt.clone();
+    const endPtCopy = endPt.clone();
+
+    const vecLen = startPtCopy.distanceTo( endPtCopy );
+
+    const material = new THREE.MeshPhongMaterial( { color: 'yellow' } );
+    const cylGeometry = new THREE.CylinderGeometry( cylRadius, cylRadius, vecLen );
+    const cylMesh = new THREE.Mesh( cylGeometry, material );
+    cylMesh.translateY( vecLen / 2 );
+
+    const coneGeometry = new THREE.ConeGeometry( coneRadius, coneHeight );
+    const coneMesh = new THREE.Mesh( coneGeometry, material );
+    coneMesh.translateY( vecLen );
+
+    const vectorGroup = new THREE.Group();
+    vectorGroup.add( cylMesh );
+    vectorGroup.add( coneMesh );
+
+    vectorGroup.lookAt( endPtCopy.x, endPtCopy.y, endPtCopy.z );
+    vectorGroup.translateX(startPtCopy.x);
+    vectorGroup.translateY(startPtCopy.y);
+    vectorGroup.translateZ(startPtCopy.z);
+
+    scene.add( vectorGroup );
+}

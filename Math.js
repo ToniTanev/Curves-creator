@@ -3,8 +3,8 @@ import * as THREE from 'three';
 function slerp( u, v, t )
 {
     // copy vectors, so that we don't modify the originals
-    const u1 = new THREE.Vector3( u.x, u.y, u.z );
-    const v1 = new THREE.Vector3( v.x, v.y, v.z );
+    const u1 = u.clone();
+    const v1 = v.clone();
 
     const angleBetween = u1.angleTo( v1 );
     const nom = u1.multiplyScalar( Math.sin( angleBetween * ( 1 - t ) ) ).add( v1.multiplyScalar( Math.sin( angleBetween * t ) ) );

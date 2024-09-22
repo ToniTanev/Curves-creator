@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 import { BezierCurve } from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
-import { drawPolygon } from "./Visualizer.js";
+import {drawPolygon, drawVector} from "./Visualizer.js";
 
 export let scene, renderer, camera;
 
@@ -60,6 +60,13 @@ function init()
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.ROTATE
     }
+
+    //const vecStart = new THREE.Vector3(0, 0, 5);
+    //const vecEnd = new THREE.Vector3(0, 5, 0);
+    //drawVector(vecStart, vecEnd);
+
+    //const arrowHelper = new THREE.ArrowHelper(vecEnd, vecStart, 5, 'yellow', 2, 4);
+    //scene.add( arrowHelper );
 }
 
 function raycastMouse( event )
