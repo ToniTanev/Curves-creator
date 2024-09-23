@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {camera, renderer} from "./CurveCreator.js";
 
 function slerp( u, v, t )
 {
@@ -49,6 +50,7 @@ export class BezierCurve
     }
 }
 
+// assumes the sphere is centered at (0, 0, 0)
 export function offsetPoints( curvePoints )
 {
     // slightly offset the curve points to avoid Z fight with the sphere
@@ -61,4 +63,32 @@ export function offsetPoints( curvePoints )
         const epsilonOffsetVec = normalized.multiplyScalar(epsilonOffset);
         point.add( epsilonOffsetVec );
     }
+}
+
+// assumes the sphere is centered at (0, 0, 0)
+function getPlaneAtSpherePoint( spherePoint )
+{
+    const normal = spherePoint.clone().normalize();
+    const p = spherePoint.length();
+
+    return new THREE.Plane( normal, p );
+}
+
+function intersectPlaneWithMouse( event, plane )
+{
+    // calculate ray
+    const mouse = new THREE.Vector2;
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
+    const raycaster = new THREE.Raycaster();
+
+    camera.updateMatrixWorld();
+
+    // update the picking ray with the camera and pointer position
+    raycaster.setFromCamera(mouse, camera);
+
+    // intersect with the plane
+    return raycaster.ray.intersectPlane( plane );
 }
