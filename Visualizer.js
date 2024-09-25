@@ -3,6 +3,7 @@ import { scene } from "./CurveCreator.js";
 import { Line2 } from './three.js-master/examples/jsm/lines/Line2.js'
 import { LineGeometry } from './three.js-master/examples/jsm/lines/LineGeometry.js'
 import { LineMaterial } from './three.js-master/examples/jsm/lines/LineMaterial.js'
+import { vectorEpsilon, vectorsEqual } from "./Math.js";
 
 export function drawPolygon( points, color )
 {
@@ -53,10 +54,24 @@ export function drawVector( startPt, endPt )
     vectorGroup.add( cylMesh );
     vectorGroup.add( coneMesh );
 
-    vectorGroup.lookAt( endPtCopy.x, endPtCopy.y, endPtCopy.z );
-    vectorGroup.translateX(startPtCopy.x);
-    vectorGroup.translateY(startPtCopy.y);
-    vectorGroup.translateZ(startPtCopy.z);
+    // the y axis is the up axis in THREE.js
+    const yAxis = endPtCopy.clone().sub( startPtCopy.clone() ).normalize();
+    let xAxis = new THREE.Vector3( 1, 0, 0 );
+    if( vectorsEqual( xAxis, yAxis, vectorEpsilon ) )
+    {
+        xAxis = new THREE.Vector3( 0, 1, 0 );
+    }
+    const zAxis = new THREE.Vector3;
+    zAxis.crossVectors( xAxis, yAxis ).normalize();
+    xAxis.crossVectors( yAxis, zAxis ).normalize();
+
+    const mat4 = new THREE.Matrix4;
+    mat4.makeBasis( xAxis, yAxis, zAxis) ;
+
+    vectorGroup.applyMatrix4( mat4 );
+    vectorGroup.position.set( startPtCopy.x, startPtCopy.y, startPtCopy.z );
 
     scene.add( vectorGroup );
+
+    return vectorGroup;
 }

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {camera, renderer} from "./CurveCreator.js";
 
+export const vectorEpsilon = 0.0000001;
 function slerp( u, v, t )
 {
     // copy vectors, so that we don't modify the originals
@@ -66,15 +67,15 @@ export function offsetPoints( curvePoints )
 }
 
 // assumes the sphere is centered at (0, 0, 0)
-function getPlaneAtSpherePoint( spherePoint )
+export function getPlaneAtSpherePoint( spherePoint )
 {
     const normal = spherePoint.clone().normalize();
-    const p = spherePoint.length();
+    const p = -spherePoint.length();
 
     return new THREE.Plane( normal, p );
 }
 
-function intersectPlaneWithMouse( event, plane )
+export function intersectPlaneWithMouse( event, plane )
 {
     // calculate ray
     const mouse = new THREE.Vector2;
@@ -90,5 +91,11 @@ function intersectPlaneWithMouse( event, plane )
     raycaster.setFromCamera(mouse, camera);
 
     // intersect with the plane
-    return raycaster.ray.intersectPlane( plane );
+    const dummy = new THREE.Vector3;
+    return raycaster.ray.intersectPlane( plane, dummy );
+}
+
+export function vectorsEqual( vec1, vec2, epsilon )
+{
+    return vec1.distanceTo( vec2 ) < epsilon;
 }

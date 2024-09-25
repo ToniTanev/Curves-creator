@@ -60,13 +60,6 @@ function init()
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.ROTATE
     }
-
-    //const vecStart = new THREE.Vector3(0, 0, 5);
-    //const vecEnd = new THREE.Vector3(0, 5, 0);
-    //drawVector(vecStart, vecEnd);
-
-    //const arrowHelper = new THREE.ArrowHelper(vecEnd, vecStart, 5, 'yellow', 2, 4);
-    //scene.add( arrowHelper );
 }
 
 function raycastMouse( event )
@@ -101,7 +94,7 @@ function onMouseClick( event )
 
         if (intersects.length > 0)
         {
-            activeTool.pointAdded( intersects[0].point, intersects[0].object );
+            activeTool.pointAdded( intersects[0].point, intersects[0].object, event );
         }
     }
 }
@@ -128,6 +121,16 @@ function startBezierCurve( event )
 
     bezierTool.curveDegree = Number( document.getElementById( "bezierDegreeEdit" ).value );
     activeTool = bezierTool;
+}
+
+function startHermiteCurve( event )
+{
+    if( activeTool )
+    {
+        activeTool.revert();
+    }
+
+    activeTool = hermiteTool;
 }
 
 function onKeyPressed( event )
@@ -174,6 +177,7 @@ function main()
     renderer.domElement.addEventListener( "click", onMouseClick );
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
+    document.getElementById( "createHermiteButton" ).addEventListener( "click", startHermiteCurve );
     document.getElementById( "bezierDegreeEdit" ).addEventListener( "change", updateBezierDegree );
     document.addEventListener( 'keydown', onKeyPressed );
 }

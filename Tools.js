@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {BezierCurve, offsetPoints} from "./Math.js";
-import {drawPolygon} from "./Visualizer.js";
+import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, intersectPlaneWithMouse} from "./Math.js";
+import {drawPolygon, drawVector} from "./Visualizer.js";
 import {scene} from "./CurveCreator.js";
 
 
@@ -14,7 +14,7 @@ class CurveTool // interface
 
     revert() {}
 
-    pointAdded( point, onObject ) {}
+    pointAdded( point, onObject, event ) {}
 
     pointRemoved( point = null ) {}
 
@@ -47,7 +47,7 @@ export class BezierCurveTool
         this.clear();
     }
 
-    pointAdded( point, onObject )
+    pointAdded( point, onObject, event )
     {
         const geometry = new THREE.SphereGeometry( 1 );
         const material = new THREE.MeshLambertMaterial( {color: 'red'} );
@@ -117,12 +117,23 @@ export class HermiteCurveTool
 
     clear()
     {
-
+        this.controlPoints = [];
+        this.meshPoints = [];
+        this.controlVectors = [];
+        this.visualVectors = [];
     }
 
     clearDrawn()
     {
+        for( const point of this.meshPoints )
+        {
+            scene.remove( point );
+        }
 
+        for( const vector of this.visualVectors )
+        {
+            scene.remove( vector );
+        }
     }
 
     revert()
@@ -131,9 +142,36 @@ export class HermiteCurveTool
         this.clear();
     }
 
-    pointAdded( point, onObject )
+    pointAdded( point, onObject, event )
     {
+        if( this.controlPoints.length === this.controlVectors.length )
+        {
+            // should add point
+            const geometry = new THREE.SphereGeometry( 1 );
+            const material = new THREE.MeshLambertMaterial( {color: 'red'} );
+            const pointMesh = new THREE.Mesh( geometry, material );
 
+            pointMesh.position.x = point.x;
+            pointMesh.position.y = point.y;
+            pointMesh.position.z = point.z;
+
+            scene.add( pointMesh );
+            this.meshPoints.push( pointMesh );
+
+            this.controlPoints.push( point );
+        }
+        else
+        {
+            // should add vector
+            const vecStart = this.controlPoints.slice(-1)[0];
+            const plane = getPlaneAtSpherePoint( vecStart );
+            const vecEnd = intersectPlaneWithMouse( event, plane );
+
+            const visualVector = drawVector( vecStart, vecEnd );
+            this.visualVectors.push( visualVector );
+
+            this.controlVectors.push( vecEnd.sub( vecStart ) );
+        }
     }
 
     pointRemoved( point = null )
