@@ -119,7 +119,6 @@ function startBezierCurve( event )
         activeTool.revert();
     }
 
-    bezierTool.curveDegree = Number( document.getElementById( "bezierDegreeEdit" ).value );
     activeTool = bezierTool;
 }
 
@@ -165,11 +164,6 @@ function onKeyPressed( event )
     }
 }
 
-function updateBezierDegree( event )
-{
-    bezierTool.curveDegree = Number( event.target.value );
-}
-
 function main()
 {
     init();
@@ -178,7 +172,6 @@ function main()
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
     document.getElementById( "createHermiteButton" ).addEventListener( "click", startHermiteCurve );
-    document.getElementById( "bezierDegreeEdit" ).addEventListener( "change", updateBezierDegree );
     document.addEventListener( 'keydown', onKeyPressed );
 }
 
