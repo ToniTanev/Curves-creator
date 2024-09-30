@@ -88,8 +88,8 @@ class CubicHermiteCurve
     generatePoint( t )
     {
         let pt = slerp( this.p0, this.p1, this.H1( t ) );
-        pt = strans( pt, this.v0.multiplyScalar( this.h0( t ) ) );
-        pt = strans( pt, this.v1.multiplyScalar( this.h1( t ) ) );
+        pt = strans( pt, this.v0.clone().multiplyScalar( this.h0( t ) ) );
+        pt = strans( pt, this.v1.clone().multiplyScalar( this.h1( t ) ) );
 
         return pt;
     }
