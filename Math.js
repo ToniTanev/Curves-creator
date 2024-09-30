@@ -122,7 +122,7 @@ export class CubicHermiteCurves
     {
         const allPoints = [];
 
-        for( let i = 0; i < this.controlPoints.length - 1; i += 2 )
+        for( let i = 0; i < this.controlPoints.length - 1; i++ )
         {
             const p0 = this.controlPoints[ i ];
             const v0 = this.controlVectors[ i ];

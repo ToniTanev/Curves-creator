@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, intersectPlaneWithMouse} from "./Math.js";
+import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, intersectPlaneWithMouse, CubicHermiteCurves} from "./Math.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {scene} from "./CurveCreator.js";
 
@@ -93,6 +93,8 @@ export class BezierCurveTool
 
     complete()
     {
+        let result = false;
+
         if( this.controlPoints.length >= 2 )
         {
             const curve = new BezierCurve( this.controlPoints );
@@ -104,7 +106,11 @@ export class BezierCurveTool
             drawPolygon( curvePoints, 'green' );
 
             this.clear();
+
+            result = true;
         }
+
+        return result;
     }
 }
 
@@ -181,6 +187,23 @@ export class HermiteCurveTool
 
     complete()
     {
+        let result = false;
 
+        if( this.controlPoints.length >= 2 )
+        {
+            const curve = new CubicHermiteCurves( this.controlPoints, this.controlVectors );
+
+            const curvePoints = curve.generateCurves();
+
+            offsetPoints( curvePoints );
+
+            drawPolygon( curvePoints, 'green' );
+
+            this.clear();
+
+            result = true;
+        }
+
+        return result;
     }
 }
