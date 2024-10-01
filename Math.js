@@ -24,7 +24,7 @@ function strans(u, v)
 
     const vScaled = v1.normalize().multiplyScalar( uLen );
 
-    return u1.multiplyScalar( Math.cos( vLen ) ).add( vScaled.multiplyScalar( Math.sin( vLen ) ) );
+    return u1.multiplyScalar( Math.cos( vLen/uLen ) ).add( vScaled.multiplyScalar( Math.sin( vLen/uLen ) ) );
 }
 
 const epsilonOffset = 0.07;
