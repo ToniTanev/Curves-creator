@@ -9,6 +9,10 @@ function slerp( u, v, t )
     const v1 = v.clone();
 
     const angleBetween = u1.angleTo( v1 );
+
+    if( Math.abs( angleBetween ) < 0.0001 )
+        return u1;
+
     const nom = u1.multiplyScalar( Math.sin( angleBetween * ( 1 - t ) ) ).add( v1.multiplyScalar( Math.sin( angleBetween * t ) ) );
     return nom.divideScalar( Math.sin( angleBetween ) );
 }
@@ -87,26 +91,16 @@ class CubicHermiteCurve
     }
     generatePoint( t )
     {
-        let pt = slerp( this.p0, this.p1, this.H1( t ) );
-        pt = strans( pt, this.v0.clone().multiplyScalar( this.h0( t ) ) );
-        pt = strans( pt, this.v1.clone().multiplyScalar( this.h1( t ) ) );
+        const su10 = strans( this.p0, this.v0.clone().multiplyScalar( t ) );
+        const su11 = slerp( this.p0, this.p1, t );
+        const su12 = strans( this.p1, this.v1.clone().multiplyScalar( t - 1 ) );
 
-        return pt;
-    }
+        const su20 = slerp( su10, su11, t );
+        const su21 = slerp( su11, su12, t );
 
-    H1( t )
-    {
-        return Math.pow( t, 2 ) * ( 3 - 2*t );
-    }
+        const su30 = slerp( su20, su21, t );
 
-    h0( t )
-    {
-        return t * Math.pow( ( 1 - t ), 2 );
-    }
-
-    h1( t )
-    {
-        return Math.pow( t, 2 ) * ( t - 1 );
+        return su30;
     }
 }
 
