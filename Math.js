@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {camera, renderer} from "./CurveCreator.js";
+import {camera, renderer, scene} from "./CurveCreator.js";
 
 export const vectorEpsilon = 0.0000001;
 function slerp( u, v, t )
@@ -133,6 +133,16 @@ export class CubicHermiteCurves
     }
 }
 
+export function getMouse( event )
+{
+    const mouse = new THREE.Vector2;
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
+    return mouse;
+}
+
 // assumes the sphere is centered at (0, 0, 0)
 export function offsetPoints( curvePoints )
 {
@@ -157,14 +167,28 @@ export function getPlaneAtSpherePoint( spherePoint )
     return new THREE.Plane( normal, p );
 }
 
-export function intersectPlaneWithMouse( event, plane )
+export function raycastMouse( mouse )
+{
+    // calculate pointer position in normalized device coordinates
+    // (-1 to +1) for both components
+    //const mouse = new THREE.Vector2;
+    //mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    //mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    const raycaster = new THREE.Raycaster();
+
+    camera.updateMatrixWorld();
+
+    // update the picking ray with the camera and pointer position
+    raycaster.setFromCamera(mouse, camera);
+
+    // calculate objects intersecting the picking ray
+    return raycaster.intersectObjects(scene.children);
+}
+
+export function intersectPlaneWithMouse( mouse, plane )
 {
     // calculate ray
-    const mouse = new THREE.Vector2;
-    const rect = renderer.domElement.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
-
     const raycaster = new THREE.Raycaster();
 
     camera.updateMatrixWorld();

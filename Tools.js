@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, intersectPlaneWithMouse, CubicHermiteCurves} from "./Math.js";
+import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "./Math.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {scene} from "./CurveCreator.js";
 
@@ -14,7 +14,9 @@ class CurveTool // interface
 
     revert() {}
 
-    pointAdded( point, onObject, event ) {}
+    onInteractive( mouse ) {}
+
+    pointAdded( mouse ) {}
 
     pointRemoved( point = null ) {}
 
@@ -47,20 +49,28 @@ export class BezierCurveTool
         this.clear();
     }
 
-    pointAdded( point, onObject, event )
+    onInteractive( mouse ) {}
+
+    pointAdded( mouse )
     {
-        const geometry = new THREE.SphereGeometry( 1 );
-        const material = new THREE.MeshLambertMaterial( {color: 'red'} );
-        const pointMesh = new THREE.Mesh( geometry, material );
+        const intersects = raycastMouse( mouse );
 
-        pointMesh.position.x = point.x;
-        pointMesh.position.y = point.y;
-        pointMesh.position.z = point.z;
+        if( intersects.length > 0 )
+        {
+            const geometry = new THREE.SphereGeometry(1);
+            const material = new THREE.MeshLambertMaterial({color: 'red'});
+            const pointMesh = new THREE.Mesh(geometry, material);
 
-        scene.add( pointMesh );
-        this.meshPoints.push( pointMesh );
+            const point = intersects[ 0 ].point;
+            pointMesh.position.x = point.x;
+            pointMesh.position.y = point.y;
+            pointMesh.position.z = point.z;
 
-        this.controlPoints.push( point );
+            scene.add(pointMesh);
+            this.meshPoints.push(pointMesh);
+
+            this.controlPoints.push(point);
+        }
     }
 
     pointRemoved( point = null ) // if point is null, deletes the last point
@@ -127,6 +137,7 @@ export class HermiteCurveTool
         this.meshPoints = [];
         this.controlVectors = [];
         this.visualVectors = [];
+        this.interactiveVector = null;
     }
 
     clearDrawn()
@@ -148,30 +159,53 @@ export class HermiteCurveTool
         this.clear();
     }
 
-    pointAdded( point, onObject, event )
+    onInteractive( mouse )
+    {
+        if( this.controlVectors.length === this.controlPoints.length - 1 )
+        {
+            const plane = getPlaneAtSpherePoint( this.controlPoints.slice( -1 )[ 0 ] );
+            const pt = intersectPlaneWithMouse( mouse, plane );
+
+            if( this.interactiveVector )
+            {
+                scene.remove( this.interactiveVector );
+            }
+
+            this.interactiveVector = drawVector( this.controlPoints.slice( -1 )[ 0 ], pt );
+            scene.add( this.interactiveVector );
+        }
+    }
+
+    pointAdded( mouse )
     {
         if( this.controlPoints.length === this.controlVectors.length )
         {
             // should add point
-            const geometry = new THREE.SphereGeometry( 1 );
-            const material = new THREE.MeshLambertMaterial( {color: 'red'} );
-            const pointMesh = new THREE.Mesh( geometry, material );
+            const intersects = raycastMouse( mouse );
 
-            pointMesh.position.x = point.x;
-            pointMesh.position.y = point.y;
-            pointMesh.position.z = point.z;
+            if( intersects.length > 0 )
+            {
+                const geometry = new THREE.SphereGeometry(1);
+                const material = new THREE.MeshLambertMaterial({color: 'red'});
+                const pointMesh = new THREE.Mesh(geometry, material);
 
-            scene.add( pointMesh );
-            this.meshPoints.push( pointMesh );
+                const point = intersects[ 0 ].point;
+                pointMesh.position.x = point.x;
+                pointMesh.position.y = point.y;
+                pointMesh.position.z = point.z;
 
-            this.controlPoints.push( point );
+                scene.add(pointMesh);
+                this.meshPoints.push(pointMesh);
+
+                this.controlPoints.push(point);
+            }
         }
         else
         {
             // should add vector
-            const vecStart = this.controlPoints.slice(-1)[0];
+            const vecStart = this.controlPoints.slice( -1 )[ 0 ];
             const plane = getPlaneAtSpherePoint( vecStart );
-            const vecEnd = intersectPlaneWithMouse( event, plane );
+            const vecEnd = intersectPlaneWithMouse( mouse, plane );
 
             const visualVector = drawVector( vecStart, vecEnd );
             this.visualVectors.push( visualVector );
