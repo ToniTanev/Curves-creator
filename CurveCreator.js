@@ -74,11 +74,11 @@ function onRightClick( event )
 {
     if (activeTool != null)
     {
-        const intersects = raycastMouse( event );
+        const intersects = raycastMouse( getMouse( event ) );
 
         if (intersects.length > 0)
         {
-            activeTool.pointRemoved( intersects[0].object );
+            activeTool.objectRemoved( intersects[0].object );
         }
     }
 }
@@ -138,7 +138,7 @@ function onKeyPressed( event )
     {
         if( activeTool )
         {
-            activeTool.pointRemoved();
+            activeTool.objectRemoved();
         }
     }
 }

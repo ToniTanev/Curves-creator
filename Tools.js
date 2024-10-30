@@ -18,7 +18,7 @@ class CurveTool // interface
 
     pointAdded( mouse ) {}
 
-    pointRemoved( point = null ) {}
+    objectRemoved( object = null ) {}
 
     complete() {}
 }
@@ -73,15 +73,15 @@ export class BezierCurveTool
         }
     }
 
-    pointRemoved( point = null ) // if point is null, deletes the last point
+    objectRemoved( object = null ) // if object is null, deletes the last object
     {
         let index = -1;
 
-        if( point )
+        if( object )
         {
             for( let i = 0; i < this.meshPoints.length; i++ )
             {
-                if( point === this.meshPoints[i] )
+                if( object === this.meshPoints[i] )
                 {
                     index = i;
                 }
@@ -90,12 +90,12 @@ export class BezierCurveTool
         else if( this.meshPoints.length > 0 )
         {
             index = this.meshPoints.length - 1;
-            point = this.meshPoints[ index ];
+            object = this.meshPoints[ index ];
         }
 
         if( index !== -1 )
         {
-            scene.remove( point );
+            scene.remove( object );
             this.meshPoints.splice( index, 1 );
             this.controlPoints.splice( index, 1 );
         }
@@ -151,6 +151,11 @@ export class HermiteCurveTool
         {
             scene.remove( vector );
         }
+
+        if( this.interactiveVector )
+        {
+            scene.remove( this.interactiveVector );
+        }
     }
 
     revert()
@@ -161,16 +166,17 @@ export class HermiteCurveTool
 
     onInteractive( mouse )
     {
+        if( this.interactiveVector )
+        {
+            scene.remove( this.interactiveVector );
+            this.interactiveVector = null;
+        }
+
         if( this.controlVectors.length === this.controlPoints.length - 1 )
         {
             const plane = getPlaneAtSpherePoint( this.controlPoints.slice( -1 )[ 0 ] );
             const pt = intersectPlaneWithMouse( mouse, plane );
-
-            if( this.interactiveVector )
-            {
-                scene.remove( this.interactiveVector );
-            }
-
+            
             this.interactiveVector = drawVector( this.controlPoints.slice( -1 )[ 0 ], pt );
             scene.add( this.interactiveVector );
         }
@@ -214,9 +220,83 @@ export class HermiteCurveTool
         }
     }
 
-    pointRemoved( point = null )
+    objectRemoved( object = null )
     {
+        if( this.meshPoints.length === 0 && this.visualVectors.length === 0 ) // nothing to remove
+            return;
 
+        let index = -1;
+
+        // we are storing whether we are deleting the last object because if the last object is a vector
+        // then we don't have to delete its corresponding point as well
+        // in all other cases we delete both the point and the vector at the index
+        let isDeletingLastObject = object === null;
+
+        if( object )
+        {
+            for( let i = 0; i < this.meshPoints.length; i++ )
+            {
+                if( object === this.meshPoints[i] )
+                {
+                    index = i;
+                }
+            }
+
+            for( let i = 0; i < this.visualVectors.length; i++ )
+            {
+                if( object.parent === this.visualVectors[i] )
+                {
+                    index = i;
+
+                    if( index === this.visualVectors.length - 1 && this.visualVectors.length === this.meshPoints.length )
+                    {
+                        // means that the last vector is selected and it is the last object
+                        isDeletingLastObject = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            index = this.meshPoints.length - 1;
+        }
+
+        if( isDeletingLastObject ) // only deletes the last point or vector
+        {
+            if( this.meshPoints.length === this.visualVectors.length + 1 )
+            {
+                // the last object is a point
+                scene.remove( this.meshPoints[ index ] );
+                this.meshPoints.splice( index, 1 );
+                this.controlPoints.splice( index, 1 );
+            }
+            else
+            {
+                // the last object is a vector
+                scene.remove( this.visualVectors[ index ] );
+                this.visualVectors.splice( index, 1 );
+                this.controlVectors.splice( index, 1 );
+            }
+        }
+        else if( index !== -1 )// deletes both point and vector at the index
+        {
+            scene.remove( this.meshPoints[ index ] );
+            this.meshPoints.splice( index, 1 );
+            this.controlPoints.splice( index, 1 );
+
+            if( index < this.visualVectors.length )
+            {
+                scene.remove(this.visualVectors[index]);
+                this.visualVectors.splice(index, 1);
+                this.controlVectors.splice(index, 1);
+            }
+        }
+
+        if( index !== -1 && this.interactiveVector )
+        {
+            scene.remove( this.interactiveVector );
+            this.interactiveVector = null;
+        }
     }
 
     complete()
