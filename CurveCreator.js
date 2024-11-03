@@ -4,10 +4,11 @@ import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitCont
 import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
-import {drawGrid} from "./GridAndAxes.js";
+import {drawAxes, drawGrid} from "./GridAndAxes.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
+let axes = null;
 
 const bezierTool = new BezierCurveTool();
 const hermiteTool = new HermiteCurveTool();
@@ -50,6 +51,11 @@ function init()
     if( document.getElementById( "drawGrid" ).checked )
     {
         grid = drawGrid();
+    }
+
+    if( document.getElementById( "drawAxes" ).checked )
+    {
+        axes = drawAxes();
     }
 
     renderer.setAnimationLoop( frame );
@@ -139,6 +145,34 @@ function onGridCheckbox( event )
     }
 }
 
+function onAxesCheckbox( event )
+{
+    if( document.getElementById( "drawAxes" ).checked )
+    {
+        if( !axes )
+        {
+            axes = drawAxes();
+        }
+        else
+        {
+            for( const axis of axes )
+            {
+                scene.add( axis );
+            }
+        }
+    }
+    else
+    {
+        if( axes )
+        {
+            for( const axis of axes )
+            {
+                scene.remove( axis );
+            }
+        }
+    }
+}
+
 function onKeyPressed( event )
 {
     if ( event.key === "Escape" )
@@ -172,13 +206,14 @@ function onKeyPressed( event )
 function main()
 {
     init();
-    
+
     renderer.domElement.addEventListener( "click", onMouseClick );
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     renderer.domElement.addEventListener( "mousemove", onMouseMove );
     document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
     document.getElementById( "createHermiteButton" ).addEventListener( "click", startHermiteCurve );
     document.getElementById( "drawGrid" ).addEventListener( "click", onGridCheckbox );
+    document.getElementById( "drawAxes" ).addEventListener( "click", onAxesCheckbox );
     document.addEventListener( 'keydown', onKeyPressed );
 }
 

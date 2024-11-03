@@ -45,19 +45,22 @@ export function drawPolygon( points, color )
     return polyline;
 }
 
-// visible vector constants
-const cylRadius = 1;
-const coneRadius = cylRadius * 2;
-const coneHeight = 2.5 * coneRadius;
-
-export function drawVector( startPt, endPt )
+export function drawVector( startPt, endPt, color = 'yellow', cylRadius = 1, useBasicMaterial = false )
 {
+    const coneRadius = cylRadius * 2;
+    const coneHeight = 2.5 * coneRadius;
+
     const startPtCopy = startPt.clone();
     const endPtCopy = endPt.clone();
 
     const vecLen = startPtCopy.distanceTo( endPtCopy );
 
-    const material = new THREE.MeshPhongMaterial( { color: 'yellow' } );
+    let material = new THREE.MeshPhongMaterial( { color: color } );
+    if( useBasicMaterial )
+    {
+        material = new THREE.MeshBasicMaterial( { color: color } );
+    }
+
     const cylGeometry = new THREE.CylinderGeometry( cylRadius, cylRadius, vecLen );
     const cylMesh = new THREE.Mesh( cylGeometry, material );
     cylMesh.translateY( vecLen / 2 );
