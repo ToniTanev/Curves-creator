@@ -4,8 +4,10 @@ import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitCont
 import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
+import {drawGrid} from "./GridAndAxes.js";
 
 export let scene, renderer, camera, sphere;
+let grid = null;
 
 const bezierTool = new BezierCurveTool();
 const hermiteTool = new HermiteCurveTool();
@@ -45,8 +47,10 @@ function init()
     sphere = new THREE.Mesh( geometry, material );
     scene.add( sphere );
 
-    //sphere.position.z = 10;
-    //sphere.position.x = 10;
+    if( document.getElementById( "drawGrid" ).checked )
+    {
+        grid = drawGrid();
+    }
 
     renderer.setAnimationLoop( frame );
     function frame( time )
@@ -111,6 +115,30 @@ function startHermiteCurve( event )
     activeTool = hermiteTool;
 }
 
+function onGridCheckbox( event )
+{
+    const shouldDrawGrid = document.getElementById( "drawGrid" ).checked;
+
+    if( shouldDrawGrid )
+    {
+        if( !grid )
+        {
+            grid = drawGrid();
+        }
+        else
+        {
+            scene.add( grid );
+        }
+    }
+    else
+    {
+        if( grid )
+        {
+            scene.remove( grid );
+        }
+    }
+}
+
 function onKeyPressed( event )
 {
     if ( event.key === "Escape" )
@@ -144,12 +172,13 @@ function onKeyPressed( event )
 function main()
 {
     init();
-
+    
     renderer.domElement.addEventListener( "click", onMouseClick );
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     renderer.domElement.addEventListener( "mousemove", onMouseMove );
     document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
     document.getElementById( "createHermiteButton" ).addEventListener( "click", startHermiteCurve );
+    document.getElementById( "drawGrid" ).addEventListener( "click", onGridCheckbox );
     document.addEventListener( 'keydown', onKeyPressed );
 }
 
