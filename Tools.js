@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "./Math.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {scene} from "./CurveCreator.js";
+import {deleteObject} from "./MemoryManagement.js";
 
 
 class CurveTool // interface
@@ -39,7 +40,7 @@ export class BezierCurveTool
     {
         for( const point of this.meshPoints )
         {
-            scene.remove( point );
+            deleteObject( point );
         }
     }
 
@@ -95,7 +96,7 @@ export class BezierCurveTool
 
         if( index !== -1 )
         {
-            scene.remove( object );
+            deleteObject( object );
             this.meshPoints.splice( index, 1 );
             this.controlPoints.splice( index, 1 );
         }
@@ -144,17 +145,17 @@ export class HermiteCurveTool
     {
         for( const point of this.meshPoints )
         {
-            scene.remove( point );
+            deleteObject( point );
         }
 
         for( const vector of this.visualVectors )
         {
-            scene.remove( vector );
+            deleteObject( vector );
         }
 
         if( this.interactiveVector )
         {
-            scene.remove( this.interactiveVector );
+            deleteObject( this.interactiveVector );
         }
     }
 
@@ -168,7 +169,7 @@ export class HermiteCurveTool
     {
         if( this.interactiveVector )
         {
-            scene.remove( this.interactiveVector );
+            deleteObject( this.interactiveVector );
             this.interactiveVector = null;
         }
 
@@ -266,27 +267,27 @@ export class HermiteCurveTool
             if( this.meshPoints.length === this.visualVectors.length + 1 )
             {
                 // the last object is a point
-                scene.remove( this.meshPoints[ index ] );
+                deleteObject( this.meshPoints[ index ] );
                 this.meshPoints.splice( index, 1 );
                 this.controlPoints.splice( index, 1 );
             }
             else
             {
                 // the last object is a vector
-                scene.remove( this.visualVectors[ index ] );
+                deleteObject( this.visualVectors[ index ] );
                 this.visualVectors.splice( index, 1 );
                 this.controlVectors.splice( index, 1 );
             }
         }
         else if( index !== -1 )// deletes both point and vector at the index
         {
-            scene.remove( this.meshPoints[ index ] );
+            deleteObject( this.meshPoints[ index ] );
             this.meshPoints.splice( index, 1 );
             this.controlPoints.splice( index, 1 );
 
             if( index < this.visualVectors.length )
             {
-                scene.remove(this.visualVectors[index]);
+                deleteObject( this.visualVectors[ index ] );
                 this.visualVectors.splice(index, 1);
                 this.controlVectors.splice(index, 1);
             }
@@ -294,7 +295,7 @@ export class HermiteCurveTool
 
         if( index !== -1 && this.interactiveVector )
         {
-            scene.remove( this.interactiveVector );
+            deleteObject( this.interactiveVector );
             this.interactiveVector = null;
         }
     }
