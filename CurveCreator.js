@@ -48,12 +48,12 @@ function init()
     sphere = new THREE.Mesh( geometry, material );
     scene.add( sphere );
 
-    if( document.getElementById( "drawGrid" ).checked )
+    if( document.getElementById( "gridCheck" ).checked )
     {
         grid = drawGrid();
     }
 
-    if( document.getElementById( "drawAxes" ).checked )
+    if( document.getElementById( "axesCheck" ).checked )
     {
         axes = drawAxes();
     }
@@ -101,7 +101,7 @@ function onMouseMove( event )
     }
 }
 
-function startBezierCurve( event )
+function onBezierTool( event )
 {
     if( activeTool )
     {
@@ -111,7 +111,7 @@ function startBezierCurve( event )
     activeTool = bezierTool;
 }
 
-function startHermiteCurve( event )
+function onHermiteTool( event )
 {
     if( activeTool )
     {
@@ -123,7 +123,7 @@ function startHermiteCurve( event )
 
 function onGridCheckbox( event )
 {
-    const shouldDrawGrid = document.getElementById( "drawGrid" ).checked;
+    const shouldDrawGrid = document.getElementById( "gridCheck" ).checked;
 
     if( shouldDrawGrid )
     {
@@ -147,7 +147,7 @@ function onGridCheckbox( event )
 
 function onAxesCheckbox( event )
 {
-    if( document.getElementById( "drawAxes" ).checked )
+    if( document.getElementById( "axesCheck" ).checked )
     {
         if( !axes )
         {
@@ -210,10 +210,10 @@ function main()
     renderer.domElement.addEventListener( "click", onMouseClick );
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     renderer.domElement.addEventListener( "mousemove", onMouseMove );
-    document.getElementById( "createBezierButton" ).addEventListener( "click", startBezierCurve );
-    document.getElementById( "createHermiteButton" ).addEventListener( "click", startHermiteCurve );
-    document.getElementById( "drawGrid" ).addEventListener( "click", onGridCheckbox );
-    document.getElementById( "drawAxes" ).addEventListener( "click", onAxesCheckbox );
+    document.getElementById( "bezierButton" ).addEventListener( "click", onBezierTool );
+    document.getElementById( "hermiteButton" ).addEventListener( "click", onHermiteTool );
+    document.getElementById( "gridCheck" ).addEventListener( "click", onGridCheckbox );
+    document.getElementById( "axesCheck" ).addEventListener( "click", onAxesCheckbox );
     document.addEventListener( 'keydown', onKeyPressed );
 }
 
