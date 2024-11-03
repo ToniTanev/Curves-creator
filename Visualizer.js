@@ -45,7 +45,7 @@ export function drawPolygon( points, color )
     return polyline;
 }
 
-export function drawVector( startPt, endPt, color = 'yellow', cylRadius = 1, useBasicMaterial = false )
+export function drawVector( startPt, endPt, color = 'yellow', cylRadius = 0.5, useBasicMaterial = false )
 {
     const coneRadius = cylRadius * 2;
     const coneHeight = 2.5 * coneRadius;
