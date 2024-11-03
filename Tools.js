@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "./Math.js";
-import {drawPolygon, drawVector} from "./Visualizer.js";
-import {scene} from "./CurveCreator.js";
+import {drawPoint, drawPolygon, drawVector} from "./Visualizer.js";
+import {scene, sphere} from "./CurveCreator.js";
 import {deleteObject} from "./MemoryManagement.js";
 
 
@@ -12,6 +12,8 @@ class CurveTool // interface
     clear() {}
 
     clearDrawn() {}
+
+    clearInteractive() {}
 
     revert() {}
 
@@ -34,6 +36,10 @@ export class BezierCurveTool
     {
         this.controlPoints = [];
         this.meshPoints = [];
+
+        // interactive objects
+        this.interactivePoint = null;
+        this.interactivePoly = null;
     }
 
     clearDrawn()
@@ -42,6 +48,14 @@ export class BezierCurveTool
         {
             deleteObject( point );
         }
+
+        this.clearInteractive();
+    }
+
+    clearInteractive()
+    {
+        deleteObject( this.interactivePoint );
+        deleteObject( this.interactivePoly );
     }
 
     revert()
@@ -50,27 +64,50 @@ export class BezierCurveTool
         this.clear();
     }
 
-    onInteractive( mouse ) {}
+    onInteractive( mouse )
+    {
+        deleteObject( this.interactivePoint );
+        this.interactivePoint = null;
+
+        deleteObject( this.interactivePoly );
+        this.interactivePoly = null;
+
+        const currControlPoints = this.controlPoints.slice();
+
+        const intersects = raycastMouse( mouse );
+
+        const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+        if( inx !== -1 )
+        {
+            this.interactivePoint = drawPoint( intersects[ inx ].point );
+            currControlPoints.push( intersects[ inx ].point );
+        }
+
+        if( currControlPoints.length >= 2 )
+        {
+            const curve = new BezierCurve( currControlPoints );
+
+            const curvePoints = curve.generateCurve();
+
+            offsetPoints( curvePoints );
+
+            this.interactivePoly = drawPolygon( curvePoints, 'green' );
+        }
+    }
 
     pointAdded( mouse )
     {
         const intersects = raycastMouse( mouse );
 
-        if( intersects.length > 0 )
+        const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+        if( inx !== -1 )
         {
-            const geometry = new THREE.SphereGeometry(1);
-            const material = new THREE.MeshLambertMaterial({color: 'red'});
-            const pointMesh = new THREE.Mesh(geometry, material);
+            const pointMesh = drawPoint( intersects[ inx ].point );
+            this.meshPoints.push( pointMesh );
 
-            const point = intersects[ 0 ].point;
-            pointMesh.position.x = point.x;
-            pointMesh.position.y = point.y;
-            pointMesh.position.z = point.z;
-
-            scene.add(pointMesh);
-            this.meshPoints.push(pointMesh);
-
-            this.controlPoints.push(point);
+            this.controlPoints.push( intersects[ inx ].point );
         }
     }
 
@@ -116,6 +153,7 @@ export class BezierCurveTool
 
             drawPolygon( curvePoints, 'green' );
 
+            this.clearInteractive();
             this.clear();
 
             result = true;
@@ -138,6 +176,8 @@ export class HermiteCurveTool
         this.meshPoints = [];
         this.controlVectors = [];
         this.visualVectors = [];
+
+        // interactive objects
         this.interactiveVector = null;
     }
 
@@ -153,10 +193,12 @@ export class HermiteCurveTool
             deleteObject( vector );
         }
 
-        if( this.interactiveVector )
-        {
-            deleteObject( this.interactiveVector );
-        }
+        this.clearInteractive();
+    }
+
+    clearInteractive()
+    {
+        deleteObject( this.interactiveVector );
     }
 
     revert()
@@ -167,11 +209,8 @@ export class HermiteCurveTool
 
     onInteractive( mouse )
     {
-        if( this.interactiveVector )
-        {
-            deleteObject( this.interactiveVector );
-            this.interactiveVector = null;
-        }
+        deleteObject( this.interactiveVector );
+        this.interactiveVector = null;
 
         if( this.controlVectors.length === this.controlPoints.length - 1 )
         {
@@ -190,21 +229,14 @@ export class HermiteCurveTool
             // should add point
             const intersects = raycastMouse( mouse );
 
-            if( intersects.length > 0 )
+            const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+            if( inx !== -1 )
             {
-                const geometry = new THREE.SphereGeometry(1);
-                const material = new THREE.MeshLambertMaterial({color: 'red'});
-                const pointMesh = new THREE.Mesh(geometry, material);
+                const pointMesh = drawPoint( intersects[ inx ].point );
+                this.meshPoints.push( pointMesh );
 
-                const point = intersects[ 0 ].point;
-                pointMesh.position.x = point.x;
-                pointMesh.position.y = point.y;
-                pointMesh.position.z = point.z;
-
-                scene.add(pointMesh);
-                this.meshPoints.push(pointMesh);
-
-                this.controlPoints.push(point);
+                this.controlPoints.push( intersects[ inx ].point );
             }
         }
         else
@@ -304,7 +336,7 @@ export class HermiteCurveTool
     {
         let result = false;
 
-        if( this.controlPoints.length >= 2 )
+        if( this.controlPoints.length >= 2 && this.controlPoints.length === this.controlVectors.length )
         {
             const curve = new CubicHermiteCurves( this.controlPoints, this.controlVectors );
 
@@ -314,6 +346,7 @@ export class HermiteCurveTool
 
             drawPolygon( curvePoints, 'green' );
 
+            this.clearInteractive();
             this.clear();
 
             result = true;

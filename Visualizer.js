@@ -5,6 +5,20 @@ import { LineGeometry } from './three.js-master/examples/jsm/lines/LineGeometry.
 import { LineMaterial } from './three.js-master/examples/jsm/lines/LineMaterial.js'
 import { vectorEpsilon, vectorsEqual } from "./Math.js";
 
+export function drawPoint( center )
+{
+    const geometry = new THREE.SphereGeometry( 1 );
+    const material = new THREE.MeshLambertMaterial( { color: 'red' } );
+    const pointMesh = new THREE.Mesh( geometry, material );
+
+    pointMesh.position.x = center.x;
+    pointMesh.position.y = center.y;
+    pointMesh.position.z = center.z;
+
+    scene.add( pointMesh );
+
+    return pointMesh;
+}
 export function drawPolygon( points, color )
 {
     const positions = [];
@@ -27,6 +41,8 @@ export function drawPolygon( points, color )
     polyline.computeLineDistances();
 
     scene.add( polyline );
+
+    return polyline;
 }
 
 // visible vector constants

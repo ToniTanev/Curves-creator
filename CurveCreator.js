@@ -5,7 +5,7 @@ import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 
-export let scene, renderer, camera;
+export let scene, renderer, camera, sphere;
 
 const bezierTool = new BezierCurveTool();
 const hermiteTool = new HermiteCurveTool();
@@ -42,7 +42,7 @@ function init()
 
     const geometry = new THREE.SphereGeometry( 10 );
     const material = new THREE.MeshPhongMaterial( { color: 0x049ef4 } );
-    const sphere = new THREE.Mesh( geometry, material );
+    sphere = new THREE.Mesh( geometry, material );
     scene.add( sphere );
 
     //sphere.position.z = 10;
@@ -126,12 +126,10 @@ function onKeyPressed( event )
     {
         if( activeTool != null )
         {
-            if( !activeTool.complete() )
+            if( activeTool.complete() )
             {
-                activeTool.revert();
+                activeTool = null;
             }
-
-            activeTool = null;
         }
     }
     else if ( event.key === "Backspace" )
