@@ -178,7 +178,9 @@ export class HermiteCurveTool
         this.visualVectors = [];
 
         // interactive objects
+        this.interactivePoint = null;
         this.interactiveVector = null;
+        this.interactivePoly = null;
     }
 
     clearDrawn()
@@ -198,7 +200,9 @@ export class HermiteCurveTool
 
     clearInteractive()
     {
+        deleteObject( this.interactivePoint );
         deleteObject( this.interactiveVector );
+        deleteObject( this.interactivePoly );
     }
 
     revert()
@@ -209,16 +213,50 @@ export class HermiteCurveTool
 
     onInteractive( mouse )
     {
+        deleteObject( this.interactivePoint );
+        this.interactivePoint = null;
+
         deleteObject( this.interactiveVector );
         this.interactiveVector = null;
 
-        if( this.controlVectors.length === this.controlPoints.length - 1 )
+        deleteObject( this.interactivePoly );
+        this.interactivePoly = null;
+
+        const currControlPoints = this.controlPoints.slice();
+        const currControlVectors = this.controlVectors.slice();
+
+        if( this.controlVectors.length === this.controlPoints.length )
         {
-            const plane = getPlaneAtSpherePoint( this.controlPoints.slice( -1 )[ 0 ] );
-            const pt = intersectPlaneWithMouse( mouse, plane );
+            const intersects = raycastMouse( mouse );
+
+            const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+            if( inx !== -1 )
+            {
+                this.interactivePoint = drawPoint( intersects[ inx ].point );
+                currControlPoints.push( intersects[ inx ].point );
+                currControlVectors.push( new THREE.Vector3( 0, 0, 0 ) );
+            }
+        }
+        else if( this.controlVectors.length === this.controlPoints.length - 1 )
+        {
+            const startPt = this.controlPoints.slice( -1 )[ 0 ];
+            const plane = getPlaneAtSpherePoint( startPt );
+            const endPt = intersectPlaneWithMouse( mouse, plane );
             
-            this.interactiveVector = drawVector( this.controlPoints.slice( -1 )[ 0 ], pt );
-            scene.add( this.interactiveVector );
+            this.interactiveVector = drawVector( startPt, endPt );
+            currControlVectors.push( endPt.sub( startPt ) );
+        }
+
+        if( currControlPoints.length >= 2 )
+        {
+            const curve = new CubicHermiteCurves( currControlPoints, currControlVectors );
+
+            const curvePoints = curve.generateCurves();
+
+            offsetPoints( curvePoints );
+
+            this.interactivePoly = drawPolygon( curvePoints, 'green' );
         }
     }
 
