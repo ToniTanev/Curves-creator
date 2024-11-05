@@ -5,6 +5,7 @@ import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./GridAndAxes.js";
+import {ToolIDs, makeToolsInactive, makeToolActive} from "./UIHandler.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
@@ -78,6 +79,8 @@ function onMouseClick( event )
     {
         activeTool.pointAdded( getMouse( event ) );
     }
+
+    event.stopPropagation();
 }
 
 function onRightClick( event )
@@ -106,9 +109,13 @@ function onBezierTool( event )
     if( activeTool )
     {
         activeTool.revert();
+        makeToolsInactive();
     }
 
     activeTool = bezierTool;
+    makeToolActive( ToolIDs.BEZIER );
+
+    event.stopPropagation();
 }
 
 function onHermiteTool( event )
@@ -116,9 +123,13 @@ function onHermiteTool( event )
     if( activeTool )
     {
         activeTool.revert();
+        makeToolsInactive();
     }
 
     activeTool = hermiteTool;
+    makeToolActive( ToolIDs.HERMITE );
+
+    event.stopPropagation();
 }
 
 function onGridCheckbox( event )
@@ -143,6 +154,8 @@ function onGridCheckbox( event )
             scene.remove( grid );
         }
     }
+
+    event.stopPropagation();
 }
 
 function onAxesCheckbox( event )
@@ -171,6 +184,8 @@ function onAxesCheckbox( event )
             }
         }
     }
+
+    event.stopPropagation();
 }
 
 function onKeyPressed( event )
@@ -182,6 +197,8 @@ function onKeyPressed( event )
             activeTool.revert();
 
             activeTool = null;
+
+            makeToolsInactive();
         }
     }
     else if ( event.key === "Enter" )
@@ -191,6 +208,8 @@ function onKeyPressed( event )
             if( activeTool.complete() )
             {
                 activeTool = null;
+
+                makeToolsInactive();
             }
         }
     }
@@ -200,6 +219,18 @@ function onKeyPressed( event )
         {
             activeTool.objectRemoved();
         }
+    }
+}
+
+function onEmptyClick( event )
+{
+    if( activeTool != null )
+    {
+        activeTool.revert();
+
+        activeTool = null;
+
+        makeToolsInactive();
     }
 }
 
@@ -215,6 +246,7 @@ function main()
     document.getElementById( "gridCheck" ).addEventListener( "click", onGridCheckbox );
     document.getElementById( "axesCheck" ).addEventListener( "click", onAxesCheckbox );
     document.addEventListener( 'keydown', onKeyPressed );
+    document.addEventListener( 'click', onEmptyClick );
 }
 
 main();

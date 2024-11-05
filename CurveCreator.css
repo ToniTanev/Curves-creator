@@ -5,3 +5,23 @@ canvas
     border-width: 0.5px;
     transform: translate(50%, 0%);
 }
+
+button
+{
+    font-size: 16px;
+    border-radius: 4px;
+    transition-duration: 0.4s;
+    background-color: #008CBA;
+    border: 2px solid #008CBA;
+    padding: 8px 20px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+button:hover
+{
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    cursor: pointer;
+    background-color: white !important;
+    color: black;
+}
