@@ -3,7 +3,7 @@ canvas
     border: solid;
     border-color: black;
     border-width: 0.5px;
-    transform: translate(50%, 0%);
+    transform: translate(50%, -10%);
 }
 
 button
