@@ -22,7 +22,7 @@ export function drawPoint( center )
 export function drawPolygon( points, color )
 {
     const positions = [];
-    for(let i = 0; i < points.length - 1; i++)
+    for(let i = 0; i < points.length; i++)
     {
         positions.push( points[i].x, points[i].y, points[i].z );
     }

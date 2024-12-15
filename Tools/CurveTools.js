@@ -3,6 +3,7 @@ import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersec
 import {drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
+import {BezierCurveObject} from "../Objects/CurveObjects.js";
 
 
 class CurveTool // interface
@@ -39,7 +40,7 @@ export class BezierCurveTool
 
         // interactive objects
         this.interactivePoint = null;
-        this.interactivePoly = null;
+        this.interactiveBezierObj = new BezierCurveObject();
     }
 
     clearDrawn()
@@ -55,7 +56,7 @@ export class BezierCurveTool
     clearInteractive()
     {
         deleteObject( this.interactivePoint );
-        deleteObject( this.interactivePoly );
+        this.interactiveBezierObj.clearPolys();
     }
 
     revert()
@@ -68,9 +69,6 @@ export class BezierCurveTool
     {
         deleteObject( this.interactivePoint );
         this.interactivePoint = null;
-
-        deleteObject( this.interactivePoly );
-        this.interactivePoly = null;
 
         const currControlPoints = this.controlPoints.slice();
 
@@ -86,13 +84,9 @@ export class BezierCurveTool
 
         if( currControlPoints.length >= 2 )
         {
-            const curve = new BezierCurve( currControlPoints );
+            this.interactiveBezierObj.controlPoints = currControlPoints;
 
-            const curvePoints = curve.generateCurve();
-
-            offsetPoints( curvePoints );
-
-            this.interactivePoly = drawPolygon( curvePoints, 'green' );
+            this.interactiveBezierObj.redrawPolys();
         }
     }
 
@@ -145,13 +139,11 @@ export class BezierCurveTool
 
         if( this.controlPoints.length >= 2 )
         {
-            const curve = new BezierCurve( this.controlPoints );
+            const bezierObj = new BezierCurveObject();
+            bezierObj.controlPoints = this.controlPoints;
+            bezierObj.meshPoints = this.meshPoints;
 
-            const curvePoints = curve.generateCurve();
-
-            offsetPoints( curvePoints );
-
-            drawPolygon( curvePoints, 'green' );
+            bezierObj.redrawPolys();
 
             this.clearInteractive();
             this.clear();

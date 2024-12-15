@@ -1,5 +1,6 @@
-import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math";
-import {drawPolygon} from "../Visualizer";
+import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math.js";
+import {drawPolygon} from "../Visualizer.js";
+import {deleteObject} from "../MemoryManagement.js";
 
 
 export class BezierCurveObject
@@ -13,10 +14,31 @@ export class BezierCurveObject
         this.controlPoly = null;
     }
 
-    redrawPolys()
+    clearPolys()
     {
         deleteObject( this.poly );
         deleteObject( this.controlPoly );
+
+        this.poly = null;
+        this.controlPoly = null;
+    }
+
+    clearAll()
+    {
+        for( const point of this.meshPoints )
+        {
+            deleteObject( point );
+        }
+
+        this.controlPoints = [];
+        this.meshPoints = [];
+
+        this.clearPolys();
+    }
+
+    redrawPolys()
+    {
+        this.clearPolys();
 
         if( this.controlPoints.length >= 2 )
         {
