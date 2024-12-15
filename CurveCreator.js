@@ -2,9 +2,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
-import {BezierCurveTool, HermiteCurveTool} from "./Tools.js";
+import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
-import {drawAxes, drawGrid} from "./GridAndAxes.js";
+import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UIHandler.js";
 
 export let scene, renderer, camera, sphere;

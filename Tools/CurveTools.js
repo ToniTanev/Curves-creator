@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "./Math.js";
-import {drawPoint, drawPolygon, drawVector} from "./Visualizer.js";
-import {scene, sphere} from "./CurveCreator.js";
-import {deleteObject} from "./MemoryManagement.js";
+import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "../Math.js";
+import {drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
+import {scene, sphere} from "../CurveCreator.js";
+import {deleteObject} from "../MemoryManagement.js";
 
 
 class CurveTool // interface

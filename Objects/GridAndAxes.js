@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {scene} from "./CurveCreator.js";
-import {drawVector} from "./Visualizer.js";
+import {scene} from "../CurveCreator.js";
+import {drawVector} from "../Visualizer.js";
 
 export function drawGrid()
 {
