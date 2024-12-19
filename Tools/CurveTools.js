@@ -3,7 +3,7 @@ import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersec
 import {drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
-import {BezierCurveObject} from "../Objects/CurveObjects.js";
+import {BezierCurveObject, HermiteCurveObject} from "../Objects/CurveObjects.js";
 
 
 class CurveTool // interface
@@ -40,6 +40,9 @@ export class BezierCurveTool
 
         // interactive objects
         this.interactivePoint = null;
+
+        // the interactive Bezier obj owns only the interactive polys, it doesn't own the points
+        // therefore, it shouldn't delete the points
         this.interactiveBezierObj = new BezierCurveObject();
     }
 
@@ -139,6 +142,7 @@ export class BezierCurveTool
 
         if( this.controlPoints.length >= 2 )
         {
+            // the new Bezier obj becomes owner of the points
             const bezierObj = new BezierCurveObject();
             bezierObj.controlPoints = this.controlPoints;
             bezierObj.meshPoints = this.meshPoints;
@@ -172,7 +176,10 @@ export class HermiteCurveTool
         // interactive objects
         this.interactivePoint = null;
         this.interactiveVector = null;
-        this.interactivePoly = null;
+
+        // the interactive Hermite obj owns only the interactive polys, it doesn't own the points and the vectors
+        // therefore, it shouldn't delete the points and the vectors
+        this.interactiveHermiteObj = new HermiteCurveObject();
     }
 
     clearDrawn()
@@ -194,7 +201,7 @@ export class HermiteCurveTool
     {
         deleteObject( this.interactivePoint );
         deleteObject( this.interactiveVector );
-        deleteObject( this.interactivePoly );
+        this.interactiveHermiteObj.clearPolys();
     }
 
     revert()
@@ -210,9 +217,6 @@ export class HermiteCurveTool
 
         deleteObject( this.interactiveVector );
         this.interactiveVector = null;
-
-        deleteObject( this.interactivePoly );
-        this.interactivePoly = null;
 
         const currControlPoints = this.controlPoints.slice();
         const currControlVectors = this.controlVectors.slice();
@@ -242,13 +246,10 @@ export class HermiteCurveTool
 
         if( currControlPoints.length >= 2 )
         {
-            const curve = new CubicHermiteCurves( currControlPoints, currControlVectors );
+            this.interactiveHermiteObj.controlPoints = currControlPoints;
+            this.interactiveHermiteObj.controlVectors = currControlVectors;
 
-            const curvePoints = curve.generateCurves();
-
-            offsetPoints( curvePoints );
-
-            this.interactivePoly = drawPolygon( curvePoints, 'green' );
+            this.interactiveHermiteObj.redrawPolys();
         }
     }
 
@@ -366,15 +367,22 @@ export class HermiteCurveTool
     {
         let result = false;
 
-        if( this.controlPoints.length >= 2 && this.controlPoints.length === this.controlVectors.length )
+        if( this.controlPoints.length >= 2 )
         {
-            const curve = new CubicHermiteCurves( this.controlPoints, this.controlVectors );
+            if( this.controlPoints.length === this.controlVectors.length + 1 )
+            {
+                const endVec = new THREE.Vector3( 0, 0, 0 );
+                this.controlVectors.push( endVec );
+            }
 
-            const curvePoints = curve.generateCurves();
+            // the new Hermite obj becomes owner of the points and the vectors
+            const hermiteObj = new HermiteCurveObject();
+            hermiteObj.controlPoints = this.controlPoints;
+            hermiteObj.meshPoints = this.meshPoints;
+            hermiteObj.controlVectors = this.controlVectors;
+            hermiteObj.visualVectors = this.visualVectors;
 
-            offsetPoints( curvePoints );
-
-            drawPolygon( curvePoints, 'green' );
+            hermiteObj.redrawPolys();
 
             this.clearInteractive();
             this.clear();

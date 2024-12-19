@@ -76,6 +76,35 @@ export class HermiteCurveObject
         this.controlPoly = null;
     }
 
+    clearPolys()
+    {
+        deleteObject( this.poly );
+        deleteObject( this.controlPoly );
+
+        this.poly = null;
+        this.controlPoly = null;
+    }
+
+    clearAll()
+    {
+        for( const point of this.meshPoints )
+        {
+            deleteObject( point );
+        }
+
+        for( const vector of this.visualVectors )
+        {
+            deleteObject( vector );
+        }
+
+        this.controlPoints = [];
+        this.meshPoints = [];
+        this.controlVectors = [];
+        this.visualVectors = [];
+
+        this.clearPolys();
+    }
+
     redrawPolys()
     {
         deleteObject( this.poly );
