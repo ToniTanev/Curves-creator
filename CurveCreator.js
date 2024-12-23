@@ -3,16 +3,21 @@ import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
+import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UIHandler.js";
+import {isCurveTool, isEditTool} from "./Tools/ToolsBase.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
 let axes = null;
 
-const bezierTool = new BezierCurveTool();
-const hermiteTool = new HermiteCurveTool();
+export const bezierTool = new BezierCurveTool();
+export const hermiteTool = new HermiteCurveTool();
+export const moveTool = new MoveTool();
+export const addTool = new AddTool();
+export const deleteTool = new DeleteTool();
 let activeTool = null;
 function init()
 {
@@ -75,9 +80,18 @@ function init()
 
 function onMouseClick( event )
 {
-    if (activeTool != null)
+    if ( isCurveTool( activeTool ) )
     {
         activeTool.pointAdded( getMouse( event ) );
+    }
+    else if( isEditTool( activeTool ) )
+    {
+        const intersects = raycastMouse( getMouse( event ) );
+        if( intersects.length > 0 )
+        {
+            // TODO: filtering
+            activeTool.objectPicked( intersects[ 0 ] );
+        }
     }
 
     event.stopPropagation();
@@ -85,11 +99,11 @@ function onMouseClick( event )
 
 function onRightClick( event )
 {
-    if (activeTool != null)
+    if ( isCurveTool( activeTool ) )
     {
         const intersects = raycastMouse( getMouse( event ) );
 
-        if (intersects.length > 0)
+        if ( intersects.length > 0 )
         {
             activeTool.objectRemoved( intersects[0].object );
         }
@@ -98,13 +112,13 @@ function onRightClick( event )
 
 function onMouseMove( event )
 {
-    if( activeTool )
+    if( isCurveTool( activeTool ) || ( isEditTool( activeTool ) && activeTool !== deleteTool )  )
     {
         activeTool.onInteractive( getMouse( event ) );
     }
 }
 
-function onBezierTool( event )
+function onToolButton( toolID, event )
 {
     if( activeTool )
     {
@@ -112,24 +126,54 @@ function onBezierTool( event )
         makeToolsInactive();
     }
 
-    activeTool = bezierTool;
-    makeToolActive( ToolIDs.BEZIER );
+    if( toolID === ToolIDs.BEZIER )
+    {
+        activeTool = bezierTool;
+    }
+    else if( toolID === ToolIDs.HERMITE )
+    {
+        activeTool = hermiteTool;
+    }
+    else if( toolID === ToolIDs.MOVE )
+    {
+        activeTool = moveTool;
+    }
+    else if( toolID === ToolIDs.ADD )
+    {
+        activeTool = addTool
+    }
+    else if( toolID === ToolIDs.DELETE )
+    {
+        activeTool = deleteTool;
+    }
+
+    makeToolActive( toolID );
 
     event.stopPropagation();
 }
-
-function onHermiteTool( event )
+function onBezierToolButton( event )
 {
-    if( activeTool )
-    {
-        activeTool.revert();
-        makeToolsInactive();
-    }
+    onToolButton( ToolIDs.BEZIER, event );
+}
 
-    activeTool = hermiteTool;
-    makeToolActive( ToolIDs.HERMITE );
+function onHermiteToolButton( event )
+{
+    onToolButton( ToolIDs.HERMITE, event );
+}
 
-    event.stopPropagation();
+function onMoveToolButton( event )
+{
+    onToolButton( ToolIDs.MOVE, event );
+}
+
+function onAddToolButton( event )
+{
+    onToolButton( ToolIDs.ADD, event );
+}
+
+function onDeleteToolButton( event )
+{
+    onToolButton( ToolIDs.DELETE, event );
 }
 
 function onGridCheckbox( event )
@@ -215,7 +259,7 @@ function onKeyPressed( event )
     }
     else if ( event.key === "Backspace" )
     {
-        if( activeTool )
+        if( isCurveTool( activeTool ) )
         {
             activeTool.objectRemoved();
         }
@@ -241,8 +285,11 @@ function main()
     renderer.domElement.addEventListener( "click", onMouseClick );
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     renderer.domElement.addEventListener( "mousemove", onMouseMove );
-    document.getElementById( "bezierButton" ).addEventListener( "click", onBezierTool );
-    document.getElementById( "hermiteButton" ).addEventListener( "click", onHermiteTool );
+    document.getElementById( "bezierButton" ).addEventListener( "click", onBezierToolButton );
+    document.getElementById( "hermiteButton" ).addEventListener( "click", onHermiteToolButton );
+    document.getElementById( "moveButton" ).addEventListener( "click", onMoveToolButton );
+    document.getElementById( "addButton" ).addEventListener( "click", onAddToolButton );
+    document.getElementById( "deleteButton" ).addEventListener( "click", onDeleteToolButton );
     document.getElementById( "gridCheck" ).addEventListener( "click", onGridCheckbox );
     document.getElementById( "axesCheck" ).addEventListener( "click", onAxesCheckbox );
     document.addEventListener( 'keydown', onKeyPressed );
