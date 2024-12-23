@@ -6,7 +6,7 @@ import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
-import {ToolIDs, makeToolsInactive, makeToolActive} from "./UIHandler.js";
+import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 
 export let scene, renderer, camera, sphere;

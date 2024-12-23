@@ -30,6 +30,11 @@ export function drawAxes()
     return [ xAxis, yAxis, zAxis ];
 }
 
+export function isGridObj( obj )
+{
+    return obj.name === "gridHelper";
+}
+
 export function isAxisObj( obj )
 {
     return obj.name === "xAxis" || obj.name === "yAxis" || obj.name === "zAxis" ||

@@ -1,6 +1,6 @@
 import {sphere} from "../CurveCreator.js";
 import {getMouse, raycastMouse} from "../Math.js";
-import {isAxisObj} from "../Objects/GridAndAxes.js";
+import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {ToolResult} from "./ToolsBase.js";
 
 export class MoveTool
@@ -41,7 +41,7 @@ export class MoveTool
         if( this.toolPointsCnt === 0 )
         {
             const intersects = raycastMouse( mouse );
-            const filteredIntersects = intersects.filter( (inters) => inters.object.name !== "gridHelper" &&
+            const filteredIntersects = intersects.filter( (inters) => !isGridObj( inters.object ) &&
                 !isAxisObj( inters.object ) );
 
             if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object.parentCurve !== undefined )
