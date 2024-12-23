@@ -8,6 +8,7 @@ export function drawGrid()
     const divisions = 10;
 
     const gridHelper = new THREE.GridHelper( size, divisions );
+    gridHelper.name = "gridHelper";
     scene.add( gridHelper );
 
     return gridHelper;
@@ -22,5 +23,15 @@ export function drawAxes()
     const yAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, vecLen ), 'green', vecThickness, true );
     const zAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, vecLen, 0 ), 'blue', vecThickness, true );
 
+    xAxis.name = "xAxis";
+    yAxis.name = "yAxis";
+    zAxis.name = "zAxis";
+
     return [ xAxis, yAxis, zAxis ];
+}
+
+export function isAxisObj( obj )
+{
+    return obj.name === "xAxis" || obj.name === "yAxis" || obj.name === "zAxis" ||
+        obj.parent.name === "xAxis" || obj.parent.name === "yAxis" || obj.parent.name === "zAxis";
 }

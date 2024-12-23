@@ -1,5 +1,7 @@
 import {sphere} from "../CurveCreator.js";
-import {raycastMouse} from "../Math.js";
+import {getMouse, raycastMouse} from "../Math.js";
+import {isAxisObj} from "../Objects/GridAndAxes.js";
+import {ToolResult} from "./ToolsBase.js";
 
 export class MoveTool
 {
@@ -10,6 +12,7 @@ export class MoveTool
 
     clear()
     {
+        this.toolPointsCnt = 0;
         this.pickedObj = null;
         this.objIndex = -1;
         this.objIsPoint = true;
@@ -31,6 +34,31 @@ export class MoveTool
                 break;
             }
         }
+    }
+
+    pointAdded( mouse )
+    {
+        if( this.toolPointsCnt === 0 )
+        {
+            const intersects = raycastMouse( mouse );
+            const filteredIntersects = intersects.filter( (inters) => inters.object.name !== "gridHelper" &&
+                !isAxisObj( inters.object ) );
+
+            if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object.parentCurve !== undefined )
+            {
+                this.objectPicked( filteredIntersects[ 0 ].object );
+                this.toolPointsCnt++;
+            }
+        }
+        else if( this.toolPointsCnt === 1 )
+        {
+            if( this.complete() )
+            {
+                return ToolResult.COMPLETED;
+            }
+        }
+
+        return ToolResult.POINT_ADDED;
     }
 
     onInteractive( mouse )
@@ -87,6 +115,11 @@ export class AddTool
         this.pickedObj = obj;
     }
 
+    pointAdded( mouse )
+    {
+
+    }
+
     onInteractive( mouse )
     {
 
@@ -113,6 +146,11 @@ export class DeleteTool
     objectPicked( obj )
     {
         this.pickedObj = obj;
+    }
+
+    pointAdded( mouse )
+    {
+
     }
 
     complete()

@@ -7,7 +7,7 @@ import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
 import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UIHandler.js";
-import {isCurveTool, isEditTool} from "./Tools/ToolsBase.js";
+import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
@@ -80,17 +80,13 @@ function init()
 
 function onMouseClick( event )
 {
-    if ( isCurveTool( activeTool ) )
+    if ( isCurveTool( activeTool ) || isEditTool( activeTool ) )
     {
-        activeTool.pointAdded( getMouse( event ) );
-    }
-    else if( isEditTool( activeTool ) )
-    {
-        const intersects = raycastMouse( getMouse( event ) );
-        if( intersects.length > 0 )
+        if( activeTool.pointAdded( getMouse( event ) ) === ToolResult.COMPLETED )
         {
-            // TODO: filtering
-            activeTool.objectPicked( intersects[ 0 ].object );
+            activeTool = null;
+
+            makeToolsInactive();
         }
     }
 

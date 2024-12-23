@@ -4,6 +4,7 @@ import {drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {BezierCurveObject, HermiteCurveObject} from "../Objects/CurveObjects.js";
+import {ToolResult} from "./ToolsBase.js";
 
 
 class CurveTool // interface
@@ -106,6 +107,8 @@ export class BezierCurveTool
 
             this.controlPoints.push( intersects[ inx ].point );
         }
+
+        return ToolResult.POINT_ADDED;
     }
 
     objectRemoved( object = null ) // if object is null, deletes the last object
@@ -283,6 +286,8 @@ export class HermiteCurveTool
 
             this.controlVectors.push( vecEnd.sub( vecStart ) );
         }
+
+        return ToolResult.POINT_ADDED;
     }
 
     objectRemoved( object = null )
