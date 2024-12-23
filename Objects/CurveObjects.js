@@ -61,6 +61,14 @@ export class BezierCurveObject
             this.controlPoly = drawPolygon( controlPointsCopy, 'orange' );
         }
     }
+
+    assignParent()
+    {
+        for( const meshPoint of this.meshPoints )
+        {
+            meshPoint.parentCurve = this;
+        }
+    }
 }
 
 export class HermiteCurveObject
@@ -119,6 +127,19 @@ export class HermiteCurveObject
             offsetPoints( curvePoints );
 
             this.poly = drawPolygon( curvePoints, 'green' );
+        }
+    }
+
+    assignParent()
+    {
+        for( const meshPoint of this.meshPoints )
+        {
+            meshPoint.parentCurve = this;
+        }
+
+        for( const visualVector of this.visualVectors )
+        {
+            visualVector.parentCurve = this;
         }
     }
 }

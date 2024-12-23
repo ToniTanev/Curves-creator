@@ -148,6 +148,7 @@ export class BezierCurveTool
             bezierObj.meshPoints = this.meshPoints;
 
             bezierObj.redrawPolys();
+            bezierObj.assignParent();
 
             this.clearInteractive();
             this.clear();

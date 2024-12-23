@@ -90,7 +90,7 @@ function onMouseClick( event )
         if( intersects.length > 0 )
         {
             // TODO: filtering
-            activeTool.objectPicked( intersects[ 0 ] );
+            activeTool.objectPicked( intersects[ 0 ].object );
         }
     }
 
