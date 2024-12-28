@@ -1,9 +1,17 @@
+import * as THREE from 'three';
 import {sphere} from "../CurveCreator.js";
-import {getMouse, raycastMouse} from "../Math.js";
+import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse} from "../Math.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {ToolResult} from "./ToolsBase.js";
-import {isHermiteCurveObj} from "../Objects/CurveObjects.js";
+import {isCurvePointObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
+import {drawVector} from "../Visualizer.js";
+
+function resetVector( visualVectors, vecInx, startPt, endPt )
+{
+    deleteObject( visualVectors[ vecInx ] );
+    visualVectors[ vecInx ] = drawVector( startPt, endPt );
+}
 
 export class MoveTool
 {
@@ -34,6 +42,14 @@ export class MoveTool
             {
                 this.objIndex = i;
                 this.oldPos = obj.position.clone();
+
+                if( isHermiteCurveObj( curve ) )
+                {
+                    this.oldVec = curve.controlVectors[ i ].clone();
+                    curve.controlVectors[ i ] = new THREE.Vector3( 0, 0, 0 );
+                    deleteObject( curve.visualVectors[ i ] );
+                }
+
                 break;
             }
         }
@@ -45,6 +61,7 @@ export class MoveTool
                 if( curve.visualVectors[ i ] === obj || curve.visualVectors[ i ] === obj.parent )
                 {
                     this.objIndex = i;
+                    this.oldPos = curve.controlPoints[ i ].clone();
                     this.oldVec = curve.controlVectors[ i ].clone();
                     break;
                 }
@@ -81,19 +98,31 @@ export class MoveTool
     {
         if( this.pickedObj && this.objIndex !== -1 )
         {
-            const intersects = raycastMouse( mouse );
+            const curveObject = this.pickedObj.parentCurve;
 
-            const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-            if( inx !== -1 )
+            if( isCurvePointObj( this.pickedObj ) )
             {
-                const curveObject = this.pickedObj.parentCurve;
-                const newPos = intersects[ inx ].point;
-                curveObject.controlPoints[ this.objIndex ] = newPos;
-                curveObject.meshPoints[ this.objIndex ].position.set( newPos.x, newPos.y, newPos.z );
+                const intersects = raycastMouse( mouse );
 
-                curveObject.redrawPolys();
+                const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+                if( inx !== -1 )
+                {
+                    const newPos = intersects[ inx ].point;
+                    curveObject.controlPoints[ this.objIndex ] = newPos;
+                    curveObject.meshPoints[ this.objIndex ].position.set( newPos.x, newPos.y, newPos.z );
+                }
             }
+            else // it is a Hermite vector obj
+            {
+                const startPt = curveObject.controlPoints[ this.objIndex ];
+                const plane = getPlaneAtSpherePoint( startPt );
+                const endPt = intersectPlaneWithMouse( mouse, plane );
+                curveObject.controlVectors[ this.objIndex ] = endPt.clone().sub( startPt );
+                resetVector( curveObject.visualVectors, this.objIndex, startPt, endPt );
+            }
+
+            curveObject.redrawPolys();
         }
     }
 
@@ -111,6 +140,13 @@ export class MoveTool
             const curveObject = this.pickedObj.parentCurve;
             curveObject.controlPoints[ this.objIndex ] = this.oldPos;
             curveObject.meshPoints[ this.objIndex ].position.set( this.oldPos.x, this.oldPos.y, this.oldPos.z );
+
+            if( isHermiteCurveObj( curveObject ) )
+            {
+                curveObject.controlVectors[ this.objIndex ] = this.oldVec;
+                const oldEndPt = this.oldPos.clone().add( this.oldVec );
+                resetVector( curveObject.visualVectors, this.objIndex, this.oldPos, oldEndPt );
+            }
 
             curveObject.redrawPolys();
         }
