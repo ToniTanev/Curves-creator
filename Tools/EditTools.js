@@ -5,7 +5,7 @@ import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {ToolResult} from "./ToolsBase.js";
 import {isCurvePointObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
-import {drawVector} from "../Visualizer.js";
+import {drawPoint, drawVector} from "../Visualizer.js";
 
 function resetVector( curve, vecInx, startPt, endPt )
 {
@@ -189,32 +189,175 @@ export class AddTool
 {
     constructor()
     {
+        this.clear();
+    }
+
+    clear()
+    {
+        this.toolPointsCnt = 0;
         this.pickedObj = null;
+        this.objIndex = -1;
     }
 
     objectPicked( obj )
     {
-        this.pickedObj = obj;
+        const curve = obj.parentCurve;
+
+        let prevInx = -1;
+        for( let i = 0; i < curve.meshPoints.length; i++ )
+        {
+            if( curve.meshPoints[ i ] === obj )
+            {
+                prevInx = i;
+                break;
+            }
+        }
+
+        if( prevInx === - 1 && isHermiteCurveObj( curve ) )
+        {
+            for( let i = 0; i < curve.visualVectors.length; i++ )
+            {
+                if( curve.visualVectors[ i ] === obj || curve.visualVectors[ i ] === obj.parent )
+                {
+                    prevInx = i;
+                    break;
+                }
+            }
+        }
+
+        if( prevInx !== -1 )
+        {
+            this.objIndex = prevInx + 1;
+            // the point's definition doesn't matter, it will be fixed in onInteractive
+            const newPt = new THREE.Vector3( 0, 0, 0 );
+            curve.controlPoints.splice( this.objIndex, 0, newPt );
+            curve.meshPoints.splice( this.objIndex, 0, drawPoint( newPt ) );
+            curve.meshPoints[ this.objIndex ].parentCurve = curve;
+            this.pickedObj = curve.meshPoints[ this.objIndex ];
+
+            if( isHermiteCurveObj( curve ) )
+            {
+                // the vector's definition doesn't matter, it will be fixed in onInteractive
+                curve.controlVectors.splice( this.objIndex, 0, newPt );
+            }
+        }
     }
 
     pointAdded( mouse )
     {
+        if( this.toolPointsCnt === 0 )
+        {
+            const intersects = raycastMouse( mouse );
+            const filteredIntersects = intersects.filter( (inters) => !isGridObj( inters.object ) &&
+                !isAxisObj( inters.object ) );
 
+            if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object.parentCurve !== undefined )
+            {
+                this.objectPicked( filteredIntersects[ 0 ].object );
+                this.toolPointsCnt++;
+            }
+        }
+        else if( this.toolPointsCnt === 1 )
+        {
+            const curve = this.pickedObj.parentCurve;
+
+            if( isHermiteCurveObj( curve ) && isCurvePointObj( this.pickedObj ) )
+            {
+                // we're setting the picked obj to be the new vector
+                // it doesn't matter what the vector's definition is, it will be fixed in onInteractive
+                const dummyPt = new THREE.Vector3( 0, 0, 0 );
+                curve.visualVectors.splice( this.objIndex, 0, drawVector( dummyPt, dummyPt ) );
+                curve.visualVectors[ this.objIndex ].parentCurve = curve;
+                curve.visualVectors[ this.objIndex ].traverse( child =>
+                    {
+                        if ( child instanceof THREE.Mesh )
+                        {
+                            child.parentCurve = curve;
+                        }
+                    }
+                );
+
+                this.pickedObj = curve.visualVectors[ this.objIndex ];
+
+                this.toolPointsCnt++;
+            }
+            else if( this.complete() )
+            {
+                return ToolResult.COMPLETED;
+            }
+        }
+        else if( this.toolPointsCnt === 2 )
+        {
+            if( this.complete() )
+            {
+                return ToolResult.COMPLETED;
+            }
+        }
     }
 
     onInteractive( mouse )
     {
+        if( this.pickedObj && this.objIndex !== -1 )
+        {
+            const curveObject = this.pickedObj.parentCurve;
 
+            if( isCurvePointObj( this.pickedObj ) )
+            {
+                const intersects = raycastMouse( mouse );
+
+                const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+                if( inx !== -1 )
+                {
+                    const newPos = intersects[ inx ].point;
+                    curveObject.controlPoints[ this.objIndex ] = newPos;
+                    curveObject.meshPoints[ this.objIndex ].position.set( newPos.x, newPos.y, newPos.z );
+                }
+            }
+            else // it is a Hermite vector obj
+            {
+                const startPt = curveObject.controlPoints[ this.objIndex ];
+                const plane = getPlaneAtSpherePoint( startPt );
+                const endPt = intersectPlaneWithMouse( mouse, plane );
+                curveObject.controlVectors[ this.objIndex ] = endPt.clone().sub( startPt );
+                resetVector( curveObject, this.objIndex, startPt, endPt );
+            }
+
+            curveObject.redrawPolys();
+        }
     }
 
     complete()
     {
+        this.clear();
 
+        return true;
     }
 
     revert()
     {
+        if( this.pickedObj && this.objIndex !== -1 )
+        {
+            const curveObject = this.pickedObj.parentCurve;
+            curveObject.controlPoints.splice( this.objIndex, 1 );
+            deleteObject( curveObject.meshPoints[ this.objIndex ] );
+            curveObject.meshPoints.splice( this.objIndex, 1 );
 
+            if( isHermiteCurveObj( curveObject ) )
+            {
+                curveObject.controlVectors.splice( this.objIndex, 1 );
+
+                if( this.toolPointsCnt === 2 ) // means that the visual vector has been added
+                {
+                    deleteObject( curveObject.visualVectors[ this.objIndex ] );
+                    curveObject.visualVectors.splice( this.objIndex, 1 );
+                }
+            }
+
+            curveObject.redrawPolys();
+        }
+
+        this.clear();
     }
 }
 
