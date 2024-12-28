@@ -373,14 +373,8 @@ export class HermiteCurveTool
     {
         let result = false;
 
-        if( this.controlPoints.length >= 2 )
+        if( this.controlPoints.length >= 2 && this.controlPoints.length === this.controlVectors.length )
         {
-            if( this.controlPoints.length === this.controlVectors.length + 1 )
-            {
-                const endVec = new THREE.Vector3( 0, 0, 0 );
-                this.controlVectors.push( endVec );
-            }
-
             // the new Hermite obj becomes owner of the points and the vectors
             const hermiteObj = new HermiteCurveObject();
             hermiteObj.controlPoints = this.controlPoints;
