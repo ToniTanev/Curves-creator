@@ -7,10 +7,21 @@ import {isCurvePointObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {drawVector} from "../Visualizer.js";
 
-function resetVector( visualVectors, vecInx, startPt, endPt )
+function resetVector( curve, vecInx, startPt, endPt )
 {
-    deleteObject( visualVectors[ vecInx ] );
-    visualVectors[ vecInx ] = drawVector( startPt, endPt );
+    deleteObject( curve.visualVectors[ vecInx ] );
+    curve.visualVectors[ vecInx ] = drawVector( startPt, endPt );
+
+    curve.visualVectors[ vecInx ].parentCurve = curve;
+
+    curve.visualVectors[ vecInx ].traverse( child =>
+        {
+            if ( child instanceof THREE.Mesh )
+            {
+                child.parentCurve = curve;
+            }
+        }
+    );
 }
 
 export class MoveTool
@@ -85,6 +96,25 @@ export class MoveTool
         }
         else if( this.toolPointsCnt === 1 )
         {
+            const curve = this.pickedObj.parentCurve;
+
+            if( isHermiteCurveObj( curve ) && isCurvePointObj( this.pickedObj ) )
+            {
+                // we're just setting the picked obj to be a vector
+                // it doesn't matter what the vector's definition is, it will be fixed in onInteractive
+                const dummyPt = new THREE.Vector3( 0, 0, 0 );
+                resetVector( curve, this.objIndex, dummyPt, dummyPt );
+                this.pickedObj = curve.visualVectors[ this.objIndex ];
+
+                this.toolPointsCnt++;
+            }
+            else if( this.complete() )
+            {
+                return ToolResult.COMPLETED;
+            }
+        }
+        else if( this.toolPointsCnt === 2 )
+        {
             if( this.complete() )
             {
                 return ToolResult.COMPLETED;
@@ -119,7 +149,7 @@ export class MoveTool
                 const plane = getPlaneAtSpherePoint( startPt );
                 const endPt = intersectPlaneWithMouse( mouse, plane );
                 curveObject.controlVectors[ this.objIndex ] = endPt.clone().sub( startPt );
-                resetVector( curveObject.visualVectors, this.objIndex, startPt, endPt );
+                resetVector( curveObject, this.objIndex, startPt, endPt );
             }
 
             curveObject.redrawPolys();
@@ -145,7 +175,7 @@ export class MoveTool
             {
                 curveObject.controlVectors[ this.objIndex ] = this.oldVec;
                 const oldEndPt = this.oldPos.clone().add( this.oldVec );
-                resetVector( curveObject.visualVectors, this.objIndex, this.oldPos, oldEndPt );
+                resetVector( curveObject, this.objIndex, this.oldPos, oldEndPt );
             }
 
             curveObject.redrawPolys();

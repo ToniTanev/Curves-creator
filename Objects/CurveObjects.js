@@ -157,7 +157,7 @@ export class HermiteCurveObject
 
 export function isCurvePointObj( obj )
 {
-    return obj.parentCurve !== undefined && obj.parent === scene;
+    return obj.parentCurve !== undefined && obj.parent === scene && obj.children.length === 0;
 }
 
 export function isHermiteCurveObj( obj )
