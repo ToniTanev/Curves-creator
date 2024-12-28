@@ -389,6 +389,7 @@ export class HermiteCurveTool
             hermiteObj.visualVectors = this.visualVectors;
 
             hermiteObj.redrawPolys();
+            hermiteObj.assignParent();
 
             this.clearInteractive();
             this.clear();

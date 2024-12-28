@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math.js";
 import {drawPolygon} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
@@ -141,6 +142,15 @@ export class HermiteCurveObject
         for( const visualVector of this.visualVectors )
         {
             visualVector.parentCurve = this;
+
+            visualVector.traverse( child =>
+            {
+                if ( child instanceof THREE.Mesh )
+                {
+                    child.parentCurve = this;
+                }
+            }
+            );
         }
     }
 }

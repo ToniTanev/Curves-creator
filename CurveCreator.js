@@ -82,12 +82,7 @@ function onMouseClick( event )
 {
     if ( isCurveTool( activeTool ) || isEditTool( activeTool ) )
     {
-        if( activeTool.pointAdded( getMouse( event ) ) === ToolResult.COMPLETED )
-        {
-            activeTool = null;
-
-            makeToolsInactive();
-        }
+        activeTool.pointAdded( getMouse( event ) );
     }
 
     event.stopPropagation();
@@ -245,12 +240,7 @@ function onKeyPressed( event )
     {
         if( activeTool != null )
         {
-            if( activeTool.complete() )
-            {
-                activeTool = null;
-
-                makeToolsInactive();
-            }
+            activeTool.complete();
         }
     }
     else if ( event.key === "Backspace" )
