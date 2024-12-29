@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {scene} from "../CurveCreator.js";
 
 export class Scaler
 {
