@@ -10,17 +10,19 @@ import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {Scaler} from "./Objects/Scaler.js";
+import {SelectionTool} from "./Tools/SelectionTool.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
 let axes = null;
 
+export const selectionTool = new SelectionTool();
 export const bezierTool = new BezierCurveTool();
 export const hermiteTool = new HermiteCurveTool();
 export const moveTool = new MoveTool();
 export const addTool = new AddTool();
 export const deleteTool = new DeleteTool();
-let activeTool = null;
+let activeTool = selectionTool;
 function init()
 {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -80,7 +82,7 @@ function init()
 
 function onMouseClick( event )
 {
-    if ( isCurveTool( activeTool ) || isEditTool( activeTool ) )
+    if ( activeTool )
     {
         activeTool.pointAdded( getMouse( event ) );
     }

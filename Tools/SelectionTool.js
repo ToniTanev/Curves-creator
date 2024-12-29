@@ -25,7 +25,7 @@ export class SelectionTool
             if( this.selectedObj && this.selectedObj.scaler !== undefined &&
                 filteredIntersects[ 0 ].object.parent === this.selectedObj.scaler.geometry )
             {
-
+                this.selectedScaler = this.selectedObj.scaler;
             }
             else
             {
@@ -39,6 +39,11 @@ export class SelectionTool
         }
         else // deselect all
         {
+            if( this.selectedObj && this.selectedObj.scaler !== undefined )
+            {
+                this.selectedObj.scaler.show( false );
+            }
+
             this.clear();
         }
     }
