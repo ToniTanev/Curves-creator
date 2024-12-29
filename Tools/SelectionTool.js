@@ -11,6 +11,7 @@ export class SelectionTool
 
     clear()
     {
+        this.toolPointsCnt = 0;
         this.selectedObj = null;
         this.selectedScaler = null;
     }
@@ -20,31 +21,41 @@ export class SelectionTool
         const intersects = raycastMouse( mouse );
         const filteredIntersects = filterIntersects( intersects );
 
-        if( filteredIntersects.length > 0 )
+        if( this.toolPointsCnt === 0 )
         {
-            if( this.selectedObj && this.selectedObj.scaler !== undefined &&
-                filteredIntersects[ 0 ].object.parent === this.selectedObj.scaler.geometry )
+            if( filteredIntersects.length > 0 )
             {
-                this.selectedScaler = this.selectedObj.scaler;
-            }
-            else
-            {
-                this.selectedObj = filteredIntersects[ 0 ].object;
-
-                if( filteredIntersects[ 0 ].object.scaler !== undefined )
+                if( this.selectedObj && this.selectedObj.scaler !== undefined &&
+                    filteredIntersects[ 0 ].object.parent === this.selectedObj.scaler.geometry )
                 {
-                    filteredIntersects[ 0 ].object.scaler.show();
+                    // begin the scaler interactive
+                    this.selectedScaler = this.selectedObj.scaler;
+                    this.toolPointsCnt++;
+                }
+                else
+                {
+                    this.selectedObj = filteredIntersects[ 0 ].object;
+
+                    if( filteredIntersects[ 0 ].object.scaler !== undefined )
+                    {
+                        filteredIntersects[ 0 ].object.scaler.show();
+                    }
                 }
             }
-        }
-        else // deselect all
-        {
-            if( this.selectedObj && this.selectedObj.scaler !== undefined )
+            else // deselect all
             {
-                this.selectedObj.scaler.show( false );
-            }
+                if( this.selectedObj && this.selectedObj.scaler !== undefined )
+                {
+                    this.selectedObj.scaler.show( false );
+                }
 
-            this.clear();
+                this.clear();
+            }
+        }
+        else if( this.toolPointsCnt === 1 ) // complete the scaler interactive
+        {
+            this.toolPointsCnt = 0;
+            this.selectedScaler = null;
         }
     }
 
