@@ -10,6 +10,7 @@ export class SelectionTool
     clear()
     {
         this.selectedObj = null;
+        this.selectedScaler = null;
     }
 
     pointAdded( mouse )

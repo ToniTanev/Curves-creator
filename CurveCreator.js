@@ -8,7 +8,8 @@ import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
-import {drawSphere, drawSphereScaler} from "./Objects/Sphere.js";
+import {drawSphere} from "./Objects/Sphere.js";
+import {Scaler} from "./Objects/Scaler.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
@@ -51,7 +52,7 @@ function init()
     scene.add( directionalLight );
 
     sphere = drawSphere();
-    sphere.scaler = drawSphereScaler( 20, 1 );
+    sphere.scaler = new Scaler( 20 );
 
     if( document.getElementById( "gridCheck" ).checked )
     {
