@@ -105,7 +105,7 @@ function onRightClick( event )
 
 function onMouseMove( event )
 {
-    if( isCurveTool( activeTool ) || ( isEditTool( activeTool ) && activeTool !== deleteTool )  )
+    if( activeTool && activeTool !== deleteTool )
     {
         activeTool.onInteractive( getMouse( event ) );
     }
@@ -233,7 +233,7 @@ function onKeyPressed( event )
         {
             activeTool.revert();
 
-            activeTool = null;
+            activeTool = selectionTool;
 
             makeToolsInactive();
         }
@@ -260,7 +260,7 @@ function onEmptyClick( event )
     {
         activeTool.revert();
 
-        activeTool = null;
+        activeTool = selectionTool;
 
         makeToolsInactive();
     }

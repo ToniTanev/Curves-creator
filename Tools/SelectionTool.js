@@ -6,11 +6,17 @@ export class SelectionTool
 {
     constructor()
     {
+        this.selectedObj = null;
         this.clear();
     }
 
     clear()
     {
+        if( this.selectedObj && this.selectedObj.scaler !== undefined )
+        {
+            this.selectedObj.scaler.show( false );
+        }
+
         this.toolPointsCnt = 0;
         this.selectedObj = null;
         this.selectedScaler = null;
@@ -44,11 +50,6 @@ export class SelectionTool
             }
             else // deselect all
             {
-                if( this.selectedObj && this.selectedObj.scaler !== undefined )
-                {
-                    this.selectedObj.scaler.show( false );
-                }
-
                 this.clear();
             }
         }
@@ -66,11 +67,13 @@ export class SelectionTool
 
     complete()
     {
+        this.clear();
 
+        return true;
     }
 
     revert()
     {
-
+        this.clear();
     }
 }
