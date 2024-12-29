@@ -8,6 +8,7 @@ import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
+import {drawSphere, drawSphereScaler} from "./Objects/Sphere.js";
 
 export let scene, renderer, camera, sphere;
 let grid = null;
@@ -49,10 +50,8 @@ function init()
     const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     scene.add( directionalLight );
 
-    const geometry = new THREE.SphereGeometry( 10 );
-    const material = new THREE.MeshPhongMaterial( { color: 0x049ef4 } );
-    sphere = new THREE.Mesh( geometry, material );
-    scene.add( sphere );
+    sphere = drawSphere();
+    sphere.scaler = drawSphereScaler( 20, 1 );
 
     if( document.getElementById( "gridCheck" ).checked )
     {
