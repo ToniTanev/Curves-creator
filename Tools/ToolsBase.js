@@ -1,4 +1,5 @@
 import {addTool, bezierTool, deleteTool, hermiteTool, moveTool} from "../CurveCreator.js";
+import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 
 export function isCurveTool( tool )
 {
@@ -14,3 +15,9 @@ export const ToolResult = Object.freeze({
     POINT_ADDED: 0,
     COMPLETED: 1,
 });
+
+export function filterIntersects( intersects )
+{
+    return intersects.filter( (inters) => !isGridObj( inters.object ) &&
+        !isAxisObj( inters.object ) );
+}

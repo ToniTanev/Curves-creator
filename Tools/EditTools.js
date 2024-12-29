@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {sphere} from "../CurveCreator.js";
 import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse} from "../Math.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
-import {ToolResult} from "./ToolsBase.js";
+import {filterIntersects, ToolResult} from "./ToolsBase.js";
 import {isCurvePointObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {drawPoint, drawVector} from "../Visualizer.js";
@@ -85,8 +85,7 @@ export class MoveTool
         if( this.toolPointsCnt === 0 )
         {
             const intersects = raycastMouse( mouse );
-            const filteredIntersects = intersects.filter( (inters) => !isGridObj( inters.object ) &&
-                !isAxisObj( inters.object ) );
+            const filteredIntersects = filterIntersects( intersects );
 
             if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object.parentCurve !== undefined )
             {
@@ -248,8 +247,7 @@ export class AddTool
         if( this.toolPointsCnt === 0 )
         {
             const intersects = raycastMouse( mouse );
-            const filteredIntersects = intersects.filter( (inters) => !isGridObj( inters.object ) &&
-                !isAxisObj( inters.object ) );
+            const filteredIntersects = filterIntersects( intersects );
 
             if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object.parentCurve !== undefined )
             {
@@ -406,8 +404,7 @@ export class DeleteTool
     pointAdded( mouse )
     {
         const intersects = raycastMouse( mouse );
-        const filteredIntersects = intersects.filter( (inters) => !isGridObj( inters.object ) &&
-            !isAxisObj( inters.object ) );
+        const filteredIntersects = filterIntersects( intersects );
 
         if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object.parentCurve !== undefined )
         {
