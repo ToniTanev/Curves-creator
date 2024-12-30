@@ -19,5 +19,5 @@ export const ToolResult = Object.freeze({
 export function filterIntersects( intersects )
 {
     return intersects.filter( (inters) => !isGridObj( inters.object ) &&
-        !isAxisObj( inters.object ) );
+        !isAxisObj( inters.object ) && !inters.object.isTransformControlHelper );
 }

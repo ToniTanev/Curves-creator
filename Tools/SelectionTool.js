@@ -1,5 +1,6 @@
 import {raycastMouse} from "../Math.js";
 import {filterIntersects} from "./ToolsBase.js";
+import {scene, transformControls, sphere} from "../CurveCreator.js";
 
 
 export class SelectionTool
@@ -7,19 +8,35 @@ export class SelectionTool
     constructor()
     {
         this.selectedObj = null;
-        this.clear();
+        this.isPanning = false;
+    }
+
+    showTransformControls( shouldShow = true )
+    {
+        if( shouldShow )
+        {
+            if( this.selectedObj )
+            {
+                transformControls.attach( this.selectedObj );
+            }
+            scene.add( transformControls );
+        }
+        else
+        {
+            if( this.selectedObj )
+            {
+                transformControls.detach( this.selectedObj );
+            }
+            scene.remove( transformControls );
+        }
     }
 
     clear()
     {
-        if( this.selectedObj && this.selectedObj.scaler !== undefined )
-        {
-            this.selectedObj.scaler.show( false );
-        }
+        this.showTransformControls( false );
 
-        this.toolPointsCnt = 0;
         this.selectedObj = null;
-        this.selectedScaler = null;
+        this.isPanning = false;
     }
 
     pointAdded( mouse )
@@ -27,42 +44,19 @@ export class SelectionTool
         const intersects = raycastMouse( mouse );
         const filteredIntersects = filterIntersects( intersects );
 
-        if( this.toolPointsCnt === 0 )
+        if ( filteredIntersects.length > 0 )
         {
-            if( filteredIntersects.length > 0 )
-            {
-                if( this.selectedObj && this.selectedObj.scaler !== undefined &&
-                    filteredIntersects[ 0 ].object.parent === this.selectedObj.scaler.geometry )
-                {
-                    // begin the scaler interactive
-                    this.selectedScaler = this.selectedObj.scaler;
-                    this.toolPointsCnt++;
-                }
-                else
-                {
-                    this.selectedObj = filteredIntersects[ 0 ].object;
+            this.selectedObj = filteredIntersects[0].object;
 
-                    if( filteredIntersects[ 0 ].object.scaler !== undefined )
-                    {
-                        filteredIntersects[ 0 ].object.scaler.show();
-                    }
-                }
-            }
-            else // deselect all
+            if (filteredIntersects[0].object === sphere)
             {
-                this.clear();
+                this.showTransformControls();
             }
         }
-        else if( this.toolPointsCnt === 1 ) // complete the scaler interactive
+        else if( !this.isPanning ) // deselect all
         {
-            this.toolPointsCnt = 0;
-            this.selectedScaler = null;
+            this.clear();
         }
-    }
-
-    onInteractive( mouse )
-    {
-
     }
 
     complete()

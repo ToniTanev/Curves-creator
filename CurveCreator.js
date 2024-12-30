@@ -1,6 +1,7 @@
 
 import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
+import {TransformControls} from './three.js-master/examples/jsm/controls/TransformControls.js';
 import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
@@ -23,6 +24,9 @@ export const moveTool = new MoveTool();
 export const addTool = new AddTool();
 export const deleteTool = new DeleteTool();
 let activeTool = selectionTool;
+
+export let transformControls;
+
 function init()
 {
     renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -72,16 +76,51 @@ function init()
         renderer.render( scene, camera );
     }
 
-    const controls = new OrbitControls( camera, renderer.domElement );
-    controls.mouseButtons = {
+    const orbitControls = new OrbitControls( camera, renderer.domElement );
+    orbitControls.mouseButtons = {
         LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.ROTATE
     }
+
+    transformControls = new TransformControls( camera, renderer.domElement );
+    transformControls.setMode( "scale" );
+    transformControls.addEventListener( 'dragging-changed', ( event ) => {
+        orbitControls.enabled = !event.value;  // disable orbit when dragging with TransformControls
+    });
+    transformControls.addEventListener( 'change', handleScale );
+    transformControls.traverse(function (child) {
+        child.isTransformControlHelper = true;
+    });
 }
+
+// Event handler to synchronize scale for uniform scaling
+function handleScale()
+{
+    if( selectionTool.selectedObj )
+    {
+        // get the current scale of the object
+        const scale = selectionTool.selectedObj.scale;
+
+        // calculate the average scale factor
+        const averageScale = ( scale.x + scale.y + scale.z ) / 3;
+
+        // apply the same scale to all axes to ensure uniform scaling
+        selectionTool.selectedObj.scale.set( averageScale, averageScale, averageScale );
+
+        renderer.render( scene, camera );
+    }
+}
+
+let previousMousePosition = { x: 0, y: 0 };
 
 function onMouseClick( event )
 {
+    const deltaX = event.clientX - previousMousePosition.x;
+    const deltaY = event.clientY - previousMousePosition.y;
+
+    selectionTool.isPanning = Math.max( Math.abs( deltaX ), Math.abs( deltaY ) ) > 0.1;
+
     if ( activeTool )
     {
         activeTool.pointAdded( getMouse( event ) );
@@ -105,9 +144,17 @@ function onRightClick( event )
 
 function onMouseMove( event )
 {
-    if( activeTool && activeTool !== deleteTool )
+    if( activeTool && activeTool !== selectionTool && activeTool !== deleteTool )
     {
         activeTool.onInteractive( getMouse( event ) );
+    }
+}
+
+function onMouseDown( event )
+{
+    if (event.button === 0) // Left mouse button (button 0)
+    {
+        previousMousePosition = { x: event.clientX, y: event.clientY };
     }
 }
 
@@ -273,6 +320,7 @@ function main()
     renderer.domElement.addEventListener( "click", onMouseClick );
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     renderer.domElement.addEventListener( "mousemove", onMouseMove );
+    renderer.domElement.addEventListener( "mousedown", onMouseDown );
     document.getElementById( "bezierButton" ).addEventListener( "click", onBezierToolButton );
     document.getElementById( "hermiteButton" ).addEventListener( "click", onHermiteToolButton );
     document.getElementById( "moveButton" ).addEventListener( "click", onMoveToolButton );
