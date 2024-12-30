@@ -4,8 +4,8 @@ import {drawVector} from "../Visualizer.js";
 
 export function drawGrid()
 {
-    const size = 100;
-    const divisions = 10;
+    const size = 200;
+    const divisions = 20;
 
     const gridHelper = new THREE.GridHelper( size, divisions );
     gridHelper.name = "gridHelper";
@@ -20,8 +20,8 @@ export function drawAxes()
     const vecThickness = 0.25;
 
     const xAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( vecLen, 0, 0 ), 'red', vecThickness, true );
-    const yAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, vecLen ), 'green', vecThickness, true );
-    const zAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, vecLen, 0 ), 'blue', vecThickness, true );
+    const yAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, vecLen, 0 ), 'green', vecThickness, true );
+    const zAxis = drawVector( new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, vecLen ), 'blue', vecThickness, true );
 
     xAxis.name = "xAxis";
     yAxis.name = "yAxis";
