@@ -10,7 +10,6 @@ import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
-import {Scaler} from "./Objects/Scaler.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 
 export let scene, renderer, camera, sphere;
@@ -58,7 +57,6 @@ function init()
     scene.add( directionalLight );
 
     sphere = drawSphere();
-    sphere.scaler = new Scaler( 20 );
 
     if( document.getElementById( "gridCheck" ).checked )
     {
