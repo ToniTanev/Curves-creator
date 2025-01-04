@@ -2,6 +2,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from './three.js-master/examples/jsm/controls/OrbitControls.js';
 import {TransformControls} from './three.js-master/examples/jsm/controls/TransformControls.js';
+import {EffectComposer} from './three.js-master/examples/jsm/postprocessing/EffectComposer.js';
+import {RenderPass} from './three.js-master/examples/jsm/postprocessing/RenderPass.js';
+import {OutlinePass} from './three.js-master/examples/jsm/postprocessing/OutlinePass.js';
+import {OutputPass} from './three.js-master/examples/jsm/postprocessing/OutputPass.js';
 import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
@@ -12,7 +16,7 @@ import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 
-export let scene, renderer, camera, sphere;
+export let scene, renderer, camera, sphere, composer;
 let grid = null;
 let axes = null;
 
@@ -40,12 +44,6 @@ function init()
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 'white' );
 
-    const aspect = windowW/windowH;
-    //var camera = new THREE.OrthographicCamera( -window.innerWidth/2, window.innerWidth/2, window.innerHeight/2, -window.innerHeight/2, 1, 1000 );
-    camera = new THREE.PerspectiveCamera( 60, aspect, 1, 10000 );
-    camera.position.set( 0,0,50 );
-    camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
-
     const ambLight = new THREE.AmbientLight( 'white', 0.5 );
     scene.add( ambLight );
 
@@ -55,6 +53,36 @@ function init()
 
     const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     scene.add( directionalLight );
+
+    const aspect = windowW/windowH;
+    //var camera = new THREE.OrthographicCamera( -window.innerWidth/2, window.innerWidth/2, window.innerHeight/2, -window.innerHeight/2, 1, 1000 );
+    camera = new THREE.PerspectiveCamera( 60, aspect, 1, 10000 );
+    camera.position.set( 0,0,50 );
+    camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+
+    const pixelRatio = renderer.getPixelRatio();
+    const renderTarget = new THREE.WebGLRenderTarget( windowW * pixelRatio, windowH * pixelRatio, { type: THREE.HalfFloatType, samples: 8 } );
+    composer = new EffectComposer(renderer, renderTarget);
+    //composer.setSize( windowW, windowH );
+
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass( renderPass );
+
+    const outlinePass = new OutlinePass(
+        new THREE.Vector2( windowW, windowH ),
+        scene,
+        camera
+    );
+
+    outlinePass.edgeStrength = 5.0;
+    outlinePass.edgeGlow = 0.0;
+    outlinePass.edgeThickness = 2.0;
+    outlinePass.selectedObjects = [];
+
+    composer.addPass( outlinePass );
+
+    const outputPass = new OutputPass();
+    composer.addPass( outputPass );
 
     sphere = drawSphere();
 
@@ -68,11 +96,15 @@ function init()
         axes = drawAxes();
     }
 
-    renderer.setAnimationLoop( frame );
-    function frame( time )
+    function animate()
     {
-        renderer.render( scene, camera );
+        requestAnimationFrame( animate );
+
+        // use the composer to render the scene with post-processing effects
+        composer.render();
     }
+
+    animate();
 
     const orbitControls = new OrbitControls( camera, renderer.domElement );
     orbitControls.mouseButtons = {
@@ -105,8 +137,6 @@ function handleScale()
 
         // apply the same scale to all axes to ensure uniform scaling
         selectionTool.selectedObj.scale.set( averageScale, averageScale, averageScale );
-
-        renderer.render( scene, camera );
     }
 }
 
