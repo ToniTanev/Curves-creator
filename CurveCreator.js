@@ -6,10 +6,9 @@ import {EffectComposer} from './three.js-master/examples/jsm/postprocessing/Effe
 import {RenderPass} from './three.js-master/examples/jsm/postprocessing/RenderPass.js';
 import {OutlinePass} from './three.js-master/examples/jsm/postprocessing/OutlinePass.js';
 import {OutputPass} from './three.js-master/examples/jsm/postprocessing/OutputPass.js';
-import {BezierCurve, getMouse, raycastMouse} from "./Math.js";
+import {getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
-import {drawPolygon, drawVector} from "./Visualizer.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
 import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
@@ -46,10 +45,6 @@ function init()
 
     const ambLight = new THREE.AmbientLight( 'white', 0.5 );
     scene.add( ambLight );
-
-    const light = new THREE.PointLight( 'white', 1, 0, 0 );
-    light.position.set( 100, 100, 100 );
-    //scene.add( light );
 
     const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
     scene.add( directionalLight );
