@@ -338,6 +338,18 @@ function onEmptyClick( event )
     }
 }
 
+function onLightBackgroundRadio( event )
+{
+    scene.background = new THREE.Color( 'white' );
+    event.stopPropagation();
+}
+
+function onDarkBackgroundRadio( event )
+{
+    scene.background = new THREE.Color( 'black' );
+    event.stopPropagation();
+}
+
 function main()
 {
     init();
@@ -353,6 +365,8 @@ function main()
     document.getElementById( "deleteButton" ).addEventListener( "click", onDeleteToolButton );
     document.getElementById( "gridCheck" ).addEventListener( "click", onGridCheckbox );
     document.getElementById( "axesCheck" ).addEventListener( "click", onAxesCheckbox );
+    document.getElementById( "lightBackgroundRadio" ).addEventListener( "click", onLightBackgroundRadio );
+    document.getElementById( "darkBackgroundRadio" ).addEventListener( "click", onDarkBackgroundRadio );
     document.addEventListener( 'keydown', onKeyPressed );
     document.addEventListener( 'click', onEmptyClick );
 }
