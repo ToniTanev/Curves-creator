@@ -1,6 +1,6 @@
 import {raycastMouse} from "../Math.js";
 import {filterIntersects} from "./ToolsBase.js";
-import {scene, transformControls, sphere} from "../CurveCreator.js";
+import {scene, transformControls, sphere, outlinePass} from "../CurveCreator.js";
 
 
 export class SelectionTool
@@ -56,6 +56,15 @@ export class SelectionTool
         else if( !this.isPanning ) // deselect all
         {
             this.clear();
+        }
+    }
+
+    onInteractive( mouse )
+    {
+        outlinePass.selectedObjects = [];
+        if( this.selectedObj )
+        {
+            outlinePass.selectedObjects.push(this.selectedObj);
         }
     }
 

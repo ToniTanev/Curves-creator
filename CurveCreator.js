@@ -15,7 +15,7 @@ import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 
-export let scene, renderer, camera, sphere, composer;
+export let scene, renderer, camera, sphere, composer, outlinePass;
 let grid = null;
 let axes = null;
 
@@ -63,15 +63,17 @@ function init()
     const renderPass = new RenderPass(scene, camera);
     composer.addPass( renderPass );
 
-    const outlinePass = new OutlinePass(
+    outlinePass = new OutlinePass(
         new THREE.Vector2( windowW, windowH ),
         scene,
         camera
     );
 
-    outlinePass.edgeStrength = 5.0;
-    outlinePass.edgeGlow = 0.0;
+    outlinePass.edgeStrength = 2.0;
+    outlinePass.edgeGlow = 5.0;
     outlinePass.edgeThickness = 2.0;
+    outlinePass.visibleEdgeColor.set( 'orange' );
+    outlinePass.hiddenEdgeColor.set( 'orange' );
     outlinePass.selectedObjects = [];
 
     composer.addPass( outlinePass );
@@ -167,7 +169,7 @@ function onRightClick( event )
 
 function onMouseMove( event )
 {
-    if( activeTool && activeTool !== selectionTool && activeTool !== deleteTool )
+    if( activeTool && activeTool !== deleteTool )
     {
         activeTool.onInteractive( getMouse( event ) );
     }

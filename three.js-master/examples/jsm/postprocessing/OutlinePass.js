@@ -1,5 +1,6 @@
 import {
 	AdditiveBlending,
+	NormalBlending,
 	Color,
 	DoubleSide,
 	HalfFloatType,
@@ -529,8 +530,10 @@ class OutlinePass extends Pass {
 					float a1 = min(c1.g, c2.g);
 					float a2 = min(c3.g, c4.g);
 					float visibilityFactor = min(a1, a2);
-					vec3 edgeColor = 1.0 - visibilityFactor > 0.001 ? visibleEdgeColor : hiddenEdgeColor;
-					gl_FragColor = vec4(edgeColor, 1.0) * vec4(d);
+					bool isVisible = 1.0 - visibilityFactor > 0.001;
+					vec3 edgeColor = isVisible ? visibleEdgeColor : hiddenEdgeColor;
+					float colorAlpha = isVisible ? 1.0 : 0.1;
+					gl_FragColor = vec4(edgeColor, colorAlpha) * vec4(d);
 				}`
 		} );
 
@@ -638,7 +641,7 @@ class OutlinePass extends Pass {
 						finalColor += + visibilityFactor * (1.0 - maskColor.r) * (1.0 - patternColor.r);
 					gl_FragColor = finalColor;
 				}`,
-			blending: AdditiveBlending,
+			blending: NormalBlending,
 			depthTest: false,
 			depthWrite: false,
 			transparent: true
