@@ -1,6 +1,7 @@
 import {raycastMouse} from "../Math.js";
-import {filterIntersects} from "./ToolsBase.js";
-import {scene, transformControls, sphere, outlinePass} from "../CurveCreator.js";
+import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj} from "./ToolsBase.js";
+import {scene, transformControls, sphere, hoverOutlinePass, selectionOutlinePass} from "../CurveCreator.js";
+import {isCurveVectorObj} from "../Objects/CurveObjects.js";
 
 
 export class SelectionTool
@@ -61,10 +62,35 @@ export class SelectionTool
 
     onInteractive( mouse )
     {
-        outlinePass.selectedObjects = [];
+        hoverOutlinePass.selectedObjects = [];
+        const intersects = raycastMouse( mouse );
+        let filteredIntersects = filterIntersects( intersects );
+        filteredIntersects = filterHighlightableIntersects( filteredIntersects );
+        if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object !== this.selectedObj )
+        {
+            const hoveredObj = filteredIntersects[ 0 ].object;
+            if( isCurveVectorObj( hoveredObj ) )
+            {
+                highlightVisualVectorObj( hoveredObj, hoverOutlinePass );
+                //hoverOutlinePass.selectedObjects.push( hoveredObj.parentCurve.poly );
+            }
+            else
+            {
+                hoverOutlinePass.selectedObjects.push( hoveredObj );
+            }
+        }
+
+        selectionOutlinePass.selectedObjects = [];
         if( this.selectedObj )
         {
-            outlinePass.selectedObjects.push(this.selectedObj);
+            if( isCurveVectorObj( this.selectedObj ) )
+            {
+                highlightVisualVectorObj( this.selectedObj, selectionOutlinePass );
+            }
+            else
+            {
+                selectionOutlinePass.selectedObjects.push( this.selectedObj );
+            }
         }
     }
 

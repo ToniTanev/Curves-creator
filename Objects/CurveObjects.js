@@ -160,6 +160,11 @@ export function isCurvePointObj( obj )
     return obj.parentCurve !== undefined && obj.parent === scene && obj.children.length === 0;
 }
 
+export function isCurveVectorObj( obj )
+{
+    return obj.parentCurve !== undefined && !isCurvePointObj( obj );
+}
+
 export function isHermiteCurveObj( obj )
 {
     return obj.meshPoints !== undefined && obj.visualVectors !== undefined;

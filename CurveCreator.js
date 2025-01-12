@@ -15,7 +15,7 @@ import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 
-export let scene, renderer, camera, sphere, composer, outlinePass;
+export let scene, renderer, camera, sphere, composer, hoverOutlinePass, selectionOutlinePass;
 let grid = null;
 let axes = null;
 
@@ -63,20 +63,35 @@ function init()
     const renderPass = new RenderPass(scene, camera);
     composer.addPass( renderPass );
 
-    outlinePass = new OutlinePass(
+    hoverOutlinePass = new OutlinePass(
         new THREE.Vector2( windowW, windowH ),
         scene,
         camera
     );
 
-    outlinePass.edgeStrength = 2.0;
-    outlinePass.edgeGlow = 5.0;
-    outlinePass.edgeThickness = 2.0;
-    outlinePass.visibleEdgeColor.set( 'orange' );
-    outlinePass.hiddenEdgeColor.set( 'orange' );
-    outlinePass.selectedObjects = [];
+    hoverOutlinePass.edgeStrength = 2.0;
+    hoverOutlinePass.edgeGlow = 5.0;
+    hoverOutlinePass.edgeThickness = 2.0;
+    hoverOutlinePass.visibleEdgeColor.set( 0xffcf3d );
+    hoverOutlinePass.hiddenEdgeColor.set( 0xffcf3d );
+    hoverOutlinePass.selectedObjects = [];
 
-    composer.addPass( outlinePass );
+    composer.addPass( hoverOutlinePass );
+
+    selectionOutlinePass = new OutlinePass(
+        new THREE.Vector2( windowW, windowH ),
+        scene,
+        camera
+    );
+
+    selectionOutlinePass.edgeStrength = 2.0;
+    selectionOutlinePass.edgeGlow = 5.0;
+    selectionOutlinePass.edgeThickness = 2.0;
+    selectionOutlinePass.visibleEdgeColor.set( 'orange' );
+    selectionOutlinePass.hiddenEdgeColor.set( 'orange' );
+    selectionOutlinePass.selectedObjects = [];
+
+    composer.addPass( selectionOutlinePass );
 
     const outputPass = new OutputPass();
     composer.addPass( outputPass );

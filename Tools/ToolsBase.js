@@ -21,3 +21,23 @@ export function filterIntersects( intersects )
     return intersects.filter( (inters) => !isGridObj( inters.object ) &&
         !isAxisObj( inters.object ) && !inters.object.isTransformControlHelper );
 }
+
+function isHighlightableObj( obj )
+{
+    return obj.type !== "Line2";
+}
+
+export function filterHighlightableIntersects( intersects )
+{
+    return intersects.filter( (inters) => isHighlightableObj( inters.object ) );
+}
+
+export function highlightVisualVectorObj( obj, outlinePass )
+{
+    let group = obj.children.length === 2 ? obj : obj.parent;
+
+    for( const child of group.children )
+    {
+        outlinePass.selectedObjects.push( child );
+    }
+}
