@@ -1,7 +1,7 @@
 import {raycastMouse} from "../Math.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj} from "./ToolsBase.js";
 import {scene, transformControls, sphere, hoverOutlinePass, selectionOutlinePass} from "../CurveCreator.js";
-import {isCurveVectorObj} from "../Objects/CurveObjects.js";
+import {isCurveObj, isCurveVectorObj} from "../Objects/CurveObjects.js";
 
 
 export class SelectionTool
@@ -38,6 +38,8 @@ export class SelectionTool
 
         this.selectedObj = null;
         this.isPanning = false;
+
+        selectionOutlinePass.selectedObjects = [];
     }
 
     pointAdded( mouse )
@@ -47,11 +49,25 @@ export class SelectionTool
 
         if ( filteredIntersects.length > 0 )
         {
-            this.selectedObj = filteredIntersects[0].object;
+            const obj = filteredIntersects[ 0 ].object;
 
-            if (filteredIntersects[0].object === sphere)
+            if ( obj === sphere )
             {
+                this.selectedObj = obj;
                 this.showTransformControls();
+            }
+            else if( obj.parentCurve !== undefined )
+            {
+                this.showTransformControls( false );
+                this.selectedObj = obj.parentCurve;
+            }
+
+            if( this.selectedObj )
+            {
+                // remove the highlight of the hovered object
+                // because the hovered object is now selected
+                hoverOutlinePass.selectedObjects = [];
+                this.highlightSelection();
             }
         }
         else if( !this.isPanning ) // deselect all
@@ -62,34 +78,24 @@ export class SelectionTool
 
     onInteractive( mouse )
     {
+        // highlight hovered
         hoverOutlinePass.selectedObjects = [];
+
         const intersects = raycastMouse( mouse );
         let filteredIntersects = filterIntersects( intersects );
         filteredIntersects = filterHighlightableIntersects( filteredIntersects );
-        if( filteredIntersects.length > 0 && filteredIntersects[ 0 ].object !== this.selectedObj )
+
+        if( filteredIntersects.length > 0 && !this.isSelected( filteredIntersects[ 0 ].object ) )
         {
             const hoveredObj = filteredIntersects[ 0 ].object;
-            if( isCurveVectorObj( hoveredObj ) )
+
+            if( hoveredObj.parentCurve !== undefined )
             {
-                highlightVisualVectorObj( hoveredObj, hoverOutlinePass );
-                //hoverOutlinePass.selectedObjects.push( hoveredObj.parentCurve.poly );
+                hoveredObj.parentCurve.highlight( hoverOutlinePass );
             }
-            else
+            else if( hoveredObj === sphere )
             {
                 hoverOutlinePass.selectedObjects.push( hoveredObj );
-            }
-        }
-
-        selectionOutlinePass.selectedObjects = [];
-        if( this.selectedObj )
-        {
-            if( isCurveVectorObj( this.selectedObj ) )
-            {
-                highlightVisualVectorObj( this.selectedObj, selectionOutlinePass );
-            }
-            else
-            {
-                selectionOutlinePass.selectedObjects.push( this.selectedObj );
             }
         }
     }
@@ -104,5 +110,35 @@ export class SelectionTool
     revert()
     {
         this.clear();
+    }
+
+    // works also on curve elements (visual points and vectors)
+    isSelected( obj )
+    {
+        if( isCurveObj( obj ) || obj === sphere )
+        {
+            return obj === this.selectedObj;
+        }
+        else if( obj.parentCurve !== undefined )
+        {
+            return obj.parentCurve === this.selectedObj;
+        }
+    }
+
+    highlightSelection()
+    {
+        selectionOutlinePass.selectedObjects = [];
+
+        if( this.selectedObj )
+        {
+            if( isCurveObj( this.selectedObj ) )
+            {
+                this.selectedObj.highlight( selectionOutlinePass );
+            }
+            else if( this.selectedObj === sphere )
+            {
+                selectionOutlinePass.selectedObjects.push( this.selectedObj );
+            }
+        }
     }
 }

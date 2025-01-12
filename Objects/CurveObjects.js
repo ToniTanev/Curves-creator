@@ -3,6 +3,7 @@ import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math.js";
 import {drawPolygon} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {scene} from "../CurveCreator.js";
+import {highlightVisualVectorObj} from "../Tools/ToolsBase.js";
 
 
 export class BezierCurveObject
@@ -89,6 +90,14 @@ export class BezierCurveObject
         }
 
         return inx;
+    }
+
+    highlight( outlinePass )
+    {
+        for( const point of this.meshPoints )
+        {
+            outlinePass.selectedObjects.push( point );
+        }
     }
 }
 
@@ -205,6 +214,19 @@ export class HermiteCurveObject
 
         return inx;
     }
+
+    highlight( outlinePass )
+    {
+        for( const point of this.meshPoints )
+        {
+            outlinePass.selectedObjects.push( point );
+        }
+
+        for( const visualVector of this.visualVectors )
+        {
+            highlightVisualVectorObj( visualVector, outlinePass );
+        }
+    }
 }
 
 export function isCurvePointObj( obj )
@@ -217,7 +239,17 @@ export function isCurveVectorObj( obj )
     return obj.parentCurve !== undefined && !isCurvePointObj( obj );
 }
 
+export function isBezierCurveObj( obj )
+{
+    return obj.meshPoints !== undefined && obj.visualVectors === undefined;
+}
+
 export function isHermiteCurveObj( obj )
 {
     return obj.meshPoints !== undefined && obj.visualVectors !== undefined;
+}
+
+export function isCurveObj( obj )
+{
+    return isBezierCurveObj( obj ) || isHermiteCurveObj( obj );
 }
