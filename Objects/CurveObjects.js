@@ -71,6 +71,25 @@ export class BezierCurveObject
             meshPoint.parentCurve = this;
         }
     }
+
+    findIndex( obj )
+    {
+        let inx = -1;
+
+        if( obj.parentCurve === this )
+        {
+            for( let i = 0; i < this.meshPoints.length; i++ )
+            {
+                if( this.meshPoints[ i ] === obj )
+                {
+                    inx = i;
+                    break;
+                }
+            }
+        }
+
+        return inx;
+    }
 }
 
 export class HermiteCurveObject
@@ -152,6 +171,39 @@ export class HermiteCurveObject
             }
             );
         }
+    }
+
+    findIndex( obj )
+    {
+        let inx = -1;
+
+        if( obj.parentCurve === this )
+        {
+            if( isCurvePointObj( obj ) )
+            {
+                for( let i = 0; i < this.meshPoints.length; i++ )
+                {
+                    if( this.meshPoints[ i ] === obj )
+                    {
+                        inx = i;
+                        break;
+                    }
+                }
+            }
+            else // it is a visual vector obj
+            {
+                for( let i = 0; i < this.visualVectors.length; i++ )
+                {
+                    if( this.visualVectors[ i ] === obj || this.visualVectors[ i ] === obj.parent )
+                    {
+                        inx = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return inx;
     }
 }
 

@@ -202,27 +202,7 @@ export class AddTool
     {
         const curve = obj.parentCurve;
 
-        let prevInx = -1;
-        for( let i = 0; i < curve.meshPoints.length; i++ )
-        {
-            if( curve.meshPoints[ i ] === obj )
-            {
-                prevInx = i;
-                break;
-            }
-        }
-
-        if( prevInx === - 1 && isHermiteCurveObj( curve ) )
-        {
-            for( let i = 0; i < curve.visualVectors.length; i++ )
-            {
-                if( curve.visualVectors[ i ] === obj || curve.visualVectors[ i ] === obj.parent )
-                {
-                    prevInx = i;
-                    break;
-                }
-            }
-        }
+        let prevInx = curve.findIndex( obj );
 
         if( prevInx !== -1 )
         {
@@ -375,30 +355,7 @@ export class DeleteTool
     objectPicked( obj )
     {
         this.pickedObj = obj;
-        this.objIndex = -1;
-
-        const curve = obj.parentCurve;
-
-        for( let i = 0; i < curve.meshPoints.length; i++ )
-        {
-            if( curve.meshPoints[ i ] === obj )
-            {
-                this.objIndex = i;
-                break;
-            }
-        }
-
-        if( this.objIndex === - 1 && isHermiteCurveObj( curve ) )
-        {
-            for( let i = 0; i < curve.visualVectors.length; i++ )
-            {
-                if( curve.visualVectors[ i ] === obj || curve.visualVectors[ i ] === obj.parent )
-                {
-                    this.objIndex = i;
-                    break;
-                }
-            }
-        }
+        this.objIndex = obj.parentCurve.findIndex( obj );
     }
 
     pointAdded( mouse )
