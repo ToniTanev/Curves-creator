@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import {sphere} from "../CurveCreator.js";
+import {hoverOutlinePass, sphere} from "../CurveCreator.js";
 import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse} from "../Math.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
-import {filterIntersects, ToolResult} from "./ToolsBase.js";
-import {isCurvePointObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
+import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj, ToolResult} from "./ToolsBase.js";
+import {isCurvePointObj, isCurveVectorObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {drawPoint, drawVector} from "../Visualizer.js";
 
@@ -125,6 +125,8 @@ export class MoveTool
 
     onInteractive( mouse )
     {
+        hoverOutlinePass.selectedObjects = [];
+
         if( this.pickedObj && this.objIndex !== -1 )
         {
             const curveObject = this.pickedObj.parentCurve;
@@ -152,6 +154,25 @@ export class MoveTool
             }
 
             curveObject.redrawPolys();
+        }
+        else
+        {
+            const intersects = raycastMouse( mouse );
+            let filteredIntersects = filterIntersects( intersects );
+            filteredIntersects = filterHighlightableIntersects( filteredIntersects );
+
+            if( filteredIntersects.length > 0 )
+            {
+                const hoveredObj = filteredIntersects[ 0 ].object;
+                if( isCurveVectorObj( hoveredObj ) )
+                {
+                    highlightVisualVectorObj( hoveredObj, hoverOutlinePass );
+                }
+                else if( isCurvePointObj( hoveredObj ) )
+                {
+                    hoverOutlinePass.selectedObjects.push( hoveredObj );
+                }
+            }
         }
     }
 
@@ -275,6 +296,8 @@ export class AddTool
 
     onInteractive( mouse )
     {
+        hoverOutlinePass.selectedObjects = [];
+
         if( this.pickedObj && this.objIndex !== -1 )
         {
             const curveObject = this.pickedObj.parentCurve;
@@ -302,6 +325,29 @@ export class AddTool
             }
 
             curveObject.redrawPolys();
+        }
+        else
+        {
+            const intersects = raycastMouse( mouse );
+            let filteredIntersects = filterIntersects( intersects );
+            filteredIntersects = filterHighlightableIntersects( filteredIntersects );
+
+            if( filteredIntersects.length > 0 )
+            {
+                const hoveredObj = filteredIntersects[ 0 ].object;
+
+                if( hoveredObj.parentCurve !== undefined )
+                {
+                    const curve = hoveredObj.parentCurve;
+                    const inx = curve.findIndex( hoveredObj );
+                    hoverOutlinePass.selectedObjects.push( curve.meshPoints[ inx ] );
+
+                    if( isHermiteCurveObj( curve ) )
+                    {
+                        highlightVisualVectorObj( curve.visualVectors[ inx ], hoverOutlinePass );
+                    }
+                }
+            }
         }
     }
 
@@ -373,6 +419,32 @@ export class DeleteTool
         }
 
         return ToolResult.POINT_ADDED;
+    }
+
+    onInteractive( mouse )
+    {
+        hoverOutlinePass.selectedObjects = [];
+
+        const intersects = raycastMouse( mouse );
+        let filteredIntersects = filterIntersects( intersects );
+        filteredIntersects = filterHighlightableIntersects( filteredIntersects );
+
+        if( filteredIntersects.length > 0 )
+        {
+            const hoveredObj = filteredIntersects[ 0 ].object;
+
+            if( hoveredObj.parentCurve !== undefined )
+            {
+                const curve = hoveredObj.parentCurve;
+                const inx = curve.findIndex( hoveredObj );
+                hoverOutlinePass.selectedObjects.push( curve.meshPoints[ inx ] );
+
+                if( isHermiteCurveObj( curve ) )
+                {
+                    highlightVisualVectorObj( curve.visualVectors[ inx ], hoverOutlinePass );
+                }
+            }
+        }
     }
 
     complete()

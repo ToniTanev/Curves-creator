@@ -184,7 +184,7 @@ function onRightClick( event )
 
 function onMouseMove( event )
 {
-    if( activeTool && activeTool !== deleteTool )
+    if( activeTool )
     {
         activeTool.onInteractive( getMouse( event ) );
     }
