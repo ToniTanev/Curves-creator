@@ -31,7 +31,7 @@
     </div>
     <div class="grid-axes-checks">
       <input type="checkbox" id="gridCheck" checked>
-      <label for="gridCheck">Grid</label><br>
+      <label for="gridCheck">Grid</label>
       <input type="checkbox" id="axesCheck" checked>
       <label for="axesCheck">Axes</label><br><br>
     </div>
@@ -43,7 +43,28 @@
       <label for="darkBackgroundRadio">Dark</label><br>
     </div>
     <br>
-    <label id="toolName"></label>
+
+    <label id="toolName"></label><br>
+    <div class="control-poly-check-row">
+      <input type="checkbox" id="showControlPolyCheck">
+      <label for="showControlPolyCheck">Show control polygon</label><br>
+    </div><br>
+    <div class="tool-points-scale-row">
+      <label for="toolPointsScaleEdit">Points Scale:</label>
+      <input type="number" id="toolPointsScaleEdit" step="any" min="0.1" value="1">
+    </div><br>
+    <div class="tool-points-color-row">
+      <label for="toolPointsColorPicker">Points Color:</label>
+      <input type="color" id="toolPointsColorPicker" value="#ff0000">
+    </div><br>
+    <div class="tool-vectors-scale-row">
+      <label for="toolVectorsScaleEdit">Vectors Scale:</label>
+      <input type="number" id="toolVectorsScaleEdit" step="any" min="0.1" value="1">
+    </div><br>
+    <div class="tool-vectors-color-row">
+      <label for="toolVectorsColorPicker">Vectors Color:</label>
+      <input type="color" id="toolVectorsColorPicker" value="#ffff00">
+    </div>
   </div>
 
   <div class="center">
