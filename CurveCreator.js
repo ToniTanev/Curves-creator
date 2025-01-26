@@ -36,9 +36,8 @@ function init()
     const windowW = 0.5 * window.innerWidth;
     renderer.setSize( windowW, windowH, true );
 
-    document.body.appendChild( renderer.domElement );
-    //document.body.style.margin = 0;
-    //document.body.style.overflow = 'hidden';
+    const canvasContainer = document.querySelector( '.center' );
+    canvasContainer.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 'white' );

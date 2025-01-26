@@ -3,7 +3,6 @@ canvas
     border: solid;
     border-color: black;
     border-width: 0.5px;
-    transform: translate(50%, -30%);
 }
 
 button
@@ -24,4 +23,17 @@ button:hover
     cursor: pointer;
     background-color: white !important;
     color: black;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align everything inside the container to the top */
+    gap: 50px; /* Space between canvas and the edit fields */
+}
+
+.left, .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Ensure content aligns at the top */
 }

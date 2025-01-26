@@ -16,23 +16,41 @@
 </head>
 
 <body>
-<label>Creation Tools:</label><br>
-<button id="bezierButton">Bezier</button>
-<button id="hermiteButton">Hermite</button><br>
-<label>Edit Tools:</label><br>
-<button id="moveButton">Move</button>
-<button id="addButton">+</button>
-<button id="deleteButton">-</button><br>
-<input type="checkbox" id="gridCheck" checked>
-<label for="gridCheck">Grid</label><br>
-<input type="checkbox" id="axesCheck" checked>
-<label for="axesCheck">Axes</label><br><br>
-<label>Background:</label>
-<input type="radio" name="backgroundRadios" id="lightBackgroundRadio" checked>
-<label for="lightBackgroundRadio">Light</label>
-<input type="radio" name="backgroundRadios" id="darkBackgroundRadio">
-<label for="darkBackgroundRadio">Dark</label><br>
-
+<div class="container">
+  <div class="left">
+    <label>Creation Tools:</label>
+    <div class="creation-buttons-row">
+      <button id="bezierButton">Bezier</button>
+      <button id="hermiteButton">Hermite</button>
+    </div>
+    <label>Edit Tools:</label>
+    <div class="edit-buttons-row">
+      <button id="moveButton">Move</button>
+      <button id="addButton">+</button>
+      <button id="deleteButton">-</button><br>
+    </div>
+    <div class="grid-axes-checks">
+      <input type="checkbox" id="gridCheck" checked>
+      <label for="gridCheck">Grid</label><br>
+      <input type="checkbox" id="axesCheck" checked>
+      <label for="axesCheck">Axes</label><br><br>
+    </div>
+    <div class="background-options">
+      <label>Background:</label>
+      <input type="radio" name="backgroundRadios" id="lightBackgroundRadio" checked>
+      <label for="lightBackgroundRadio">Light</label>
+      <input type="radio" name="backgroundRadios" id="darkBackgroundRadio">
+      <label for="darkBackgroundRadio">Dark</label><br>
+    </div>
+  </div>
+  <div class="center">
+    <!-- Canvas will be inserted here -->
+  </div>
+  <div class="right">
+    <input type="text" placeholder="Right input 1">
+    <input type="text" placeholder="Right input 2">
+  </div>
+</div>
 </body>
 </html>
 
