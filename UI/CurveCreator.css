@@ -37,3 +37,7 @@ button:hover
     flex-direction: column;
     justify-content: flex-start; /* Ensure content aligns at the top */
 }
+
+#toolName{
+    font-size: x-large;
+}

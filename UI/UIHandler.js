@@ -17,6 +17,8 @@ export function makeToolsInactive()
     document.getElementById( "moveButton" ).style.backgroundColor = defaultButtonColor;
     document.getElementById( "addButton" ).style.backgroundColor = defaultButtonColor;
     document.getElementById( "deleteButton" ).style.backgroundColor = defaultButtonColor;
+
+    document.getElementById( "toolName" ).innerText = "";
 }
 
 export function makeToolActive( toolID )
@@ -24,10 +26,12 @@ export function makeToolActive( toolID )
     if( toolID === ToolIDs.BEZIER )
     {
         document.getElementById( "bezierButton" ).style.backgroundColor = activeButtonColor;
+        document.getElementById( "toolName" ).innerText = "Bezier Tool";
     }
     else if( toolID === ToolIDs.HERMITE )
     {
         document.getElementById( "hermiteButton" ).style.backgroundColor = activeButtonColor;
+        document.getElementById( "toolName" ).innerText = "Hermite Tool";
     }
     else if( toolID === ToolIDs.MOVE )
     {
