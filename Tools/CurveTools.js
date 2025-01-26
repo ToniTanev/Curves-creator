@@ -5,6 +5,7 @@ import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {BezierCurveObject, HermiteCurveObject} from "../Objects/CurveObjects.js";
 import {ToolResult} from "./ToolsBase.js";
+import {BezierSettings, HermiteSettings} from "../Data/Settings.js";
 
 
 class CurveTool // interface
@@ -36,8 +37,12 @@ export class BezierCurveTool
 
     clear()
     {
+        this.name = "Bezier Tool";
+
         this.controlPoints = [];
         this.meshPoints = [];
+
+        this.settings = new BezierSettings();
 
         // interactive objects
         this.interactivePoint = null;
@@ -172,10 +177,14 @@ export class HermiteCurveTool
 
     clear()
     {
+        this.name = "Hermite Tool";
+
         this.controlPoints = [];
         this.meshPoints = [];
         this.controlVectors = [];
-        this.visualVectors = [];
+        this.visualVectors = []
+
+        this.settings = new HermiteSettings();
 
         // interactive objects
         this.interactivePoint = null;

@@ -10,6 +10,8 @@ export class BezierCurveObject
 {
     constructor()
     {
+        this.name = "Bezier Curve";
+
         this.controlPoints = [];
         this.meshPoints = [];
 
@@ -105,6 +107,8 @@ export class HermiteCurveObject
 {
     constructor()
     {
+        this.name = "Hermite Curve";
+
         this.controlPoints = [];
         this.meshPoints = [];
         this.controlVectors = [];
