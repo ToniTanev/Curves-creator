@@ -31,6 +31,8 @@ export let transformControls;
 
 function init()
 {
+    makeToolsInactive();
+
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     const windowH = 0.8 * window.innerHeight;
     const windowW = 0.5 * window.innerWidth;

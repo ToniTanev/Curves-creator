@@ -45,26 +45,28 @@
     <br>
 
     <label id="toolName"></label><br>
-    <div class="control-poly-check-row">
-      <input type="checkbox" id="showControlPolyCheck">
-      <label for="showControlPolyCheck" class="bezier-labels hermite-labels">Show control polygon</label><br>
+    <div class="tool-control-poly-check-row">
+      <input type="checkbox" id="toolShowControlPolyCheck">
+      <label for="toolShowControlPolyCheck" class="tool-bezier-labels tool-hermite-labels">Show control polygon</label><br>
     </div><br>
     <div class="tool-points-scale-row">
-      <label for="toolPointsScaleEdit" class="bezier-labels hermite-labels">Points Scale:</label>
+      <label for="toolPointsScaleEdit" class="tool-bezier-labels tool-hermite-labels">Points Scale:</label>
       <input type="number" id="toolPointsScaleEdit" step="any" min="0.1" value="1">
     </div><br>
     <div class="tool-points-color-row">
-      <label for="toolPointsColorPicker" class="bezier-labels hermite-labels">Points Color:</label>
+      <label for="toolPointsColorPicker" class="tool-bezier-labels tool-hermite-labels">Points Color:</label>
       <input type="color" id="toolPointsColorPicker" value="#ff0000">
     </div><br>
     <div class="tool-vectors-scale-row">
-      <label for="toolVectorsScaleEdit" class="hermite-labels">Vectors Scale:</label>
+      <label for="toolVectorsScaleEdit" class="tool-hermite-labels">Vectors Scale:</label>
       <input type="number" id="toolVectorsScaleEdit" step="any" min="0.1" value="1">
     </div><br>
     <div class="tool-vectors-color-row">
-      <label for="toolVectorsColorPicker" class="hermite-labels">Vectors Color:</label>
+      <label for="toolVectorsColorPicker" class="tool-hermite-labels">Vectors Color:</label>
       <input type="color" id="toolVectorsColorPicker" value="#ffff00">
     </div>
+    <!-- This hidden label is used to make the left and the right parts of the flex layout fixed -->
+    <label style="visibility: hidden">----------------------------------------------------</label>
   </div>
 
   <div class="center">
@@ -72,8 +74,29 @@
   </div>
 
   <div class="right">
-    <input type="text" placeholder="Right input 1">
-    <input type="text" placeholder="Right input 2">
+    <label id="objectName"></label><br>
+    <div class="object-control-poly-check-row">
+      <input type="checkbox" id="objectShowControlPolyCheck">
+      <label for="objectShowControlPolyCheck" class="object-bezier-labels object-hermite-labels">Show control polygon</label><br>
+    </div><br>
+    <div class="object-points-scale-row">
+      <label for="objectPointsScaleEdit" class="object-bezier-labels object-hermite-labels">Points Scale:</label>
+      <input type="number" id="objectPointsScaleEdit" step="any" min="0.1" value="1">
+    </div><br>
+    <div class="object-points-color-row">
+      <label for="objectPointsColorPicker" class="object-bezier-labels object-hermite-labels">Points Color:</label>
+      <input type="color" id="objectPointsColorPicker" value="#ff0000">
+    </div><br>
+    <div class="object-vectors-scale-row">
+      <label for="objectVectorsScaleEdit" class="object-hermite-labels">Vectors Scale:</label>
+      <input type="number" id="objectVectorsScaleEdit" step="any" min="0.1" value="1">
+    </div><br>
+    <div class="object-vectors-color-row">
+      <label for="objectVectorsColorPicker" class="object-hermite-labels">Vectors Color:</label>
+      <input type="color" id="objectVectorsColorPicker" value="#ffff00">
+    </div>
+    <!-- This hidden label is used to make the left and the right parts of the flex layout fixed -->
+    <label style="visibility: hidden">----------------------------------------------------</label>
   </div>
 </div>
 </body>
