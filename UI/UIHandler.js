@@ -1,3 +1,5 @@
+import {isBezierCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
+import {isSphereObj} from "../Objects/Sphere.js";
 
 export const ToolIDs = Object.freeze({
     BEZIER: 0,
@@ -5,6 +7,12 @@ export const ToolIDs = Object.freeze({
     MOVE: 2,
     ADD: 3,
     DELETE: 4,
+});
+
+export const ObjectTypes = Object.freeze({
+    BEZIER: 0,
+    HERMITE: 1,
+    SPHERE: 2,
 });
 
 const defaultButtonColor = "#008CBA";
@@ -48,6 +56,77 @@ function showToolSettings( toolID, show = true )
             label.style.display = display;
         }
     }
+}
+
+function showObjectSettings( objectType, show = true )
+{
+    const display = show ? "inline" : "none";
+
+    if( objectType === ObjectTypes.BEZIER )
+    {
+        document.getElementById( "objectName" ).innerText = show ? "Bezier Curve" : "";
+
+        document.getElementById( "objectShowControlPolyCheck" ).style.display = display;
+        document.getElementById( "objectControlPolygonColorPicker" ).style.display = display;
+        document.getElementById( "objectCurveColorPicker" ).style.display = display;
+        document.getElementById( "objectPointsScaleEdit" ).style.display = display;
+        document.getElementById( "objectPointsColorPicker" ).style.display = display;
+
+        const labels = document.getElementsByClassName( "object-bezier-labels" );
+        for( const label of labels )
+        {
+            label.style.display = display;
+        }
+    }
+    else if( objectType === ObjectTypes.HERMITE )
+    {
+        document.getElementById( "objectName" ).innerText = show ? "Hermite Curve" : "";
+
+        document.getElementById( "objectShowControlPolyCheck" ).style.display = display;
+        document.getElementById( "objectControlPolygonColorPicker" ).style.display = display;
+        document.getElementById( "objectCurveColorPicker" ).style.display = display;
+        document.getElementById( "objectPointsScaleEdit" ).style.display = display;
+        document.getElementById( "objectPointsColorPicker" ).style.display = display;
+        document.getElementById( "objectVectorsScaleEdit" ).style.display = display;
+        document.getElementById( "objectVectorsColorPicker" ).style.display = display;
+
+        const labels = document.getElementsByClassName( "object-hermite-labels" );
+        for( const label of labels )
+        {
+            label.style.display = display;
+        }
+    }
+    else if( objectType === ObjectTypes.SPHERE )
+    {
+        document.getElementById( "objectName" ).innerText = show ? "Sphere" : "";
+    }
+}
+
+export function showObjectSettingsByObj( obj, show )
+{
+    let objectType = ObjectTypes.BEZIER;
+
+    if( isBezierCurveObj( obj ) )
+    {
+        objectType = ObjectTypes.BEZIER;
+    }
+    else if( isHermiteCurveObj( obj ) )
+    {
+        objectType = ObjectTypes.HERMITE;
+    }
+    else if( isSphereObj( obj ) )
+    {
+        objectType = ObjectTypes.SPHERE;
+    }
+
+    showObjectSettings( objectType, show );
+}
+
+export function hideObjectsSettings()
+{
+    showObjectSettings( ObjectTypes.BEZIER, false );
+    showObjectSettings( ObjectTypes.HERMITE, false );
+    showObjectSettings( ObjectTypes.SPHERE, false );
 }
 
 export function makeToolsInactive()

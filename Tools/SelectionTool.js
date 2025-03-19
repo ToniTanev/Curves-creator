@@ -2,6 +2,7 @@ import {raycastMouse} from "../Math.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj} from "./ToolsBase.js";
 import {scene, transformControls, sphere, hoverOutlinePass, selectionOutlinePass} from "../CurveCreator.js";
 import {isCurveObj, isCurveVectorObj} from "../Objects/CurveObjects.js";
+import {hideObjectsSettings, showObjectSettingsByObj} from "../UI/UIHandler.js";
 
 
 export class SelectionTool
@@ -40,6 +41,8 @@ export class SelectionTool
         this.isPanning = false;
 
         selectionOutlinePass.selectedObjects = [];
+
+        hideObjectsSettings();
     }
 
     pointAdded( mouse )
@@ -68,6 +71,7 @@ export class SelectionTool
                 // because the hovered object is now selected
                 hoverOutlinePass.selectedObjects = [];
                 this.highlightSelection();
+                showObjectSettingsByObj( this.selectedObj );
             }
         }
         else if( !this.isPanning ) // deselect all

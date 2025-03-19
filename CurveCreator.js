@@ -10,7 +10,7 @@ import {getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
-import {ToolIDs, makeToolsInactive, makeToolActive} from "./UI/UIHandler.js";
+import {ToolIDs, makeToolsInactive, makeToolActive, hideObjectsSettings} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
@@ -32,6 +32,7 @@ export let transformControls;
 function init()
 {
     makeToolsInactive();
+    hideObjectsSettings();
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     const windowH = 0.8 * window.innerHeight;
