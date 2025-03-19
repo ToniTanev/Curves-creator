@@ -19,6 +19,8 @@ function showToolSettings( toolID, show = true )
         document.getElementById( "toolName" ).innerText = show ? "Bezier Tool" : "";
 
         document.getElementById( "toolShowControlPolyCheck" ).style.display = display;
+        document.getElementById( "toolControlPolygonColorPicker" ).style.display = display;
+        document.getElementById( "toolCurveColorPicker" ).style.display = display;
         document.getElementById( "toolPointsScaleEdit" ).style.display = display;
         document.getElementById( "toolPointsColorPicker" ).style.display = display;
 
@@ -33,6 +35,8 @@ function showToolSettings( toolID, show = true )
         document.getElementById( "toolName" ).innerText = show ? "Hermite Tool" : "";
 
         document.getElementById( "toolShowControlPolyCheck" ).style.display = display;
+        document.getElementById( "toolControlPolygonColorPicker" ).style.display = display;
+        document.getElementById( "toolCurveColorPicker" ).style.display = display;
         document.getElementById( "toolPointsScaleEdit" ).style.display = display;
         document.getElementById( "toolPointsColorPicker" ).style.display = display;
         document.getElementById( "toolVectorsScaleEdit" ).style.display = display;
