@@ -24,3 +24,12 @@ export class HermiteSettings
         this.vectorColor = 'yellow';
     }
 }
+
+export class SphereSettings
+{
+    constructor()
+    {
+        this.scale = 1;
+        this.color = 'blue';
+    }
+}

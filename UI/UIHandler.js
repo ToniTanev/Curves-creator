@@ -99,11 +99,22 @@ function showObjectSettings( objectType, show = true )
     else if( objectType === ObjectTypes.SPHERE )
     {
         document.getElementById( "objectName" ).innerText = show ? "Sphere" : "";
+
+        document.getElementById( "objectSphereScaleEdit" ).style.display = display;
+        document.getElementById( "objectSphereColorPicker" ).style.display = display;
+
+        const labels = document.getElementsByClassName( "object-sphere-labels" );
+        for( const label of labels )
+        {
+            label.style.display = display;
+        }
     }
 }
 
 export function showObjectSettingsByObj( obj, show )
 {
+    hideObjectsSettings();
+
     let objectType = ObjectTypes.BEZIER;
 
     if( isBezierCurveObj( obj ) )
