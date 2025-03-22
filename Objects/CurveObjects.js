@@ -4,13 +4,14 @@ import {drawPolygon} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {scene} from "../CurveCreator.js";
 import {highlightVisualVectorObj} from "../Tools/ToolsBase.js";
+import {BezierSettings} from "../Data/Settings.js";
 
 
 export class BezierCurveObject
 {
     constructor()
     {
-        this.name = "Bezier Curve";
+        this.settings = new BezierSettings();
 
         this.controlPoints = [];
         this.meshPoints = [];

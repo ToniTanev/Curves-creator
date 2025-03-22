@@ -32,71 +32,34 @@ export class BezierCurveTool
 {
     constructor()
     {
-        this.clear();
-    }
-
-    clear()
-    {
-        this.name = "Bezier Tool";
-
-        this.controlPoints = [];
-        this.meshPoints = [];
-
-        this.settings = new BezierSettings();
-
-        // interactive objects
-        this.interactivePoint = null;
-
-        // the interactive Bezier obj owns only the interactive polys, it doesn't own the points
-        // therefore, it shouldn't delete the points
-        this.interactiveBezierObj = new BezierCurveObject();
-    }
-
-    clearDrawn()
-    {
-        for( const point of this.meshPoints )
-        {
-            deleteObject( point );
-        }
-
-        this.clearInteractive();
-    }
-
-    clearInteractive()
-    {
-        deleteObject( this.interactivePoint );
-        this.interactiveBezierObj.clearPolys();
+        this.curve = new BezierCurveObject();
     }
 
     revert()
     {
-        this.clearDrawn();
-        this.clear();
+        this.curve.clearAll();
     }
 
     onInteractive( mouse )
     {
-        deleteObject( this.interactivePoint );
-        this.interactivePoint = null;
-
-        const currControlPoints = this.controlPoints.slice();
-
         const intersects = raycastMouse( mouse );
 
         const inx = intersects.findIndex( intrs => intrs.object === sphere );
 
         if( inx !== -1 )
         {
-            this.interactivePoint = drawPoint( intersects[ inx ].point );
-            currControlPoints.push( intersects[ inx ].point );
+            if( this.curve.meshPoints.length > 0 )
+            {
+                deleteObject( this.curve.meshPoints[ this.curve.meshPoints.length - 1 ] );
+                this.curve.meshPoints.pop();
+                this.curve.controlPoints.pop();
+            }
+
+            this.curve.meshPoints.push( drawPoint( intersects[ inx ].point ) );
+            this.curve.controlPoints.push( intersects[ inx ].point );
         }
 
-        if( currControlPoints.length >= 2 )
-        {
-            this.interactiveBezierObj.controlPoints = currControlPoints;
-
-            this.interactiveBezierObj.redrawPolys();
-        }
+        this.curve.redrawPolys();
     }
 
     pointAdded( mouse )
@@ -108,9 +71,9 @@ export class BezierCurveTool
         if( inx !== -1 )
         {
             const pointMesh = drawPoint( intersects[ inx ].point );
-            this.meshPoints.push( pointMesh );
+            this.curve.meshPoints.push( pointMesh );
 
-            this.controlPoints.push( intersects[ inx ].point );
+            this.curve.controlPoints.push( intersects[ inx ].point );
         }
 
         return ToolResult.POINT_ADDED;
@@ -122,25 +85,26 @@ export class BezierCurveTool
 
         if( object )
         {
-            for( let i = 0; i < this.meshPoints.length; i++ )
+            for( let i = 0; i < this.curve.meshPoints.length - 1; i++ )
             {
-                if( object === this.meshPoints[i] )
+                if( object === this.curve.meshPoints[ i ] )
                 {
                     index = i;
                 }
             }
         }
-        else if( this.meshPoints.length > 0 )
+        else if( this.curve.meshPoints.length > 0 )
         {
-            index = this.meshPoints.length - 1;
-            object = this.meshPoints[ index ];
+            index = this.curve.meshPoints.length - 1;
+            object = this.curve.meshPoints[ index ];
         }
 
         if( index !== -1 )
         {
             deleteObject( object );
-            this.meshPoints.splice( index, 1 );
-            this.controlPoints.splice( index, 1 );
+            this.curve.meshPoints.splice( index, 1 );
+            this.curve.controlPoints.splice( index, 1 );
+            this.curve.redrawPolys();
         }
     }
 
@@ -148,18 +112,17 @@ export class BezierCurveTool
     {
         let result = false;
 
-        if( this.controlPoints.length >= 2 )
+        if( this.curve.controlPoints.length >= 3 ) // at least 2 added + 1 interactive points
         {
-            // the new Bezier obj becomes owner of the points
-            const bezierObj = new BezierCurveObject();
-            bezierObj.controlPoints = this.controlPoints;
-            bezierObj.meshPoints = this.meshPoints;
+            // last pt is interactive so it doesn't count
+            const lastPt = this.curve.meshPoints.pop();
+            deleteObject( lastPt );
+            this.curve.controlPoints.pop();
 
-            bezierObj.redrawPolys();
-            bezierObj.assignParent();
+            this.curve.redrawPolys();
+            this.curve.assignParent();
 
-            this.clearInteractive();
-            this.clear();
+            this.curve = new BezierCurveObject();
 
             result = true;
         }
