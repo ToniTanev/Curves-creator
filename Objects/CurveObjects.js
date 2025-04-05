@@ -4,7 +4,7 @@ import {drawPolygon} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {scene} from "../CurveCreator.js";
 import {highlightVisualVectorObj} from "../Tools/ToolsBase.js";
-import {BezierSettings} from "../Data/Settings.js";
+import {BezierSettings, HermiteSettings} from "../Data/Settings.js";
 
 
 export class BezierCurveObject
@@ -108,7 +108,7 @@ export class HermiteCurveObject
 {
     constructor()
     {
-        this.name = "Hermite Curve";
+        this.settings = new HermiteSettings();
 
         this.controlPoints = [];
         this.meshPoints = [];
@@ -150,8 +150,7 @@ export class HermiteCurveObject
 
     redrawPolys()
     {
-        deleteObject( this.poly );
-        deleteObject( this.controlPoly );
+        this.clearPolys();
 
         if( this.controlPoints.length >= 2 && this.controlPoints.length === this.controlVectors.length )
         {

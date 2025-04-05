@@ -135,69 +135,31 @@ export class HermiteCurveTool
 {
     constructor()
     {
-        this.clear();
-    }
-
-    clear()
-    {
-        this.name = "Hermite Tool";
-
-        this.controlPoints = [];
-        this.meshPoints = [];
-        this.controlVectors = [];
-        this.visualVectors = []
-
-        this.settings = new HermiteSettings();
-
-        // interactive objects
+        this.curve = new HermiteCurveObject();
         this.interactivePoint = null;
         this.interactiveVector = null;
-
-        // the interactive Hermite obj owns only the interactive polys, it doesn't own the points and the vectors
-        // therefore, it shouldn't delete the points and the vectors
-        this.interactiveHermiteObj = new HermiteCurveObject();
-    }
-
-    clearDrawn()
-    {
-        for( const point of this.meshPoints )
-        {
-            deleteObject( point );
-        }
-
-        for( const vector of this.visualVectors )
-        {
-            deleteObject( vector );
-        }
-
-        this.clearInteractive();
-    }
-
-    clearInteractive()
-    {
-        deleteObject( this.interactivePoint );
-        deleteObject( this.interactiveVector );
-        this.interactiveHermiteObj.clearPolys();
     }
 
     revert()
     {
-        this.clearDrawn();
-        this.clear();
+        this.curve.clearAll();
+        this.interactivePoint = null;
+        this.interactiveVector = null;
     }
 
     onInteractive( mouse )
     {
-        deleteObject( this.interactivePoint );
-        this.interactivePoint = null;
+        let shouldAddPoint = false;
 
-        deleteObject( this.interactiveVector );
-        this.interactiveVector = null;
+        if( this.interactivePoint === null && this.interactiveVector === null )
+        {
+            if( this.curve.meshPoints.length === this.curve.visualVectors.length )
+            {
+                shouldAddPoint = true;
+            }
+        }
 
-        const currControlPoints = this.controlPoints.slice();
-        const currControlVectors = this.controlVectors.slice();
-
-        if( this.controlVectors.length === this.controlPoints.length )
+        if( shouldAddPoint || this.interactivePoint )
         {
             const intersects = raycastMouse( mouse );
 
@@ -205,33 +167,58 @@ export class HermiteCurveTool
 
             if( inx !== -1 )
             {
-                this.interactivePoint = drawPoint( intersects[ inx ].point );
-                currControlPoints.push( intersects[ inx ].point );
-                currControlVectors.push( new THREE.Vector3( 0, 0, 0 ) );
+                if( this.curve.meshPoints.length > 0 && this.interactivePoint )
+                {
+                    deleteObject( this.curve.meshPoints[ this.curve.meshPoints.length - 1 ] );
+                    this.curve.meshPoints.pop();
+                    this.curve.controlPoints.pop();
+                }
+
+                this.curve.meshPoints.push( drawPoint( intersects[ inx ].point ) );
+                this.curve.controlPoints.push( intersects[ inx ].point );
+
+                this.interactivePoint = this.curve.meshPoints.slice( -1 )[ 0 ];
             }
         }
-        else if( this.controlVectors.length === this.controlPoints.length - 1 )
+        else
         {
-            const startPt = this.controlPoints.slice( -1 )[ 0 ];
+            const startPt = this.curve.controlPoints.slice( -1 )[ 0 ];
             const plane = getPlaneAtSpherePoint( startPt );
             const endPt = intersectPlaneWithMouse( mouse, plane );
-            
-            this.interactiveVector = drawVector( startPt, endPt );
-            currControlVectors.push( endPt.sub( startPt ) );
+
+            if( endPt )
+            {
+                if( this.curve.visualVectors.length > 0 && this.interactiveVector )
+                {
+                    deleteObject( this.curve.visualVectors[ this.curve.visualVectors.length - 1 ] );
+                    this.curve.visualVectors.pop();
+                    this.curve.controlVectors.pop();
+                }
+
+                this.curve.visualVectors.push( drawVector( startPt, endPt ) );
+                this.curve.controlVectors.push( endPt.sub( startPt ) );
+
+                this.interactiveVector = this.curve.visualVectors.slice( -1 )[ 0 ];
+            }
         }
 
-        if( currControlPoints.length >= 2 )
+        const needsFakeLastVec = this.curve.controlPoints.length === this.curve.controlVectors.length + 1;
+        if( needsFakeLastVec )
         {
-            this.interactiveHermiteObj.controlPoints = currControlPoints;
-            this.interactiveHermiteObj.controlVectors = currControlVectors;
+            this.curve.controlVectors.push( new THREE.Vector3( 0, 0, 0 ) );
+        }
 
-            this.interactiveHermiteObj.redrawPolys();
+        this.curve.redrawPolys();
+
+        if( needsFakeLastVec )
+        {
+            this.curve.controlVectors.pop();
         }
     }
 
     pointAdded( mouse )
     {
-        if( this.controlPoints.length === this.controlVectors.length )
+        if( this.interactivePoint )
         {
             // should add point
             const intersects = raycastMouse( mouse );
@@ -240,23 +227,13 @@ export class HermiteCurveTool
 
             if( inx !== -1 )
             {
-                const pointMesh = drawPoint( intersects[ inx ].point );
-                this.meshPoints.push( pointMesh );
-
-                this.controlPoints.push( intersects[ inx ].point );
+                this.interactivePoint = null;
             }
         }
         else
         {
             // should add vector
-            const vecStart = this.controlPoints.slice( -1 )[ 0 ];
-            const plane = getPlaneAtSpherePoint( vecStart );
-            const vecEnd = intersectPlaneWithMouse( mouse, plane );
-
-            const visualVector = drawVector( vecStart, vecEnd );
-            this.visualVectors.push( visualVector );
-
-            this.controlVectors.push( vecEnd.sub( vecStart ) );
+            this.interactiveVector = null;
         }
 
         return ToolResult.POINT_ADDED;
@@ -264,7 +241,7 @@ export class HermiteCurveTool
 
     objectRemoved( object = null )
     {
-        if( this.meshPoints.length === 0 && this.visualVectors.length === 0 ) // nothing to remove
+        /*if( this.meshPoints.length === 0 && this.visualVectors.length === 0 ) // nothing to remove
             return;
 
         let index = -1;
@@ -338,27 +315,33 @@ export class HermiteCurveTool
         {
             deleteObject( this.interactiveVector );
             this.interactiveVector = null;
-        }
+        }*/
     }
 
     complete()
     {
         let result = false;
 
-        if( this.controlPoints.length >= 2 && this.controlPoints.length === this.controlVectors.length )
+        const hasAtLeastTwoPoints = this.interactivePoint && this.curve.controlPoints.length >= 3
+            || this.interactivePoint === null && this.curve.controlPoints.length >= 2;
+        const isEqualNumberOfPointsAndVectors = this.interactivePoint && this.curve.controlPoints.length === this.curve.controlVectors.length + 1
+            || this.interactivePoint === null && this.curve.controlPoints.length === this.curve.controlVectors.length;
+        if( hasAtLeastTwoPoints && isEqualNumberOfPointsAndVectors )
         {
-            // the new Hermite obj becomes owner of the points and the vectors
-            const hermiteObj = new HermiteCurveObject();
-            hermiteObj.controlPoints = this.controlPoints;
-            hermiteObj.meshPoints = this.meshPoints;
-            hermiteObj.controlVectors = this.controlVectors;
-            hermiteObj.visualVectors = this.visualVectors;
+            if( this.interactivePoint )
+            {
+                // last pt is interactive so it doesn't count
+                const lastPt = this.curve.meshPoints.pop();
+                deleteObject( lastPt );
+                this.curve.controlPoints.pop();
+            }
 
-            hermiteObj.redrawPolys();
-            hermiteObj.assignParent();
+            this.curve.redrawPolys();
+            this.curve.assignParent();
 
-            this.clearInteractive();
-            this.clear();
+            this.curve = new HermiteCurveObject();
+            this.interactivePoint = null;
+            this.interactiveVector = null;
 
             result = true;
         }
