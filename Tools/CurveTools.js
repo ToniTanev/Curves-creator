@@ -143,74 +143,74 @@ export class HermiteCurveTool
     revert()
     {
         this.curve.clearAll();
+        deleteObject( this.interactivePoint );
+        deleteObject( this.interactiveVector );
         this.interactivePoint = null;
         this.interactiveVector = null;
     }
 
     onInteractive( mouse )
     {
-        let shouldAddPoint = false;
-
-        if( this.interactivePoint === null && this.interactiveVector === null )
+        if( this.curve.controlPoints.length === this.curve.controlVectors.length )
         {
-            if( this.curve.meshPoints.length === this.curve.visualVectors.length )
-            {
-                shouldAddPoint = true;
-            }
-        }
-
-        if( shouldAddPoint || this.interactivePoint )
-        {
+            // should add interactive point
             const intersects = raycastMouse( mouse );
 
             const inx = intersects.findIndex( intrs => intrs.object === sphere );
 
             if( inx !== -1 )
             {
-                if( this.curve.meshPoints.length > 0 && this.interactivePoint )
+                const newPos = intersects[ inx ].point;
+
+                if( this.interactivePoint !== null )
                 {
-                    deleteObject( this.curve.meshPoints[ this.curve.meshPoints.length - 1 ] );
-                    this.curve.meshPoints.pop();
-                    this.curve.controlPoints.pop();
+                    this.interactivePoint.position.set( newPos.x, newPos.y, newPos.z );
                 }
-
-                this.curve.meshPoints.push( drawPoint( intersects[ inx ].point ) );
-                this.curve.controlPoints.push( intersects[ inx ].point );
-
-                this.interactivePoint = this.curve.meshPoints.slice( -1 )[ 0 ];
+                else
+                {
+                    this.interactivePoint = drawPoint( newPos );
+                }
             }
         }
         else
         {
+            // should add interactive vector
             const startPt = this.curve.controlPoints.slice( -1 )[ 0 ];
             const plane = getPlaneAtSpherePoint( startPt );
             const endPt = intersectPlaneWithMouse( mouse, plane );
 
             if( endPt )
             {
-                if( this.curve.visualVectors.length > 0 && this.interactiveVector )
+                if( this.interactiveVector )
                 {
-                    deleteObject( this.curve.visualVectors[ this.curve.visualVectors.length - 1 ] );
-                    this.curve.visualVectors.pop();
-                    this.curve.controlVectors.pop();
+                    deleteObject( this.interactiveVector );
                 }
 
-                this.curve.visualVectors.push( drawVector( startPt, endPt ) );
-                this.curve.controlVectors.push( endPt.sub( startPt ) );
-
-                this.interactiveVector = this.curve.visualVectors.slice( -1 )[ 0 ];
+                this.interactiveVector = drawVector( startPt, endPt );
+                this.interactiveVector.def = endPt.sub( startPt );
             }
         }
 
-        const needsFakeLastVec = this.curve.controlPoints.length === this.curve.controlVectors.length + 1;
-        if( needsFakeLastVec )
+        if( this.interactivePoint )
         {
+            // add a temporary control point and a temporary control vector so that the curve poly is interactive
+            this.curve.controlPoints.push( this.interactivePoint.position );
             this.curve.controlVectors.push( new THREE.Vector3( 0, 0, 0 ) );
+        }
+        else if( this.interactiveVector )
+        {
+            // add a temporary control vector so that the curve poly is interactive
+            this.curve.controlVectors.push( this.interactiveVector.def );
         }
 
         this.curve.redrawPolys();
 
-        if( needsFakeLastVec )
+        if( this.interactivePoint )
+        {
+            this.curve.controlPoints.pop();
+            this.curve.controlVectors.pop();
+        }
+        else if( this.interactiveVector )
         {
             this.curve.controlVectors.pop();
         }
@@ -227,12 +227,18 @@ export class HermiteCurveTool
 
             if( inx !== -1 )
             {
+                this.curve.meshPoints.push( this.interactivePoint );
+                this.curve.controlPoints.push( this.interactivePoint.position );
+
                 this.interactivePoint = null;
             }
         }
-        else
+        else if( this.interactiveVector )
         {
             // should add vector
+            this.curve.visualVectors.push( this.interactiveVector );
+            this.curve.controlVectors.push( this.interactiveVector.def );
+
             this.interactiveVector = null;
         }
 
@@ -322,18 +328,11 @@ export class HermiteCurveTool
     {
         let result = false;
 
-        const hasAtLeastTwoPoints = this.interactivePoint && this.curve.controlPoints.length >= 3
-            || this.interactivePoint === null && this.curve.controlPoints.length >= 2;
-        const isEqualNumberOfPointsAndVectors = this.interactivePoint && this.curve.controlPoints.length === this.curve.controlVectors.length + 1
-            || this.interactivePoint === null && this.curve.controlPoints.length === this.curve.controlVectors.length;
-        if( hasAtLeastTwoPoints && isEqualNumberOfPointsAndVectors )
+        if( this.curve.controlPoints.length >= 2 && this.curve.controlPoints.length === this.curve.controlVectors.length )
         {
             if( this.interactivePoint )
             {
-                // last pt is interactive so it doesn't count
-                const lastPt = this.curve.meshPoints.pop();
-                deleteObject( lastPt );
-                this.curve.controlPoints.pop();
+                deleteObject( this.interactivePoint );
             }
 
             this.curve.redrawPolys();
