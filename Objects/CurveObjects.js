@@ -102,6 +102,12 @@ export class BezierCurveObject
             outlinePass.selectedObjects.push( point );
         }
     }
+
+    filterCurveObjects( intersects )
+    {
+        intersects = filterIntersects( intersects );
+        return intersects.filter( (inters) => this.findIndex( inters.object ) !== -1 );
+    }
 }
 
 export class HermiteCurveObject

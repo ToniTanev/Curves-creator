@@ -33,11 +33,14 @@ export class BezierCurveTool
     constructor()
     {
         this.curve = new BezierCurveObject();
+        this.interactivePoint = null;
     }
 
     revert()
     {
         this.curve.clearAll();
+        deleteObject( this.interactivePoint );
+        this.interactivePoint = null;
     }
 
     onInteractive( mouse )
@@ -48,32 +51,42 @@ export class BezierCurveTool
 
         if( inx !== -1 )
         {
-            if( this.curve.meshPoints.length > 0 )
-            {
-                deleteObject( this.curve.meshPoints[ this.curve.meshPoints.length - 1 ] );
-                this.curve.meshPoints.pop();
-                this.curve.controlPoints.pop();
-            }
+            const newPos = intersects[ inx ].point;
 
-            this.curve.meshPoints.push( drawPoint( intersects[ inx ].point ) );
-            this.curve.controlPoints.push( intersects[ inx ].point );
+            if( this.interactivePoint !== null )
+            {
+                this.interactivePoint.position.set( newPos.x, newPos.y, newPos.z );
+            }
+            else
+            {
+                this.interactivePoint = drawPoint( newPos );
+            }
         }
 
+        // add a temporary control point so that the curve poly is interactive
+        this.curve.controlPoints.push( this.interactivePoint.position );
+
         this.curve.redrawPolys();
+
+        this.curve.controlPoints.pop();
     }
 
     pointAdded( mouse )
     {
-        const intersects = raycastMouse( mouse );
-
-        const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-        if( inx !== -1 )
+        if( this.interactivePoint )
         {
-            const pointMesh = drawPoint( intersects[ inx ].point );
-            this.curve.meshPoints.push( pointMesh );
+            const intersects = raycastMouse( mouse );
 
-            this.curve.controlPoints.push( intersects[ inx ].point );
+            const inx = intersects.findIndex( intrs => intrs.object === sphere );
+
+            if( inx !== -1 )
+            {
+                this.interactivePoint.parentCurve = this.curve;
+                this.curve.meshPoints.push( this.interactivePoint );
+                this.curve.controlPoints.push( this.interactivePoint.position );
+
+                this.interactivePoint = null;
+            }
         }
 
         return ToolResult.POINT_ADDED;
@@ -85,13 +98,7 @@ export class BezierCurveTool
 
         if( object )
         {
-            for( let i = 0; i < this.curve.meshPoints.length - 1; i++ )
-            {
-                if( object === this.curve.meshPoints[ i ] )
-                {
-                    index = i;
-                }
-            }
+            index = this.curve.findIndex( object );
         }
         else if( this.curve.meshPoints.length > 0 )
         {
@@ -112,17 +119,17 @@ export class BezierCurveTool
     {
         let result = false;
 
-        if( this.curve.controlPoints.length >= 3 ) // at least 2 added + 1 interactive points
+        if( this.curve.controlPoints.length >= 2 )
         {
-            // last pt is interactive so it doesn't count
-            const lastPt = this.curve.meshPoints.pop();
-            deleteObject( lastPt );
-            this.curve.controlPoints.pop();
+            if( this.interactivePoint )
+            {
+                deleteObject( this.interactivePoint );
+            }
 
             this.curve.redrawPolys();
-            this.curve.assignParent();
 
             this.curve = new BezierCurveObject();
+            this.interactivePoint = null;
 
             result = true;
         }
@@ -331,7 +338,18 @@ export class HermiteCurveTool
             this.interactiveVector = null;
         }
 
+        const needsFakeVec = this.curve.controlPoints.length === this.curve.controlVectors.length + 1;
+        if( needsFakeVec )
+        {
+            this.curve.controlVectors.push( new THREE.Vector3( 0, 0, 0 ) );
+        }
+
         this.curve.redrawPolys();
+
+        if( needsFakeVec )
+        {
+            this.curve.controlVectors.pop();
+        }
     }
 
     complete()
@@ -346,7 +364,6 @@ export class HermiteCurveTool
             }
 
             this.curve.redrawPolys();
-            this.curve.assignParent();
 
             this.curve = new HermiteCurveObject();
             this.interactivePoint = null;
