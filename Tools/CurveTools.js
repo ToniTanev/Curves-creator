@@ -3,9 +3,8 @@ import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersec
 import {drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
-import {BezierCurveObject, HermiteCurveObject} from "../Objects/CurveObjects.js";
+import {BezierCurveObject, HermiteCurveObject, isCurveVectorObj} from "../Objects/CurveObjects.js";
 import {ToolResult} from "./ToolsBase.js";
-import {BezierSettings, HermiteSettings} from "../Data/Settings.js";
 
 
 class CurveTool // interface
@@ -267,33 +266,19 @@ export class HermiteCurveTool
 
         let index = -1;
 
-        // we are storing whether we are deleting the last object because if the last object is a vector
-        // then we don't have to delete its corresponding point as well
+        // we are storing whether we are deleting the last vector when it is the last object
+        // because then we don't have to delete its corresponding point as well
         // in all other cases we delete both the point and the vector at the index
-        let isDeletingLastObject = object === null;
+        let isDeletingLastVector = object === null && this.curve.visualVectors.length === this.curve.meshPoints.length;
 
         if( object )
         {
-            for( let i = 0; i < this.curve.meshPoints.length; i++ )
-            {
-                if( object === this.curve.meshPoints[i] )
-                {
-                    index = i;
-                }
-            }
+            index = this.curve.findIndex( object );
 
-            for( let i = 0; i < this.curve.visualVectors.length; i++ )
+            if( isCurveVectorObj( object ) && index === this.curve.visualVectors.length - 1 && this.curve.visualVectors.length === this.curve.meshPoints.length )
             {
-                if( object.parent === this.curve.visualVectors[i] )
-                {
-                    index = i;
-
-                    if( index === this.curve.visualVectors.length - 1 && this.curve.visualVectors.length === this.curve.meshPoints.length )
-                    {
-                        // means that the last vector is selected and it is the last object
-                        isDeletingLastObject = true;
-                    }
-                }
+                // means that the last vector is selected and it is the last object
+                isDeletingLastVector = true;
             }
         }
         else
@@ -301,22 +286,11 @@ export class HermiteCurveTool
             index = this.curve.meshPoints.length - 1;
         }
 
-        if( isDeletingLastObject ) // only deletes the last point or vector
+        if( isDeletingLastVector ) // only deletes the last vector when it is the last object
         {
-            if( this.curve.meshPoints.length === this.curve.visualVectors.length + 1 )
-            {
-                // the last object is a point
-                deleteObject( this.curve.meshPoints[ index ] );
-                this.curve.meshPoints.splice( index, 1 );
-                this.curve.controlPoints.splice( index, 1 );
-            }
-            else
-            {
-                // the last object is a vector
-                deleteObject( this.curve.visualVectors[ index ] );
-                this.curve.visualVectors.splice( index, 1 );
-                this.curve.controlVectors.splice( index, 1 );
-            }
+            deleteObject( this.curve.visualVectors[ index ] );
+            this.curve.visualVectors.splice( index, 1 );
+            this.curve.controlVectors.splice( index, 1 );
         }
         else if( index !== -1 ) // deletes both point and vector at the index
         {
@@ -324,7 +298,7 @@ export class HermiteCurveTool
             this.curve.meshPoints.splice( index, 1 );
             this.curve.controlPoints.splice( index, 1 );
 
-            if( index < this.curve.visualVectors.length )
+            if( index < this.curve.visualVectors.length ) // if the point is not the last object, then it has a corresponding vector
             {
                 deleteObject( this.curve.visualVectors[ index ] );
                 this.curve.visualVectors.splice(index, 1);
