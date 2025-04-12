@@ -63,12 +63,18 @@ export class BezierCurveTool
             }
         }
 
-        // add a temporary control point so that the curve poly is interactive
-        this.curve.controlPoints.push( this.interactivePoint.position );
+        if( this.interactivePoint )
+        {
+            // add a temporary control point so that the curve poly is interactive
+            this.curve.controlPoints.push( this.interactivePoint.position );
+        }
 
         this.curve.redrawPolys();
 
-        this.curve.controlPoints.pop();
+        if( this.interactivePoint )
+        {
+            this.curve.controlPoints.pop();
+        }
     }
 
     pointAdded( mouse )
