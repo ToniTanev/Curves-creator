@@ -227,6 +227,7 @@ export class HermiteCurveTool
 
             if( inx !== -1 )
             {
+                this.interactivePoint.parentCurve = this.curve;
                 this.curve.meshPoints.push( this.interactivePoint );
                 this.curve.controlPoints.push( this.interactivePoint.position );
 
@@ -236,6 +237,7 @@ export class HermiteCurveTool
         else if( this.interactiveVector )
         {
             // should add vector
+            this.curve.assignAsParentToVector( this.interactiveVector );
             this.curve.visualVectors.push( this.interactiveVector );
             this.curve.controlVectors.push( this.interactiveVector.def );
 
@@ -247,7 +249,7 @@ export class HermiteCurveTool
 
     objectRemoved( object = null )
     {
-        /*if( this.meshPoints.length === 0 && this.visualVectors.length === 0 ) // nothing to remove
+        if( this.curve.meshPoints.length === 0 && this.curve.visualVectors.length === 0 ) // nothing to remove
             return;
 
         let index = -1;
@@ -259,21 +261,21 @@ export class HermiteCurveTool
 
         if( object )
         {
-            for( let i = 0; i < this.meshPoints.length; i++ )
+            for( let i = 0; i < this.curve.meshPoints.length; i++ )
             {
-                if( object === this.meshPoints[i] )
+                if( object === this.curve.meshPoints[i] )
                 {
                     index = i;
                 }
             }
 
-            for( let i = 0; i < this.visualVectors.length; i++ )
+            for( let i = 0; i < this.curve.visualVectors.length; i++ )
             {
-                if( object.parent === this.visualVectors[i] )
+                if( object.parent === this.curve.visualVectors[i] )
                 {
                     index = i;
 
-                    if( index === this.visualVectors.length - 1 && this.visualVectors.length === this.meshPoints.length )
+                    if( index === this.curve.visualVectors.length - 1 && this.curve.visualVectors.length === this.curve.meshPoints.length )
                     {
                         // means that the last vector is selected and it is the last object
                         isDeletingLastObject = true;
@@ -283,45 +285,53 @@ export class HermiteCurveTool
         }
         else
         {
-            index = this.meshPoints.length - 1;
+            index = this.curve.meshPoints.length - 1;
         }
 
         if( isDeletingLastObject ) // only deletes the last point or vector
         {
-            if( this.meshPoints.length === this.visualVectors.length + 1 )
+            if( this.curve.meshPoints.length === this.curve.visualVectors.length + 1 )
             {
                 // the last object is a point
-                deleteObject( this.meshPoints[ index ] );
-                this.meshPoints.splice( index, 1 );
-                this.controlPoints.splice( index, 1 );
+                deleteObject( this.curve.meshPoints[ index ] );
+                this.curve.meshPoints.splice( index, 1 );
+                this.curve.controlPoints.splice( index, 1 );
             }
             else
             {
                 // the last object is a vector
-                deleteObject( this.visualVectors[ index ] );
-                this.visualVectors.splice( index, 1 );
-                this.controlVectors.splice( index, 1 );
+                deleteObject( this.curve.visualVectors[ index ] );
+                this.curve.visualVectors.splice( index, 1 );
+                this.curve.controlVectors.splice( index, 1 );
             }
         }
-        else if( index !== -1 )// deletes both point and vector at the index
+        else if( index !== -1 ) // deletes both point and vector at the index
         {
-            deleteObject( this.meshPoints[ index ] );
-            this.meshPoints.splice( index, 1 );
-            this.controlPoints.splice( index, 1 );
+            deleteObject( this.curve.meshPoints[ index ] );
+            this.curve.meshPoints.splice( index, 1 );
+            this.curve.controlPoints.splice( index, 1 );
 
-            if( index < this.visualVectors.length )
+            if( index < this.curve.visualVectors.length )
             {
-                deleteObject( this.visualVectors[ index ] );
-                this.visualVectors.splice(index, 1);
-                this.controlVectors.splice(index, 1);
+                deleteObject( this.curve.visualVectors[ index ] );
+                this.curve.visualVectors.splice(index, 1);
+                this.curve.controlVectors.splice(index, 1);
             }
         }
 
-        if( index !== -1 && this.interactiveVector )
+        if( this.interactivePoint )
+        {
+            deleteObject( this.interactivePoint );
+            this.interactivePoint = null;
+        }
+
+        if( this.interactiveVector )
         {
             deleteObject( this.interactiveVector );
             this.interactiveVector = null;
-        }*/
+        }
+
+        this.curve.redrawPolys();
     }
 
     complete()

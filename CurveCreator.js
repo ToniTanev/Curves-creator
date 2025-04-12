@@ -175,7 +175,8 @@ function onRightClick( event )
 {
     if ( isCurveTool( activeTool ) )
     {
-        const intersects = raycastMouse( getMouse( event ) );
+        let intersects = raycastMouse( getMouse( event ) );
+        intersects = activeTool.curve.filterCurveObjects( intersects );
 
         if ( intersects.length > 0 )
         {

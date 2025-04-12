@@ -3,7 +3,7 @@ import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math.js";
 import {drawPolygon} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {scene} from "../CurveCreator.js";
-import {highlightVisualVectorObj} from "../Tools/ToolsBase.js";
+import {filterIntersects, highlightVisualVectorObj} from "../Tools/ToolsBase.js";
 import {BezierSettings, HermiteSettings} from "../Data/Settings.js";
 
 
@@ -164,6 +164,20 @@ export class HermiteCurveObject
         }
     }
 
+    assignAsParentToVector( visualVector )
+    {
+        visualVector.parentCurve = this;
+
+        visualVector.traverse( child =>
+            {
+                if ( child instanceof THREE.Mesh )
+                {
+                    child.parentCurve = this;
+                }
+            }
+        );
+    }
+
     assignParent()
     {
         for( const meshPoint of this.meshPoints )
@@ -173,16 +187,7 @@ export class HermiteCurveObject
 
         for( const visualVector of this.visualVectors )
         {
-            visualVector.parentCurve = this;
-
-            visualVector.traverse( child =>
-            {
-                if ( child instanceof THREE.Mesh )
-                {
-                    child.parentCurve = this;
-                }
-            }
-            );
+            this.assignAsParentToVector( visualVector );
         }
     }
 
@@ -230,6 +235,12 @@ export class HermiteCurveObject
         {
             highlightVisualVectorObj( visualVector, outlinePass );
         }
+    }
+
+    filterCurveObjects( intersects )
+    {
+        intersects = filterIntersects( intersects );
+        return intersects.filter( (inters) => this.findIndex( inters.object ) !== -1 );
     }
 }
 

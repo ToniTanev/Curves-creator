@@ -12,16 +12,7 @@ function resetVector( curve, vecInx, startPt, endPt )
     deleteObject( curve.visualVectors[ vecInx ] );
     curve.visualVectors[ vecInx ] = drawVector( startPt, endPt );
 
-    curve.visualVectors[ vecInx ].parentCurve = curve;
-
-    curve.visualVectors[ vecInx ].traverse( child =>
-        {
-            if ( child instanceof THREE.Mesh )
-            {
-                child.parentCurve = curve;
-            }
-        }
-    );
+    curve.assignAsParentToVector( curve.visualVectors[ vecInx ] );
 }
 
 export class MoveTool
@@ -266,15 +257,8 @@ export class AddTool
                 // it doesn't matter what the vector's definition is, it will be fixed in onInteractive
                 const dummyPt = new THREE.Vector3( 0, 0, 0 );
                 curve.visualVectors.splice( this.objIndex, 0, drawVector( dummyPt, dummyPt ) );
-                curve.visualVectors[ this.objIndex ].parentCurve = curve;
-                curve.visualVectors[ this.objIndex ].traverse( child =>
-                    {
-                        if ( child instanceof THREE.Mesh )
-                        {
-                            child.parentCurve = curve;
-                        }
-                    }
-                );
+
+                curve.assignAsParentToVector( curve.visualVectors[ this.objIndex ] );
 
                 this.pickedObj = curve.visualVectors[ this.objIndex ];
 
