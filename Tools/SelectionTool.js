@@ -106,8 +106,6 @@ export class SelectionTool
 
     complete()
     {
-        this.clear();
-
         return true;
     }
 

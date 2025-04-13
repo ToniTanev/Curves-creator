@@ -14,6 +14,7 @@ import {ToolIDs, makeToolsInactive, makeToolActive, hideObjectsSettings} from ".
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
+import {enableSettingsEvents} from "./UI/SettingsEvents.js";
 
 export let scene, renderer, camera, sphere, composer, hoverOutlinePass, selectionOutlinePass;
 let grid = null;
@@ -25,7 +26,7 @@ export const hermiteTool = new HermiteCurveTool();
 export const moveTool = new MoveTool();
 export const addTool = new AddTool();
 export const deleteTool = new DeleteTool();
-let activeTool = selectionTool;
+export let activeTool = selectionTool;
 
 export let transformControls;
 
@@ -167,8 +168,6 @@ function onMouseClick( event )
     {
         activeTool.pointAdded( getMouse( event ) );
     }
-
-    event.stopPropagation();
 }
 
 function onRightClick( event )
@@ -231,8 +230,6 @@ function onToolButton( toolID, event )
     }
 
     makeToolActive( toolID );
-
-    event.stopPropagation();
 }
 function onBezierToolButton( event )
 {
@@ -281,8 +278,6 @@ function onGridCheckbox( event )
             scene.remove( grid );
         }
     }
-
-    event.stopPropagation();
 }
 
 function onAxesCheckbox( event )
@@ -311,8 +306,6 @@ function onAxesCheckbox( event )
             }
         }
     }
-
-    event.stopPropagation();
 }
 
 function onKeyPressed( event )
@@ -344,28 +337,14 @@ function onKeyPressed( event )
     }
 }
 
-function onEmptyClick( event )
-{
-    if( activeTool != null )
-    {
-        activeTool.revert();
-
-        activeTool = selectionTool;
-
-        makeToolsInactive();
-    }
-}
-
 function onLightBackgroundRadio( event )
 {
     scene.background = new THREE.Color( 'white' );
-    event.stopPropagation();
 }
 
 function onDarkBackgroundRadio( event )
 {
     scene.background = new THREE.Color( 'black' );
-    event.stopPropagation();
 }
 
 function main()
@@ -386,7 +365,7 @@ function main()
     document.getElementById( "lightBackgroundRadio" ).addEventListener( "click", onLightBackgroundRadio );
     document.getElementById( "darkBackgroundRadio" ).addEventListener( "click", onDarkBackgroundRadio );
     document.addEventListener( 'keydown', onKeyPressed );
-    document.addEventListener( 'click', onEmptyClick );
+    enableSettingsEvents();
 }
 
 main();
