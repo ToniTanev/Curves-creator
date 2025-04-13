@@ -134,7 +134,9 @@ export class BezierCurveTool
 
             this.curve.redrawPolys();
 
+            const toolSettings = this.curve.settings; // preserve the tool settings
             this.curve = new BezierCurveObject();
+            this.curve.settings.copyFrom( toolSettings );
             this.interactivePoint = null;
 
             result = true;
@@ -361,7 +363,9 @@ export class HermiteCurveTool
 
             this.curve.redrawPolys();
 
+            const toolSettings = this.curve.settings; // preserve the tool settings
             this.curve = new HermiteCurveObject();
+            this.curve.settings.copyFrom( toolSettings );
             this.interactivePoint = null;
             this.interactiveVector = null;
 

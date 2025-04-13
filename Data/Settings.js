@@ -9,6 +9,15 @@ export class BezierSettings
         this.pointScale = 1;
         this.pointColor = 'red';
     }
+
+    copyFrom( other )
+    {
+        this.showControlPoly = other.showControlPoly;
+        this.controlPolyColor = other.controlPolyColor;
+        this.curveColor = other.curveColor;
+        this.pointScale = other.pointScale;
+        this.pointColor = other.pointColor;
+    }
 }
 
 export class HermiteSettings
@@ -22,6 +31,17 @@ export class HermiteSettings
         this.pointColor = 'red';
         this.vectorScale = 1;
         this.vectorColor = 'yellow';
+    }
+
+    copyFrom( other )
+    {
+        this.showControlPoly = other.showControlPoly;
+        this.controlPolyColor = other.controlPolyColor;
+        this.curveColor = other.curveColor;
+        this.pointScale = other.pointScale;
+        this.pointColor = other.pointColor;
+        this.vectorScale = other.vectorScale;
+        this.vectorColor = other.vectorColor;
     }
 }
 
