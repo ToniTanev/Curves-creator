@@ -2,7 +2,7 @@ import {raycastMouse} from "../Math.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj} from "./ToolsBase.js";
 import {scene, transformControls, sphere, hoverOutlinePass, selectionOutlinePass} from "../CurveCreator.js";
 import {isCurveObj, isCurveVectorObj} from "../Objects/CurveObjects.js";
-import {hideObjectsSettings, showObjectSettingsByObj} from "../UI/UIHandler.js";
+import {hideObjectsSettings, showObjectSettingsByObj, updateObjectSettingsUI} from "../UI/UIHandler.js";
 
 
 export class SelectionTool
@@ -72,6 +72,7 @@ export class SelectionTool
                 hoverOutlinePass.selectedObjects = [];
                 this.highlightSelection();
                 showObjectSettingsByObj( this.selectedObj );
+                updateObjectSettingsUI( this.selectedObj );
             }
         }
         else if( !this.isPanning ) // deselect all

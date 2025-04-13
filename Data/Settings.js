@@ -1,13 +1,16 @@
 
+export const defaultPointColor = "#ff0000";
+export const defaultVectorColor = "#ffff00";
+
 export class BezierSettings
 {
     constructor()
     {
         this.showControlPoly = false;
-        this.controlPolyColor = 'orange';
-        this.curveColor = 'green';
+        this.controlPolyColor = "#ffa500";
+        this.curveColor = "#00ff00";
         this.pointScale = 1;
-        this.pointColor = 'red';
+        this.pointColor = defaultPointColor;
     }
 
     copyFrom( other )
@@ -25,12 +28,12 @@ export class HermiteSettings
     constructor()
     {
         this.showControlPoly = false;
-        this.controlPolyColor = 'orange';
-        this.curveColor = 'green';
+        this.controlPolyColor = "#ffa500";
+        this.curveColor = "#00ff00";
         this.pointScale = 1;
-        this.pointColor = 'red';
+        this.pointColor = defaultPointColor;
         this.vectorScale = 1;
-        this.vectorColor = 'yellow';
+        this.vectorColor = defaultVectorColor;
     }
 
     copyFrom( other )
@@ -42,14 +45,5 @@ export class HermiteSettings
         this.pointColor = other.pointColor;
         this.vectorScale = other.vectorScale;
         this.vectorColor = other.vectorColor;
-    }
-}
-
-export class SphereSettings
-{
-    constructor()
-    {
-        this.scale = 1;
-        this.color = 'blue';
     }
 }

@@ -177,3 +177,45 @@ export function makeToolActive( toolID )
         document.getElementById( "deleteButton" ).style.backgroundColor = activeButtonColor;
     }
 }
+
+function updateBezierObjectSettingsUI( bezierSettings )
+{
+    document.getElementById( "objectShowControlPolyCheck" ).checked = bezierSettings.showControlPoly;
+    document.getElementById( "objectControlPolygonColorPicker" ).value = bezierSettings.controlPolyColor;
+    document.getElementById( "objectCurveColorPicker" ).value = bezierSettings.curveColor;
+    document.getElementById( "objectPointsScaleEdit" ).value = bezierSettings.pointScale;
+    document.getElementById( "objectPointsColorPicker" ).value = bezierSettings.pointColor;
+}
+
+function updateHermiteObjectSettingsUI( hermiteSettings )
+{
+    document.getElementById( "objectShowControlPolyCheck" ).checked = hermiteSettings.showControlPoly;
+    document.getElementById( "objectControlPolygonColorPicker" ).value = hermiteSettings.controlPolyColor;
+    document.getElementById( "objectCurveColorPicker" ).value = hermiteSettings.curveColor;
+    document.getElementById( "objectPointsScaleEdit" ).value = hermiteSettings.pointScale;
+    document.getElementById( "objectPointsColorPicker" ).value = hermiteSettings.pointColor;
+    document.getElementById( "objectVectorsScaleEdit" ).value = hermiteSettings.vectorScale;
+    document.getElementById( "objectVectorsColorPicker" ).value = hermiteSettings.vectorColor;
+}
+
+function updateSphereObjectSettingsUI( sphere )
+{
+    document.getElementById( "objectSphereScaleEdit" ).value = sphere.scale.x;
+    document.getElementById( "objectSphereColorPicker" ).value = "#" + sphere.material.color.getHexString();
+}
+
+export function updateObjectSettingsUI( obj )
+{
+    if( isBezierCurveObj( obj ) )
+    {
+        updateBezierObjectSettingsUI( obj.settings );
+    }
+    else if( isHermiteCurveObj( obj ) )
+    {
+        updateHermiteObjectSettingsUI( obj.settings );
+    }
+    else if( isSphereObj( obj ) )
+    {
+        updateSphereObjectSettingsUI( obj );
+    }
+}
