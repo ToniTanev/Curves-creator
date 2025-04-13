@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "../Math.js";
-import {drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
+import {defaultPointSize, defaultVectorSize, drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {BezierCurveObject, HermiteCurveObject, isCurveVectorObj} from "../Objects/CurveObjects.js";
@@ -58,7 +58,8 @@ export class BezierCurveTool
             }
             else
             {
-                this.interactivePoint = drawPoint( newPos );
+                const pointSize = this.curve.settings.pointScale * defaultPointSize;
+                this.interactivePoint = drawPoint( newPos, this.curve.settings.pointColor, pointSize );
             }
         }
 
@@ -141,6 +142,19 @@ export class BezierCurveTool
 
         return result;
     }
+
+    redrawInteractive()
+    {
+        if( this.interactivePoint )
+        {
+            const pos = this.interactivePoint.position;
+
+            deleteObject( this.interactivePoint );
+
+            const pointSize = this.curve.settings.pointScale * defaultPointSize;
+            this.interactivePoint = drawPoint( pos, this.curve.settings.pointColor, pointSize );
+        }
+    }
 }
 
 export class HermiteCurveTool
@@ -180,7 +194,8 @@ export class HermiteCurveTool
                 }
                 else
                 {
-                    this.interactivePoint = drawPoint( newPos );
+                    const pointSize = this.curve.settings.pointScale * defaultPointSize;
+                    this.interactivePoint = drawPoint( newPos, this.curve.settings.pointColor, pointSize );
                 }
             }
         }
@@ -198,7 +213,8 @@ export class HermiteCurveTool
                     deleteObject( this.interactiveVector );
                 }
 
-                this.interactiveVector = drawVector( startPt, endPt );
+                const vectorSize = this.curve.settings.vectorScale * defaultVectorSize;
+                this.interactiveVector = drawVector( startPt, endPt, this.curve.settings.vectorColor, vectorSize );
                 this.interactiveVector.def = endPt.sub( startPt );
             }
         }
@@ -353,5 +369,32 @@ export class HermiteCurveTool
         }
 
         return result;
+    }
+
+    redrawInteractive()
+    {
+        if( this.interactivePoint )
+        {
+            const pos = this.interactivePoint.position;
+
+            deleteObject( this.interactivePoint );
+
+            const pointSize = this.curve.settings.pointScale * defaultPointSize;
+            this.interactivePoint = drawPoint( pos, this.curve.settings.pointColor, pointSize );
+        }
+
+        if( this.interactiveVector )
+        {
+            const def = this.interactiveVector.def;
+
+            deleteObject( this.interactiveVector );
+
+            const startPt = this.curve.controlPoints.slice( -1 )[ 0 ];
+            const endPt = startPt.clone().add( def );
+
+            const vectorSize = this.curve.settings.vectorScale * defaultVectorSize;
+            this.interactiveVector = drawVector( startPt, endPt, this.curve.settings.vectorColor, vectorSize );
+            this.interactiveVector.def = def;
+        }
     }
 }
