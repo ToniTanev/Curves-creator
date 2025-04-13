@@ -1,4 +1,4 @@
-import {activeTool, selectionTool} from "../CurveCreator.js";
+import {activeTool, selectionOutlinePass, selectionTool} from "../CurveCreator.js";
 import {isCurveTool} from "../Tools/ToolsBase.js";
 import {isCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {isSphereObj} from "../Objects/Sphere.js";
@@ -37,6 +37,8 @@ function onToolPointsScaleEdit( event )
     if( isCurveTool( activeTool ) )
     {
         activeTool.curve.settings.pointScale = parseFloat( document.getElementById( "toolPointsScaleEdit" ).value );
+        activeTool.curve.redrawPointsAndVectors();
+        activeTool.curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -45,6 +47,8 @@ function onToolPointsColorChange( event )
     if( isCurveTool( activeTool ) )
     {
         activeTool.curve.settings.pointColor = document.getElementById( "toolPointsColorPicker" ).value;
+        activeTool.curve.redrawPointsAndVectors();
+        activeTool.curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -53,6 +57,8 @@ function onToolVectorsScaleEdit( event )
     if( isCurveTool( activeTool ) && isHermiteCurveObj( activeTool.curve ) )
     {
         activeTool.curve.settings.vectorScale = parseFloat( document.getElementById( "toolVectorsScaleEdit" ).value );
+        activeTool.curve.redrawPointsAndVectors();
+        activeTool.curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -61,6 +67,8 @@ function onToolVectorsColorChange( event )
     if( isCurveTool( activeTool ) && isHermiteCurveObj( activeTool.curve ) )
     {
         activeTool.curve.settings.vectorColor = document.getElementById( "toolVectorsColorPicker" ).value;
+        activeTool.curve.redrawPointsAndVectors();
+        activeTool.curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -101,6 +109,8 @@ function onObjectPointsScaleEdit( event )
     {
         const curve = activeTool.selectedObj;
         curve.settings.pointScale = parseFloat( document.getElementById( "objectPointsScaleEdit" ).value );
+        curve.redrawPointsAndVectors();
+        curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -110,6 +120,8 @@ function onObjectPointsColorChange( event )
     {
         const curve = activeTool.selectedObj;
         curve.settings.pointColor = document.getElementById( "objectPointsColorPicker" ).value;
+        curve.redrawPointsAndVectors();
+        curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -119,6 +131,8 @@ function onObjectVectorsScaleEdit( event )
     {
         const curve = activeTool.selectedObj;
         curve.settings.vectorScale = parseFloat( document.getElementById( "objectVectorsScaleEdit" ).value );
+        curve.redrawPointsAndVectors();
+        curve.highlight( selectionOutlinePass );
     }
 }
 
@@ -128,6 +142,8 @@ function onObjectVectorsColorChange( event )
     {
         const curve = activeTool.selectedObj;
         curve.settings.vectorColor = document.getElementById( "objectVectorsColorPicker" ).value;
+        curve.redrawPointsAndVectors();
+        curve.highlight( selectionOutlinePass );
     }
 }
 

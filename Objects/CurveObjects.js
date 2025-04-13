@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math.js";
-import {drawPolygon} from "../Visualizer.js";
+import {defaultPointSize, defaultVectorSize, drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {scene} from "../CurveCreator.js";
 import {filterIntersects, highlightVisualVectorObj} from "../Tools/ToolsBase.js";
@@ -42,6 +42,23 @@ export class BezierCurveObject
         this.clearPolys();
     }
 
+    redrawPointsAndVectors()
+    {
+        for( const point of this.meshPoints )
+        {
+            deleteObject( point );
+        }
+
+        this.meshPoints = [];
+
+        for( const point of this.controlPoints )
+        {
+            const meshPt = drawPoint( point, this.settings.pointColor, this.settings.pointScale * defaultPointSize );
+            meshPt.parentCurve = this;
+            this.meshPoints.push( meshPt );
+        }
+    }
+
     redrawPolys()
     {
         this.clearPolys();
@@ -65,14 +82,6 @@ export class BezierCurveObject
             offsetPoints( controlPointsCopy );
 
             this.controlPoly = drawPolygon( controlPointsCopy, 'orange' );
-        }
-    }
-
-    assignParent()
-    {
-        for( const meshPoint of this.meshPoints )
-        {
-            meshPoint.parentCurve = this;
         }
     }
 
@@ -154,6 +163,39 @@ export class HermiteCurveObject
         this.clearPolys();
     }
 
+    redrawPointsAndVectors()
+    {
+        for( const point of this.meshPoints )
+        {
+            deleteObject( point );
+        }
+
+        for( const vector of this.visualVectors )
+        {
+            deleteObject( vector );
+        }
+
+        this.meshPoints = [];
+        this.visualVectors = [];
+
+        for( const point of this.controlPoints )
+        {
+            const meshPt = drawPoint( point, this.settings.pointColor, this.settings.pointScale * defaultPointSize );
+            meshPt.parentCurve = this;
+            this.meshPoints.push( meshPt );
+        }
+
+        for( let i = 0; i < this.controlVectors.length; i++ )
+        {
+            const startPt = this.controlPoints[ i ];
+            const endPt = startPt.clone().add( this.controlVectors[ i ] );
+
+            const visualVector = drawVector( startPt, endPt, this.settings.vectorColor, this.settings.vectorScale * defaultVectorSize );
+            this.assignAsParentToVector( visualVector );
+            this.visualVectors.push( visualVector );
+        }
+    }
+
     redrawPolys()
     {
         this.clearPolys();
@@ -182,19 +224,6 @@ export class HermiteCurveObject
                 }
             }
         );
-    }
-
-    assignParent()
-    {
-        for( const meshPoint of this.meshPoints )
-        {
-            meshPoint.parentCurve = this;
-        }
-
-        for( const visualVector of this.visualVectors )
-        {
-            this.assignAsParentToVector( visualVector );
-        }
     }
 
     findIndex( obj )

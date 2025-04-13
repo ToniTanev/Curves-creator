@@ -5,10 +5,14 @@ import { LineGeometry } from './three.js-master/examples/jsm/lines/LineGeometry.
 import { LineMaterial } from './three.js-master/examples/jsm/lines/LineMaterial.js'
 import { vectorEpsilon, vectorsEqual } from "./Math.js";
 
-export function drawPoint( center )
+
+export const defaultPointSize = 1;
+export const defaultVectorSize = 0.5;
+
+export function drawPoint( center, color = 'red', size = defaultPointSize )
 {
-    const geometry = new THREE.SphereGeometry( 1 );
-    const material = new THREE.MeshLambertMaterial( { color: 'red' } );
+    const geometry = new THREE.SphereGeometry( size );
+    const material = new THREE.MeshLambertMaterial( { color: color } );
     const pointMesh = new THREE.Mesh( geometry, material );
 
     pointMesh.position.x = center.x;
@@ -45,7 +49,7 @@ export function drawPolygon( points, color )
     return polyline;
 }
 
-export function drawVector( startPt, endPt, color = 'yellow', cylRadius = 0.5, useBasicMaterial = false )
+export function drawVector( startPt, endPt, color = 'yellow', cylRadius = defaultVectorSize, useBasicMaterial = false )
 {
     const coneRadius = cylRadius * 2;
     const coneHeight = 2.5 * coneRadius;
