@@ -71,7 +71,7 @@ export class BezierCurveObject
 
             offsetPoints( curvePoints );
 
-            this.poly = drawPolygon( curvePoints, 'green' );
+            this.poly = drawPolygon( curvePoints, this.settings.curveColor );
 
             const controlPointsCopy = [];
             for( let i = 0; i < this.controlPoints.length; i++ )
@@ -81,7 +81,7 @@ export class BezierCurveObject
 
             offsetPoints( controlPointsCopy );
 
-            this.controlPoly = drawPolygon( controlPointsCopy, 'orange' );
+            this.controlPoly = drawPolygon( controlPointsCopy, this.settings.controlPolyColor );
         }
     }
 
@@ -208,7 +208,7 @@ export class HermiteCurveObject
 
             offsetPoints( curvePoints );
 
-            this.poly = drawPolygon( curvePoints, 'green' );
+            this.poly = drawPolygon( curvePoints, this.settings.curveColor );
         }
     }
 
