@@ -208,6 +208,15 @@ export class HermiteCurveObject
             offsetPoints( curvePoints );
 
             this.poly = drawPolygon( curvePoints, this.settings.curveColor );
+
+            if( this.settings.showControlPoly )
+            {
+                const controlPolygonPoints = curve.generateControlPolygons();
+
+                offsetPoints( controlPolygonPoints );
+
+                this.controlPoly = drawPolygon( controlPolygonPoints, this.settings.controlPolyColor );
+            }
         }
     }
 

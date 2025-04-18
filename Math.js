@@ -117,6 +117,35 @@ class CubicHermiteCurve
 
         return su30;
     }
+
+    getBezierControlPoints()
+    {
+        const b0 = this.p0.clone();
+        const oneThirdOfV0 = this.v0.clone().divideScalar( 3 );
+        const b1 = strans( this.p0, oneThirdOfV0 );
+        const oneThirdOfV1 = this.v1.clone().divideScalar( -3 );
+        const b2 = strans( this.p1, oneThirdOfV1 );
+        const b3 = this.p1.clone();
+
+        return [b0, b1, b2, b3];
+    }
+
+    generateControlPolygon()
+    {
+        const controlPolygonPoints = [];
+
+        const bezierControlPoints = this.getBezierControlPoints();
+
+        for( let i = 0; i < bezierControlPoints.length - 1; i++)
+        {
+            for( let t = 0.0; t <= 1.0; t += 0.01 )
+            {
+                controlPolygonPoints.push( slerp( bezierControlPoints[i], bezierControlPoints[i + 1], t ) );
+            }
+        }
+
+        return controlPolygonPoints;
+    }
 }
 
 export class CubicHermiteCurves
@@ -140,6 +169,26 @@ export class CubicHermiteCurves
 
             const twoPointCurve = new CubicHermiteCurve(p0, v0, p1, v1);
             const currPoints = twoPointCurve.generateCurve();
+
+            allPoints.push( ...currPoints );
+        }
+
+        return allPoints;
+    }
+
+    generateControlPolygons()
+    {
+        const allPoints = [];
+
+        for( let i = 0; i < this.controlPoints.length - 1; i++ )
+        {
+            const p0 = this.controlPoints[ i ];
+            const v0 = this.controlVectors[ i ];
+            const p1 = this.controlPoints[ i + 1 ];
+            const v1 = this.controlVectors[ i + 1 ];
+
+            const twoPointCurve = new CubicHermiteCurve(p0, v0, p1, v1);
+            const currPoints = twoPointCurve.generateControlPolygon();
 
             allPoints.push( ...currPoints );
         }
