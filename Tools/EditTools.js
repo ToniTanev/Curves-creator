@@ -5,12 +5,13 @@ import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj, ToolResult} from "./ToolsBase.js";
 import {isCurvePointObj, isCurveVectorObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
-import {drawPoint, drawVector} from "../Visualizer.js";
+import {defaultPointSize, defaultVectorSize, drawPoint, drawVector} from "../Visualizer.js";
 
 function resetVector( curve, vecInx, startPt, endPt )
 {
     deleteObject( curve.visualVectors[ vecInx ] );
-    curve.visualVectors[ vecInx ] = drawVector( startPt, endPt );
+    const vectorSize = curve.settings.vectorScale * defaultVectorSize;
+    curve.visualVectors[ vecInx ] = drawVector( startPt, endPt, curve.settings.vectorColor, vectorSize );
 
     curve.assignAsParentToVector( curve.visualVectors[ vecInx ] );
 }
@@ -222,7 +223,8 @@ export class AddTool
             // the point's definition doesn't matter, it will be fixed in onInteractive
             const newPt = new THREE.Vector3( 0, 0, 0 );
             curve.controlPoints.splice( this.objIndex, 0, newPt );
-            curve.meshPoints.splice( this.objIndex, 0, drawPoint( newPt ) );
+            const pointSize = curve.settings.pointScale * defaultPointSize;
+            curve.meshPoints.splice( this.objIndex, 0, drawPoint( newPt, curve.settings.pointColor, pointSize ) );
             curve.meshPoints[ this.objIndex ].parentCurve = curve;
             this.pickedObj = curve.meshPoints[ this.objIndex ];
 
@@ -256,7 +258,8 @@ export class AddTool
                 // we're setting the picked obj to be the new vector
                 // it doesn't matter what the vector's definition is, it will be fixed in onInteractive
                 const dummyPt = new THREE.Vector3( 0, 0, 0 );
-                curve.visualVectors.splice( this.objIndex, 0, drawVector( dummyPt, dummyPt ) );
+                const vectorSize = curve.settings.vectorScale * defaultVectorSize;
+                curve.visualVectors.splice( this.objIndex, 0, drawVector( dummyPt, dummyPt, curve.settings.vectorColor, vectorSize ) );
 
                 curve.assignAsParentToVector( curve.visualVectors[ this.objIndex ] );
 
