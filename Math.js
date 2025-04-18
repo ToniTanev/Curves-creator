@@ -67,6 +67,21 @@ export class BezierCurve
 
         return prevPoints[ 0 ];
     }
+
+    generateControlPolygon()
+    {
+        const controlPolygonPoints = [];
+
+        for( let i = 0; i < this.controlPoints.length - 1; i++)
+        {
+            for( let t = 0.0; t <= 1.0; t += 0.01 )
+            {
+                controlPolygonPoints.push( slerp( this.controlPoints[i], this.controlPoints[i + 1], t ) );
+            }
+        }
+
+        return controlPolygonPoints;
+    }
 }
 
 class CubicHermiteCurve

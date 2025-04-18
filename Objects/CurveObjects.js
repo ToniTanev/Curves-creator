@@ -73,15 +73,14 @@ export class BezierCurveObject
 
             this.poly = drawPolygon( curvePoints, this.settings.curveColor );
 
-            const controlPointsCopy = [];
-            for( let i = 0; i < this.controlPoints.length; i++ )
+            if( this.settings.showControlPoly )
             {
-                controlPointsCopy.push( this.controlPoints[ i ].clone() );
+                const controlPolygonPoints = curve.generateControlPolygon();
+
+                offsetPoints( controlPolygonPoints );
+
+                this.controlPoly = drawPolygon( controlPolygonPoints, this.settings.controlPolyColor );
             }
-
-            offsetPoints( controlPointsCopy );
-
-            this.controlPoly = drawPolygon( controlPointsCopy, this.settings.controlPolyColor );
         }
     }
 
