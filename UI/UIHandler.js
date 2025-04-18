@@ -1,5 +1,6 @@
 import {isBezierCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {isSphereObj} from "../Objects/Sphere.js";
+import {bezierTool, hermiteTool} from "../CurveCreator.js";
 
 export const ToolIDs = Object.freeze({
     BEZIER: 0,
@@ -158,11 +159,13 @@ export function makeToolActive( toolID )
     {
         document.getElementById( "bezierButton" ).style.backgroundColor = activeButtonColor;
         showToolSettings( ToolIDs.BEZIER );
+        updateBezierToolSettingsUI( bezierTool.curve.settings );
     }
     else if( toolID === ToolIDs.HERMITE )
     {
         document.getElementById( "hermiteButton" ).style.backgroundColor = activeButtonColor;
         showToolSettings( ToolIDs.HERMITE );
+        updateHermiteToolSettingsUI( hermiteTool.curve.settings );
     }
     else if( toolID === ToolIDs.MOVE )
     {
@@ -218,4 +221,24 @@ export function updateObjectSettingsUI( obj )
     {
         updateSphereObjectSettingsUI( obj );
     }
+}
+
+function updateBezierToolSettingsUI( bezierSettings )
+{
+    document.getElementById( "toolShowControlPolyCheck" ).checked = bezierSettings.showControlPoly;
+    document.getElementById( "toolControlPolygonColorPicker" ).value = bezierSettings.controlPolyColor;
+    document.getElementById( "toolCurveColorPicker" ).value = bezierSettings.curveColor;
+    document.getElementById( "toolPointsScaleEdit" ).value = bezierSettings.pointScale;
+    document.getElementById( "toolPointsColorPicker" ).value = bezierSettings.pointColor;
+}
+
+function updateHermiteToolSettingsUI( hermiteSettings )
+{
+    document.getElementById( "toolShowControlPolyCheck" ).checked = hermiteSettings.showControlPoly;
+    document.getElementById( "toolControlPolygonColorPicker" ).value = hermiteSettings.controlPolyColor;
+    document.getElementById( "toolCurveColorPicker" ).value = hermiteSettings.curveColor;
+    document.getElementById( "toolPointsScaleEdit" ).value = hermiteSettings.pointScale;
+    document.getElementById( "toolPointsColorPicker" ).value = hermiteSettings.pointColor;
+    document.getElementById( "toolVectorsScaleEdit" ).value = hermiteSettings.vectorScale;
+    document.getElementById( "toolVectorsColorPicker" ).value = hermiteSettings.vectorColor;
 }
