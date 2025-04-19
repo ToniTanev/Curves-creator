@@ -6,6 +6,7 @@ export class BezierSettings
 {
     constructor()
     {
+        this.stickToSphere = true;
         this.showControlPoly = false;
         this.controlPolyColor = "#ffa500";
         this.curveColor = "#00ff00";
@@ -15,6 +16,7 @@ export class BezierSettings
 
     copyFrom( other )
     {
+        this.stickToSphere = other.stickToSphere;
         this.showControlPoly = other.showControlPoly;
         this.controlPolyColor = other.controlPolyColor;
         this.curveColor = other.curveColor;
@@ -27,6 +29,7 @@ export class HermiteSettings
 {
     constructor()
     {
+        this.stickToSphere = true;
         this.showControlPoly = false;
         this.controlPolyColor = "#ffa500";
         this.curveColor = "#00ff00";
@@ -38,6 +41,7 @@ export class HermiteSettings
 
     copyFrom( other )
     {
+        this.stickToSphere = other.stickToSphere;
         this.showControlPoly = other.showControlPoly;
         this.controlPolyColor = other.controlPolyColor;
         this.curveColor = other.curveColor;

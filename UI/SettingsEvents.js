@@ -5,6 +5,14 @@ import {isSphereObj} from "../Objects/Sphere.js";
 
 
 // tool settings events
+function onToolStickToSphereCheckbox( event )
+{
+    if( isCurveTool( activeTool ) )
+    {
+        activeTool.curve.settings.stickToSphere = document.getElementById( "toolStickToSphereWhenScaledCheck" ).checked;
+    }
+}
+
 function onToolShowControlPolygonCheckbox( event )
 {
     if( isCurveTool( activeTool ) )
@@ -77,6 +85,21 @@ function onToolVectorsColorChange( event )
 }
 
 // object settings events
+function onObjectStickToSphereCheckbox( event )
+{
+    if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) )
+    {
+        const curve = activeTool.selectedObj;
+        curve.settings.stickToSphere = document.getElementById( "objectStickToSphereWhenScaledCheck" ).checked;
+
+        if( curve.settings.stickToSphere )
+        {
+            // TODO
+            //onSphereScaleEdit();
+        }
+    }
+}
+
 function onObjectShowControlPolygonCheckbox( event )
 {
     if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) )
@@ -175,6 +198,7 @@ function onObjectSphereColorChange( event )
 export function enableSettingsEvents()
 {
     // tool settings events
+    document.getElementById( "toolStickToSphereWhenScaledCheck" ).addEventListener( "click", onToolStickToSphereCheckbox );
     document.getElementById( "toolShowControlPolyCheck" ).addEventListener( "click", onToolShowControlPolygonCheckbox );
     document.getElementById( "toolControlPolygonColorPicker" ).addEventListener( "change", onToolControlPolygonColorChange );
     document.getElementById( "toolCurveColorPicker" ).addEventListener( "change", onToolCurveColorChange );
@@ -184,6 +208,7 @@ export function enableSettingsEvents()
     document.getElementById( "toolVectorsColorPicker" ).addEventListener( "change", onToolVectorsColorChange );
 
     // object settings events
+    document.getElementById( "objectStickToSphereWhenScaledCheck" ).addEventListener( "click", onObjectStickToSphereCheckbox );
     document.getElementById( "objectShowControlPolyCheck" ).addEventListener( "click", onObjectShowControlPolygonCheckbox );
     document.getElementById( "objectControlPolygonColorPicker" ).addEventListener( "change", onObjectControlPolygonColorChange );
     document.getElementById( "objectCurveColorPicker" ).addEventListener( "change", onObjectCurveColorChange );

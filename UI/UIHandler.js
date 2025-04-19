@@ -187,6 +187,7 @@ export function makeToolActive( toolID )
 
 function updateBezierObjectSettingsUI( bezierSettings )
 {
+    document.getElementById( "objectStickToSphereWhenScaledCheck" ).checked = bezierSettings.stickToSphere;
     document.getElementById( "objectShowControlPolyCheck" ).checked = bezierSettings.showControlPoly;
     document.getElementById( "objectControlPolygonColorPicker" ).value = bezierSettings.controlPolyColor;
     document.getElementById( "objectCurveColorPicker" ).value = bezierSettings.curveColor;
@@ -196,6 +197,7 @@ function updateBezierObjectSettingsUI( bezierSettings )
 
 function updateHermiteObjectSettingsUI( hermiteSettings )
 {
+    document.getElementById( "objectStickToSphereWhenScaledCheck" ).checked = hermiteSettings.stickToSphere;
     document.getElementById( "objectShowControlPolyCheck" ).checked = hermiteSettings.showControlPoly;
     document.getElementById( "objectControlPolygonColorPicker" ).value = hermiteSettings.controlPolyColor;
     document.getElementById( "objectCurveColorPicker" ).value = hermiteSettings.curveColor;
@@ -229,6 +231,7 @@ export function updateObjectSettingsUI( obj )
 
 function updateBezierToolSettingsUI( bezierSettings )
 {
+    document.getElementById( "toolStickToSphereWhenScaledCheck" ).checked = bezierSettings.stickToSphere;
     document.getElementById( "toolShowControlPolyCheck" ).checked = bezierSettings.showControlPoly;
     document.getElementById( "toolControlPolygonColorPicker" ).value = bezierSettings.controlPolyColor;
     document.getElementById( "toolCurveColorPicker" ).value = bezierSettings.curveColor;
@@ -238,6 +241,7 @@ function updateBezierToolSettingsUI( bezierSettings )
 
 function updateHermiteToolSettingsUI( hermiteSettings )
 {
+    document.getElementById( "toolStickToSphereWhenScaledCheck" ).checked = hermiteSettings.stickToSphere;
     document.getElementById( "toolShowControlPolyCheck" ).checked = hermiteSettings.showControlPoly;
     document.getElementById( "toolControlPolygonColorPicker" ).value = hermiteSettings.controlPolyColor;
     document.getElementById( "toolCurveColorPicker" ).value = hermiteSettings.curveColor;
