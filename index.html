@@ -45,6 +45,10 @@
     <br>
 
     <label id="toolName"></label><br>
+    <div class="tool-stick-to-sphere-check-row">
+      <input type="checkbox" id="toolStickToSphereWhenScaledCheck">
+      <label for="toolStickToSphereWhenScaledCheck" class="tool-bezier-labels tool-hermite-labels">Stick to sphere when scaled</label><br>
+    </div><br>
     <div class="tool-control-poly-check-row">
       <input type="checkbox" id="toolShowControlPolyCheck">
       <label for="toolShowControlPolyCheck" class="tool-bezier-labels tool-hermite-labels">Show control polygon</label><br>
@@ -73,8 +77,6 @@
       <label for="toolVectorsColorPicker" class="tool-hermite-labels">Vectors Color:</label>
       <input type="color" id="toolVectorsColorPicker" value="#ffff00">
     </div>
-    <!-- This hidden label is used to make the left and the right parts of the flex layout fixed -->
-    <label style="visibility: hidden">----------------------------------------------------</label>
   </div>
 
   <div class="center">
@@ -83,6 +85,10 @@
 
   <div class="right">
     <label id="objectName"></label><br>
+    <div class="object-stick-to-sphere-check-row">
+      <input type="checkbox" id="objectStickToSphereWhenScaledCheck">
+      <label for="objectStickToSphereWhenScaledCheck" class="object-bezier-labels object-hermite-labels">Stick to sphere when scaled</label><br>
+    </div><br>
     <div class="object-control-poly-check-row">
       <input type="checkbox" id="objectShowControlPolyCheck">
       <label for="objectShowControlPolyCheck" class="object-bezier-labels object-hermite-labels">Show control polygon</label><br>

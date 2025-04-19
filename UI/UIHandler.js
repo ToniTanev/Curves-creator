@@ -21,40 +21,42 @@ const activeButtonColor = "rgb(0, 200, 250)";
 
 function showToolSettings( toolID, show = true )
 {
-    const display = show ? "inline" : "none";
+    const visibility = show ? "visible" : "hidden";
 
     if( toolID === ToolIDs.BEZIER )
     {
         document.getElementById( "toolName" ).innerText = show ? "Bezier Tool" : "";
 
-        document.getElementById( "toolShowControlPolyCheck" ).style.display = display;
-        document.getElementById( "toolControlPolygonColorPicker" ).style.display = display;
-        document.getElementById( "toolCurveColorPicker" ).style.display = display;
-        document.getElementById( "toolPointsScaleEdit" ).style.display = display;
-        document.getElementById( "toolPointsColorPicker" ).style.display = display;
+        document.getElementById( "toolStickToSphereWhenScaledCheck" ).style.visibility = visibility;
+        document.getElementById( "toolShowControlPolyCheck" ).style.visibility = visibility;
+        document.getElementById( "toolControlPolygonColorPicker" ).style.visibility = visibility;
+        document.getElementById( "toolCurveColorPicker" ).style.visibility = visibility;
+        document.getElementById( "toolPointsScaleEdit" ).style.visibility = visibility;
+        document.getElementById( "toolPointsColorPicker" ).style.visibility = visibility;
 
         const labels = document.getElementsByClassName( "tool-bezier-labels" );
         for( const label of labels )
         {
-            label.style.display = display;
+            label.style.visibility = visibility;
         }
     }
     else if( toolID === ToolIDs.HERMITE )
     {
         document.getElementById( "toolName" ).innerText = show ? "Hermite Tool" : "";
 
-        document.getElementById( "toolShowControlPolyCheck" ).style.display = display;
-        document.getElementById( "toolControlPolygonColorPicker" ).style.display = display;
-        document.getElementById( "toolCurveColorPicker" ).style.display = display;
-        document.getElementById( "toolPointsScaleEdit" ).style.display = display;
-        document.getElementById( "toolPointsColorPicker" ).style.display = display;
-        document.getElementById( "toolVectorsScaleEdit" ).style.display = display;
-        document.getElementById( "toolVectorsColorPicker" ).style.display = display;
+        document.getElementById( "toolStickToSphereWhenScaledCheck" ).style.visibility = visibility;
+        document.getElementById( "toolShowControlPolyCheck" ).style.visibility = visibility;
+        document.getElementById( "toolControlPolygonColorPicker" ).style.visibility = visibility;
+        document.getElementById( "toolCurveColorPicker" ).style.visibility = visibility;
+        document.getElementById( "toolPointsScaleEdit" ).style.visibility = visibility;
+        document.getElementById( "toolPointsColorPicker" ).style.visibility = visibility;
+        document.getElementById( "toolVectorsScaleEdit" ).style.visibility = visibility;
+        document.getElementById( "toolVectorsColorPicker" ).style.visibility = visibility;
 
         const labels = document.getElementsByClassName( "tool-hermite-labels" );
         for( const label of labels )
         {
-            label.style.display = display;
+            label.style.visibility = visibility;
         }
     }
 }
@@ -67,6 +69,7 @@ function showObjectSettings( objectType, show = true )
     {
         document.getElementById( "objectName" ).innerText = show ? "Bezier Curve" : "";
 
+        document.getElementById( "objectStickToSphereWhenScaledCheck" ).style.display = display;
         document.getElementById( "objectShowControlPolyCheck" ).style.display = display;
         document.getElementById( "objectControlPolygonColorPicker" ).style.display = display;
         document.getElementById( "objectCurveColorPicker" ).style.display = display;
@@ -83,6 +86,7 @@ function showObjectSettings( objectType, show = true )
     {
         document.getElementById( "objectName" ).innerText = show ? "Hermite Curve" : "";
 
+        document.getElementById( "objectStickToSphereWhenScaledCheck" ).style.display = display;
         document.getElementById( "objectShowControlPolyCheck" ).style.display = display;
         document.getElementById( "objectControlPolygonColorPicker" ).style.display = display;
         document.getElementById( "objectCurveColorPicker" ).style.display = display;
