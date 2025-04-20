@@ -15,6 +15,7 @@ import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 import {enableSettingsEvents} from "./UI/SettingsEvents.js";
+import {onSphereScaleChange} from "./Objects/CurveObjects.js";
 
 export let scene, renderer, camera, sphere, composer, hoverOutlinePass, selectionOutlinePass;
 let grid = null;
@@ -152,6 +153,8 @@ function handleScale()
 
         // apply the same scale to all axes to ensure uniform scaling
         selectionTool.selectedObj.scale.set( averageScale, averageScale, averageScale );
+
+        onSphereScaleChange( averageScale );
     }
 }
 

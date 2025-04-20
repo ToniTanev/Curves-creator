@@ -1,7 +1,7 @@
-import {activeTool, selectionOutlinePass, selectionTool} from "../CurveCreator.js";
+import {activeTool, selectionOutlinePass, selectionTool, sphere} from "../CurveCreator.js";
 import {isCurveTool} from "../Tools/ToolsBase.js";
-import {isCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
-import {isSphereObj} from "../Objects/Sphere.js";
+import {isCurveObj, isHermiteCurveObj, onSphereScaleChange} from "../Objects/CurveObjects.js";
+import {defaultSphereRadius, isSphereObj} from "../Objects/Sphere.js";
 
 
 // tool settings events
@@ -94,8 +94,19 @@ function onObjectStickToSphereCheckbox( event )
 
         if( curve.settings.stickToSphere )
         {
-            // TODO
-            //onSphereScaleEdit();
+            const sphereRadius = defaultSphereRadius * sphere.scale.x;
+
+            if( curve.controlPoints.length > 0 && curve.controlPoints[ 0 ].length() !== sphereRadius )
+            {
+                for( const pt of curve.controlPoints )
+                {
+                    pt.normalize().multiplyScalar( sphereRadius );
+                }
+
+                curve.redrawPointsAndVectors();
+                curve.redrawPolys();
+                curve.highlight( selectionOutlinePass );
+            }
         }
     }
 }
@@ -182,6 +193,8 @@ function onObjectSphereScaleEdit( event )
         const sphere = activeTool.selectedObj;
         const sphereScale = parseFloat( document.getElementById( "objectSphereScaleEdit" ).value );
         sphere.scale.set( sphereScale, sphereScale, sphereScale );
+
+        onSphereScaleChange( sphereScale );
     }
 }
 

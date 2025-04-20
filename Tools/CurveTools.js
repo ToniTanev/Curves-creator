@@ -3,7 +3,7 @@ import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersec
 import {defaultPointSize, defaultVectorSize, drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {scene, sphere} from "../CurveCreator.js";
 import {deleteObject} from "../MemoryManagement.js";
-import {BezierCurveObject, HermiteCurveObject, isCurveVectorObj} from "../Objects/CurveObjects.js";
+import {BezierCurveObject, bezierObjects, HermiteCurveObject, hermiteObjects, isCurveVectorObj} from "../Objects/CurveObjects.js";
 import {ToolResult} from "./ToolsBase.js";
 
 
@@ -133,6 +133,7 @@ export class BezierCurveTool
             }
 
             this.curve.redrawPolys();
+            bezierObjects.push( this.curve );
 
             const toolSettings = this.curve.settings; // preserve the tool settings
             this.curve = new BezierCurveObject();
@@ -362,6 +363,7 @@ export class HermiteCurveTool
             }
 
             this.curve.redrawPolys();
+            hermiteObjects.push( this.curve );
 
             const toolSettings = this.curve.settings; // preserve the tool settings
             this.curve = new HermiteCurveObject();
