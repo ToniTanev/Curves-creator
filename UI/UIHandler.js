@@ -1,5 +1,5 @@
 import {isBezierCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
-import {isSphereObj} from "../Objects/Sphere.js";
+import {getSphereScale, isSphereObj} from "../Objects/Sphere.js";
 import {bezierTool, hermiteTool} from "../CurveCreator.js";
 
 export const ToolIDs = Object.freeze({
@@ -209,7 +209,7 @@ function updateHermiteObjectSettingsUI( hermiteSettings )
 
 function updateSphereObjectSettingsUI( sphere )
 {
-    document.getElementById( "objectSphereScaleEdit" ).value = sphere.scale.x;
+    document.getElementById( "objectSphereScaleEdit" ).value = getSphereScale();
     document.getElementById( "objectSphereColorPicker" ).value = "#" + sphere.material.color.getHexString();
 }
 

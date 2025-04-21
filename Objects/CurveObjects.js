@@ -5,7 +5,7 @@ import {deleteObject} from "../MemoryManagement.js";
 import {scene} from "../CurveCreator.js";
 import {filterIntersects, highlightVisualVectorObj} from "../Tools/ToolsBase.js";
 import {BezierSettings, HermiteSettings} from "../Data/Settings.js";
-import {defaultSphereRadius} from "./Sphere.js";
+import {defaultSphereRadius, stickToSphere} from "./Sphere.js";
 
 export const bezierObjects = [];
 export const hermiteObjects = [];
@@ -317,15 +317,13 @@ export function isCurveObj( obj )
 
 export function onSphereScaleChange( sphereScale )
 {
-    const sphereRadius = defaultSphereRadius * sphereScale;
-
     for( const bezierObj of bezierObjects )
     {
         if( bezierObj.settings.stickToSphere )
         {
             for( const pt of bezierObj.controlPoints )
             {
-                pt.normalize().multiplyScalar( sphereRadius );
+                stickToSphere( pt );
             }
 
             bezierObj.redrawPointsAndVectors();
@@ -339,7 +337,7 @@ export function onSphereScaleChange( sphereScale )
         {
             for( const pt of hermiteObj.controlPoints )
             {
-                pt.normalize().multiplyScalar( sphereRadius );
+                stickToSphere( pt );
             }
 
             hermiteObj.redrawPointsAndVectors();

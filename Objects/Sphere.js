@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {scene} from "../CurveCreator.js";
+import {scene, sphere} from "../CurveCreator.js";
 
 export const defaultSphereRadius = 10;
 
@@ -19,4 +19,15 @@ export function drawSphere()
 export function isSphereObj( obj )
 {
     return obj.name === "Sphere";
+}
+
+export function getSphereScale()
+{
+    return sphere.scale.x;
+}
+
+export function stickToSphere( pt )
+{
+    const sphereRadius = defaultSphereRadius * getSphereScale();
+    return pt.normalize().multiplyScalar( sphereRadius );
 }
