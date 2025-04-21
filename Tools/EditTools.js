@@ -3,7 +3,7 @@ import {hoverOutlinePass} from "../CurveCreator.js";
 import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse, raycastMouseOnSphere} from "../Math.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj, ToolResult} from "./ToolsBase.js";
-import {isCurvePointObj, isCurveVectorObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
+import {isCurvePointObj, isCurveVectorObj, isHermiteCurveObj, onDeleteCurveObject} from "../Objects/CurveObjects.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {defaultPointSize, defaultVectorSize, drawPoint, drawVector} from "../Visualizer.js";
 
@@ -446,6 +446,11 @@ export class DeleteTool
             }
 
             curve.redrawPolys();
+
+            if( curve.controlPoints.length === 0 )
+            {
+                onDeleteCurveObject( curve );
+            }
         }
 
         this.clear();

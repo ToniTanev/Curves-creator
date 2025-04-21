@@ -21,7 +21,7 @@ import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 import {enableSettingsEvents} from "./UI/SettingsEvents.js";
-import {isCurveObj, onSphereScaleChange} from "./Objects/CurveObjects.js";
+import {isCurveObj, onDeleteCurveObject, onSphereScaleChange} from "./Objects/CurveObjects.js";
 
 export let scene, renderer, camera, sphere, composer, hoverOutlinePass, selectionOutlinePass;
 let grid = null;
@@ -351,7 +351,7 @@ function onKeyPressed( event )
             !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
         {
             const curve = activeTool.selectedObj;
-            curve.clearAll();
+            onDeleteCurveObject( curve );
             hideObjectsSettings();
         }
     }
@@ -363,7 +363,7 @@ function onKeyPressed( event )
             !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
         {
             const curve = activeTool.selectedObj;
-            curve.clearAll();
+            onDeleteCurveObject( curve );
             hideObjectsSettings();
         }
     }

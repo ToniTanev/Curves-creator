@@ -345,3 +345,25 @@ export function onSphereScaleChange( sphereScale )
         }
     }
 }
+
+export function onDeleteCurveObject( curve )
+{
+    curve.clearAll();
+
+    if( isBezierCurveObj( curve ) )
+    {
+        const inx = bezierObjects.indexOf( curve );
+        if ( inx !== -1 )
+        {
+            bezierObjects.splice( inx, 1 );
+        }
+    }
+    else if( isHermiteCurveObj( curve ) )
+    {
+        const inx = hermiteObjects.indexOf( curve );
+        if ( inx !== -1 )
+        {
+            hermiteObjects.splice( inx, 1 );
+        }
+    }
+}
