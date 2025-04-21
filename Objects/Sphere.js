@@ -26,8 +26,9 @@ export function getSphereScale()
     return sphere.scale.x;
 }
 
+// sticks the point onto the mathematical definition of the sphere
 export function stickToSphere( pt )
 {
     const sphereRadius = defaultSphereRadius * getSphereScale();
-    return pt.normalize().multiplyScalar( sphereRadius );
+    pt.normalize().multiplyScalar( sphereRadius );
 }

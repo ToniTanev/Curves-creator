@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import {hoverOutlinePass, sphere} from "../CurveCreator.js";
-import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse} from "../Math.js";
+import {hoverOutlinePass} from "../CurveCreator.js";
+import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse, raycastMouseOnSphere} from "../Math.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj, ToolResult} from "./ToolsBase.js";
 import {isCurvePointObj, isCurveVectorObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
@@ -125,13 +125,10 @@ export class MoveTool
 
             if( isCurvePointObj( this.pickedObj ) )
             {
-                const intersects = raycastMouse( mouse );
+                const newPos = raycastMouseOnSphere( mouse );
 
-                const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-                if( inx !== -1 )
+                if( newPos )
                 {
-                    const newPos = intersects[ inx ].point;
                     curveObject.controlPoints[ this.objIndex ] = newPos;
                     curveObject.meshPoints[ this.objIndex ].position.set( newPos.x, newPos.y, newPos.z );
                 }
@@ -291,13 +288,10 @@ export class AddTool
 
             if( isCurvePointObj( this.pickedObj ) )
             {
-                const intersects = raycastMouse( mouse );
+                const newPos = raycastMouseOnSphere( mouse );
 
-                const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-                if( inx !== -1 )
+                if( newPos )
                 {
-                    const newPos = intersects[ inx ].point;
                     curveObject.controlPoints[ this.objIndex ] = newPos;
                     curveObject.meshPoints[ this.objIndex ].position.set( newPos.x, newPos.y, newPos.z );
                 }

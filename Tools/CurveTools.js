@@ -1,7 +1,10 @@
 import * as THREE from 'three';
-import {BezierCurve, offsetPoints, getPlaneAtSpherePoint, raycastMouse, intersectPlaneWithMouse, CubicHermiteCurves} from "../Math.js";
-import {defaultPointSize, defaultVectorSize, drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
-import {scene, sphere} from "../CurveCreator.js";
+import {
+    getPlaneAtSpherePoint,
+    intersectPlaneWithMouse,
+    raycastMouseOnSphere
+} from "../Math.js";
+import {defaultPointSize, defaultVectorSize, drawPoint, drawVector} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
 import {BezierCurveObject, bezierObjects, HermiteCurveObject, hermiteObjects, isCurveVectorObj} from "../Objects/CurveObjects.js";
 import {ToolResult} from "./ToolsBase.js";
@@ -44,14 +47,10 @@ export class BezierCurveTool
 
     onInteractive( mouse )
     {
-        const intersects = raycastMouse( mouse );
+        const newPos = raycastMouseOnSphere( mouse );
 
-        const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-        if( inx !== -1 )
+        if( newPos )
         {
-            const newPos = intersects[ inx ].point;
-
             if( this.interactivePoint !== null )
             {
                 this.interactivePoint.position.set( newPos.x, newPos.y, newPos.z );
@@ -81,11 +80,9 @@ export class BezierCurveTool
     {
         if( this.interactivePoint )
         {
-            const intersects = raycastMouse( mouse );
+            const newPos = raycastMouseOnSphere( mouse );
 
-            const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-            if( inx !== -1 )
+            if( newPos )
             {
                 this.interactivePoint.parentCurve = this.curve;
                 this.curve.meshPoints.push( this.interactivePoint );
@@ -183,14 +180,10 @@ export class HermiteCurveTool
         if( this.curve.controlPoints.length === this.curve.controlVectors.length )
         {
             // should add interactive point
-            const intersects = raycastMouse( mouse );
+            const newPos = raycastMouseOnSphere( mouse );
 
-            const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-            if( inx !== -1 )
+            if( newPos )
             {
-                const newPos = intersects[ inx ].point;
-
                 if( this.interactivePoint !== null )
                 {
                     this.interactivePoint.position.set( newPos.x, newPos.y, newPos.z );
@@ -252,11 +245,9 @@ export class HermiteCurveTool
         if( this.interactivePoint )
         {
             // should add point
-            const intersects = raycastMouse( mouse );
+            const newPos = raycastMouseOnSphere( mouse );
 
-            const inx = intersects.findIndex( intrs => intrs.object === sphere );
-
-            if( inx !== -1 )
+            if( newPos )
             {
                 this.interactivePoint.parentCurve = this.curve;
                 this.curve.meshPoints.push( this.interactivePoint );

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import {camera, renderer, scene} from "./CurveCreator.js";
+import {isSphereObj, stickToSphere} from "./Objects/Sphere.js";
 
 export const vectorEpsilon = 0.0000001;
 function slerp( u, v, t )
@@ -248,6 +249,23 @@ export function raycastMouse( mouse )
 
     // calculate objects intersecting the picking ray
     return raycaster.intersectObjects(scene.children);
+}
+
+export function raycastMouseOnSphere( mouse )
+{
+    let resultPt = null;
+
+    const intersects = raycastMouse( mouse );
+
+    const inx = intersects.findIndex( intrs => isSphereObj( intrs.object ) );
+
+    if( inx !== -1 )
+    {
+        resultPt = intersects[ inx ].point;
+        stickToSphere( resultPt );
+    }
+
+    return resultPt;
 }
 
 export function intersectPlaneWithMouse( mouse, plane )
