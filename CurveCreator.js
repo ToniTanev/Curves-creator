@@ -10,7 +10,13 @@ import {getMouse, raycastMouse} from "./Math.js";
 import {BezierCurveTool, HermiteCurveTool} from "./Tools/CurveTools.js";
 import {MoveTool, AddTool, DeleteTool} from "./Tools/EditTools.js";
 import {drawAxes, drawGrid} from "./Objects/GridAndAxes.js";
-import {ToolIDs, makeToolsInactive, makeToolActive, hideObjectsSettings} from "./UI/UIHandler.js";
+import {
+    ToolIDs,
+    makeToolsInactive,
+    makeToolActive,
+    hideObjectsSettings,
+    updateObjectSettingsUI
+} from "./UI/UIHandler.js";
 import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
@@ -155,6 +161,8 @@ function handleScale()
         selectionTool.selectedObj.scale.set( averageScale, averageScale, averageScale );
 
         onSphereScaleChange( averageScale );
+
+        updateObjectSettingsUI( sphere );
     }
 }
 
