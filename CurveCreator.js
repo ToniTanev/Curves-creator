@@ -21,7 +21,7 @@ import {isCurveTool, isEditTool, ToolResult} from "./Tools/ToolsBase.js";
 import {drawSphere} from "./Objects/Sphere.js";
 import {SelectionTool} from "./Tools/SelectionTool.js";
 import {enableSettingsEvents} from "./UI/SettingsEvents.js";
-import {onSphereScaleChange} from "./Objects/CurveObjects.js";
+import {isCurveObj, onSphereScaleChange} from "./Objects/CurveObjects.js";
 
 export let scene, renderer, camera, sphere, composer, hoverOutlinePass, selectionOutlinePass;
 let grid = null;
@@ -341,9 +341,30 @@ function onKeyPressed( event )
     }
     else if ( event.key === "Backspace" )
     {
+        const numberInputs = document.querySelectorAll( 'input[type="number"]' );
+
         if( isCurveTool( activeTool ) )
         {
             activeTool.objectRemoved();
+        }
+        else if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) &&
+            !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
+        {
+            const curve = activeTool.selectedObj;
+            curve.clearAll();
+            hideObjectsSettings();
+        }
+    }
+    else if ( event.key === "Delete" )
+    {
+        const numberInputs = document.querySelectorAll( 'input[type="number"]' );
+
+        if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) &&
+            !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
+        {
+            const curve = activeTool.selectedObj;
+            curve.clearAll();
+            hideObjectsSettings();
         }
     }
 }
