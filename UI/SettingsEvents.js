@@ -44,7 +44,15 @@ function onToolPointsScaleEdit( event )
 {
     if( isCurveTool( activeTool ) )
     {
-        activeTool.curve.settings.pointScale = parseFloat( document.getElementById( "toolPointsScaleEdit" ).value );
+        const toolPointsScaleEdit = document.getElementById( "toolPointsScaleEdit" );
+        activeTool.curve.settings.pointScale = parseFloat( toolPointsScaleEdit.value );
+
+        if( isNaN( activeTool.curve.settings.pointScale ) )
+        {
+            activeTool.curve.settings.pointScale = 1.0;
+            toolPointsScaleEdit.value = activeTool.curve.settings.pointScale;
+        }
+
         activeTool.curve.redrawPointsAndVectors();
         activeTool.curve.highlight( selectionOutlinePass );
         activeTool.redrawInteractive();
@@ -66,7 +74,15 @@ function onToolVectorsScaleEdit( event )
 {
     if( isCurveTool( activeTool ) && isHermiteCurveObj( activeTool.curve ) )
     {
-        activeTool.curve.settings.vectorScale = parseFloat( document.getElementById( "toolVectorsScaleEdit" ).value );
+        const toolVectorsScaleEdit = document.getElementById( "toolVectorsScaleEdit" );
+        activeTool.curve.settings.vectorScale = parseFloat( toolVectorsScaleEdit.value );
+
+        if( isNaN( activeTool.curve.settings.vectorScale ) )
+        {
+            activeTool.curve.settings.vectorScale = 1.0;
+            toolVectorsScaleEdit.value = activeTool.curve.settings.vectorScale;
+        }
+
         activeTool.curve.redrawPointsAndVectors();
         activeTool.curve.highlight( selectionOutlinePass );
         activeTool.redrawInteractive();
@@ -146,7 +162,15 @@ function onObjectPointsScaleEdit( event )
     if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) )
     {
         const curve = activeTool.selectedObj;
-        curve.settings.pointScale = parseFloat( document.getElementById( "objectPointsScaleEdit" ).value );
+        const objectPointsScaleEdit = document.getElementById( "objectPointsScaleEdit" );
+        curve.settings.pointScale = parseFloat( objectPointsScaleEdit.value );
+
+        if( isNaN( curve.settings.pointScale ) )
+        {
+            curve.settings.pointScale = 1.0;
+            objectPointsScaleEdit.value = curve.settings.pointScale;
+        }
+
         curve.redrawPointsAndVectors();
         curve.highlight( selectionOutlinePass );
     }
@@ -168,7 +192,16 @@ function onObjectVectorsScaleEdit( event )
     if( activeTool === selectionTool && isHermiteCurveObj( activeTool.selectedObj ) )
     {
         const curve = activeTool.selectedObj;
-        curve.settings.vectorScale = parseFloat( document.getElementById( "objectVectorsScaleEdit" ).value );
+
+        const objectVectorsScaleEdit = document.getElementById( "objectVectorsScaleEdit" );
+        curve.settings.vectorScale = parseFloat( objectVectorsScaleEdit.value );
+
+        if( isNaN( curve.settings.vectorScale ) )
+        {
+            curve.settings.vectorScale = 1.0;
+            objectVectorsScaleEdit.value = curve.settings.vectorScale;
+        }
+
         curve.redrawPointsAndVectors();
         curve.highlight( selectionOutlinePass );
     }
@@ -191,7 +224,16 @@ function onObjectSphereScaleEdit( event )
     if( activeTool === selectionTool && isSphereObj( activeTool.selectedObj ) )
     {
         const sphere = activeTool.selectedObj;
-        const sphereScale = parseFloat( document.getElementById( "objectSphereScaleEdit" ).value );
+
+        const objectSphereScaleEdit = document.getElementById( "objectSphereScaleEdit" );
+        let sphereScale = parseFloat( objectSphereScaleEdit.value );
+
+        if( isNaN( sphereScale ) )
+        {
+            sphereScale = 1.0;
+            objectSphereScaleEdit.value = sphereScale;
+        }
+
         sphere.scale.set( sphereScale, sphereScale, sphereScale );
 
         onSphereScaleChange( sphereScale );
