@@ -16,7 +16,6 @@ button {
     font-size: 16px;
     border-radius: 8px;
     padding: 10px 20px;
-    margin: 5px 0;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
     border: none;
@@ -53,6 +52,11 @@ button:hover
 
 #toolName, #objectName{
     font-size: x-large;
+    margin-bottom: 10px;
+}
+
+#toolName{
+    margin-top: 10px;
 }
 
 label {
@@ -63,7 +67,7 @@ label {
 input[type="color"],
 input[type="radio"],
 input[type="checkbox"] {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     cursor: pointer;
 }
 

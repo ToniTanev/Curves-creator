@@ -27,52 +27,51 @@
     <div class="edit-buttons-row">
       <button id="moveButton">Move</button>
       <button id="addButton">+</button>
-      <button id="deleteButton">-</button><br>
+      <button id="deleteButton">-</button>
     </div>
     <div class="grid-axes-checks">
       <input type="checkbox" id="gridCheck" checked>
       <label for="gridCheck">Grid</label>
       <input type="checkbox" id="axesCheck" checked>
-      <label for="axesCheck">Axes</label><br><br>
+      <label for="axesCheck">Axes</label>
     </div>
     <div class="background-options">
       <label>Background:</label>
       <input type="radio" name="backgroundRadios" id="lightBackgroundRadio" checked>
       <label for="lightBackgroundRadio">Light</label>
       <input type="radio" name="backgroundRadios" id="darkBackgroundRadio">
-      <label for="darkBackgroundRadio">Dark</label><br>
+      <label for="darkBackgroundRadio">Dark</label>
     </div>
-    <br>
 
-    <label id="toolName"></label><br>
+    <label id="toolName"></label>
     <div class="tool-stick-to-sphere-check-row">
       <input type="checkbox" id="toolStickToSphereWhenScaledCheck">
-      <label for="toolStickToSphereWhenScaledCheck" class="tool-bezier-labels tool-hermite-labels">Stick to sphere when scaled</label><br>
-    </div><br>
+      <label for="toolStickToSphereWhenScaledCheck" class="tool-bezier-labels tool-hermite-labels">Stick to sphere when scaled</label>
+    </div>
     <div class="tool-control-poly-check-row">
       <input type="checkbox" id="toolShowControlPolyCheck">
-      <label for="toolShowControlPolyCheck" class="tool-bezier-labels tool-hermite-labels">Show control polygon</label><br>
-    </div><br>
+      <label for="toolShowControlPolyCheck" class="tool-bezier-labels tool-hermite-labels">Show control polygon</label>
+    </div>
     <div class="input-row">
       <label for="toolControlPolygonColorPicker" class="tool-bezier-labels tool-hermite-labels">Control Polygon Color:</label>
       <input type="color" id="toolControlPolygonColorPicker" value="#00ff00">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="toolCurveColorPicker" class="tool-bezier-labels tool-hermite-labels">Curve Color:</label>
       <input type="color" id="toolCurveColorPicker" value="#00ff00">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="toolPointsScaleEdit" class="tool-bezier-labels tool-hermite-labels">Points Scale:</label>
       <input type="number" id="toolPointsScaleEdit" step="any" min="0.1" value="1">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="toolPointsColorPicker" class="tool-bezier-labels tool-hermite-labels">Points Color:</label>
       <input type="color" id="toolPointsColorPicker" value="#ff0000">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="toolVectorsScaleEdit" class="tool-hermite-labels">Vectors Scale:</label>
       <input type="number" id="toolVectorsScaleEdit" step="any" min="0.1" value="1">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="toolVectorsColorPicker" class="tool-hermite-labels">Vectors Color:</label>
       <input type="color" id="toolVectorsColorPicker" value="#ffff00">
@@ -84,35 +83,35 @@
   </div>
 
   <div class="right">
-    <label id="objectName"></label><br>
+    <label id="objectName"></label>
     <div class="object-stick-to-sphere-check-row">
       <input type="checkbox" id="objectStickToSphereWhenScaledCheck">
-      <label for="objectStickToSphereWhenScaledCheck" class="object-bezier-labels object-hermite-labels">Stick to sphere when scaled</label><br>
-    </div><br>
+      <label for="objectStickToSphereWhenScaledCheck" class="object-bezier-labels object-hermite-labels">Stick to sphere when scaled</label>
+    </div>
     <div class="object-control-poly-check-row">
       <input type="checkbox" id="objectShowControlPolyCheck">
-      <label for="objectShowControlPolyCheck" class="object-bezier-labels object-hermite-labels">Show control polygon</label><br>
-    </div><br>
+      <label for="objectShowControlPolyCheck" class="object-bezier-labels object-hermite-labels">Show control polygon</label>
+    </div>
     <div class="input-row">
       <label for="objectControlPolygonColorPicker" class="object-bezier-labels object-hermite-labels">Control Polygon Color:</label>
       <input type="color" id="objectControlPolygonColorPicker" value="#00ff00">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="objectCurveColorPicker" class="object-bezier-labels object-hermite-labels">Curve Color:</label>
       <input type="color" id="objectCurveColorPicker" value="#00ff00">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="objectPointsScaleEdit" class="object-bezier-labels object-hermite-labels">Points Scale:</label>
       <input type="number" id="objectPointsScaleEdit" step="any" min="0.1" value="1">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="objectPointsColorPicker" class="object-bezier-labels object-hermite-labels">Points Color:</label>
       <input type="color" id="objectPointsColorPicker" value="#ff0000">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="objectVectorsScaleEdit" class="object-hermite-labels">Vectors Scale:</label>
       <input type="number" id="objectVectorsScaleEdit" step="any" min="0.1" value="1">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="objectVectorsColorPicker" class="object-hermite-labels">Vectors Color:</label>
       <input type="color" id="objectVectorsColorPicker" value="#ffff00">
@@ -120,7 +119,7 @@
     <div class="input-row">
       <label for="objectSphereScaleEdit" class="object-sphere-labels">Scale:</label>
       <input type="number" id="objectSphereScaleEdit" step="any" min="0.1" value="1">
-    </div><br>
+    </div>
     <div class="input-row">
       <label for="objectSphereColorPicker" class="object-sphere-labels">Color:</label>
       <input type="color" id="objectSphereColorPicker" value="#0000ff">
