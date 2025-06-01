@@ -1,18 +1,26 @@
-canvas
-{
-    border: solid;
-    border-color: black;
-    border-width: 0.5px;
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    margin: 0;
+    padding: 20px;
 }
 
-button
+canvas
 {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+button {
     font-size: 16px;
-    border-radius: 4px;
-    transition-duration: 0.4s;
-    background-color: #008CBA;
-    border: 2px solid #008CBA;
-    padding: 8px 20px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    border: none;
+    background-color: #4F46E5;
     color: white;
     margin-bottom: 20px;
 }
@@ -36,8 +44,32 @@ button:hover
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Ensure content aligns at the top */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 300px;
 }
 
 #toolName, #objectName{
     font-size: x-large;
+}
+
+label {
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+input[type="color"],
+input[type="number"],
+input[type="radio"],
+input[type="checkbox"] {
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+input[type="color"] {
+    border: none;
+    background-color: transparent;
+    padding: 0;
 }
