@@ -97,4 +97,10 @@ input[type="radio"] {
     height: 16px;
 }
 
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
 
