@@ -211,6 +211,15 @@ function onMouseDown( event )
     }
 }
 
+function onDoubleClick( event )
+{
+    if( isCurveTool( activeTool ) )
+    {
+        activeTool.pointAdded( getMouse( event ) );
+        activeTool.complete();
+    }
+}
+
 function onToolButton( toolID, event )
 {
     if( activeTool )
@@ -334,7 +343,10 @@ function onKeyPressed( event )
     }
     else if ( event.key === "Enter" )
     {
-        if( activeTool != null )
+        const numberInputs = document.querySelectorAll( 'input[type="number"]' );
+
+        if( activeTool != null &&
+            !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
         {
             activeTool.complete();
         }
@@ -343,16 +355,18 @@ function onKeyPressed( event )
     {
         const numberInputs = document.querySelectorAll( 'input[type="number"]' );
 
-        if( isCurveTool( activeTool ) )
+        if( !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
         {
-            activeTool.objectRemoved();
-        }
-        else if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) &&
-            !Array.from( numberInputs ).includes( document.activeElement ) ) // make sure we are not editing a number field currently
-        {
-            const curve = activeTool.selectedObj;
-            onDeleteCurveObject( curve );
-            hideObjectsSettings();
+            if( isCurveTool( activeTool ) )
+            {
+                activeTool.objectRemoved();
+            }
+            else if( activeTool === selectionTool && isCurveObj( activeTool.selectedObj ) )
+            {
+                const curve = activeTool.selectedObj;
+                onDeleteCurveObject( curve );
+                hideObjectsSettings();
+            }
         }
     }
     else if ( event.key === "Delete" )
@@ -387,6 +401,7 @@ function main()
     renderer.domElement.addEventListener( "contextmenu", onRightClick );
     renderer.domElement.addEventListener( "mousemove", onMouseMove );
     renderer.domElement.addEventListener( "mousedown", onMouseDown );
+    renderer.domElement.addEventListener( "dblclick", onDoubleClick );
     document.getElementById( "bezierButton" ).addEventListener( "click", onBezierToolButton );
     document.getElementById( "hermiteButton" ).addEventListener( "click", onHermiteToolButton );
     document.getElementById( "moveButton" ).addEventListener( "click", onMoveToolButton );
