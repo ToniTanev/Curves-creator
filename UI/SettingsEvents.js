@@ -54,7 +54,6 @@ function onToolPointsScaleEdit( event )
         }
 
         activeTool.curve.redrawPointsAndVectors();
-        activeTool.curve.highlight( selectionOutlinePass );
         activeTool.redrawInteractive();
     }
 }
@@ -65,7 +64,6 @@ function onToolPointsColorChange( event )
     {
         activeTool.curve.settings.pointColor = document.getElementById( "toolPointsColorPicker" ).value;
         activeTool.curve.redrawPointsAndVectors();
-        activeTool.curve.highlight( selectionOutlinePass );
         activeTool.redrawInteractive();
     }
 }
@@ -84,7 +82,6 @@ function onToolVectorsScaleEdit( event )
         }
 
         activeTool.curve.redrawPointsAndVectors();
-        activeTool.curve.highlight( selectionOutlinePass );
         activeTool.redrawInteractive();
     }
 }
@@ -95,7 +92,6 @@ function onToolVectorsColorChange( event )
     {
         activeTool.curve.settings.vectorColor = document.getElementById( "toolVectorsColorPicker" ).value;
         activeTool.curve.redrawPointsAndVectors();
-        activeTool.curve.highlight( selectionOutlinePass );
         activeTool.redrawInteractive();
     }
 }
