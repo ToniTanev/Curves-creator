@@ -42,13 +42,11 @@ function init()
     makeToolsInactive();
     hideObjectsSettings();
 
-    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    const canvas = document.getElementById( 'mainCanvas' );
+    renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
     const windowH = 0.8 * window.innerHeight;
     const windowW = 0.5 * window.innerWidth;
     renderer.setSize( windowW, windowH, true );
-
-    const canvasContainer = document.querySelector( '.center' );
-    canvasContainer.appendChild( renderer.domElement );
 
     scene = new THREE.Scene();
     scene.background = new THREE.Color( 'white' );

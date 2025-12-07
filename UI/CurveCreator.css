@@ -50,6 +50,15 @@ button:hover
     width: 300px;
 }
 
+.tooltip {
+    margin-top: 20px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
 #toolName, #objectName{
     font-size: x-large;
     margin-bottom: 10px;
