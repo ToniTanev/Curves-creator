@@ -50,7 +50,7 @@ button:hover
     width: 300px;
 }
 
-.tooltip {
+#tooltip {
     margin-top: 20px;
     background-color: #ffffff;
     padding: 20px;

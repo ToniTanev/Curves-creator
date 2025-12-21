@@ -1,0 +1,7 @@
+
+export const selectionTooltip = "You can move around the drawing by holding left-click to pan, right-click to rotate the view and using the mouse scroll to zoom in and out. Select one of the tools on the left to create/edit curves. The sphere and existing curves can be selected with left-click and their settings will display on the right. The selected curve can be deleted with the Backspace or the Delete button.";
+export const bezierTooltip = "Add points on the sphere with left-click. Remove a certain point with right-click or use Backspace to remove the last point. To finish a curve use double-click or Enter. Only curves with at least 2 points are accepted.";
+export const hermiteTooltip = "Add points/vectors on the sphere with left-click. Remove a certain point/vector with right-click or use Backspace to remove the last point/vector. To finish a curve use double-click or Enter. Only curves with at least 2 points and 2 vectors and equal number of points and vectors are accepted.";
+export const moveTooltip = "Move a point or rotate a vector from an existing curve. Moving an Hermite curve point, requires you to specify a new vector for that point.";
+export const addTooltip = "Add a point to an existing curve. Select the curve point after which the new point should be added. Adding a point to an Hermite curve, requires you to specify a vector for that point.";
+export const deleteTooltip = "Delete a point from an existing curve. For Hermite curves a whole point-vector pair is deleted.";

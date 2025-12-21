@@ -1,6 +1,14 @@
 import {isBezierCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {getSphereScale, isSphereObj} from "../Objects/Sphere.js";
 import {bezierTool, hermiteTool} from "../CurveCreator.js";
+import {
+    addTooltip,
+    bezierTooltip,
+    deleteTooltip,
+    hermiteTooltip,
+    moveTooltip,
+    selectionTooltip
+} from "../Constants/Tooltips.js";
 
 export const ToolIDs = Object.freeze({
     BEZIER: 0,
@@ -152,6 +160,7 @@ export function makeToolsInactive()
     document.getElementById( "moveButton" ).style.backgroundColor = defaultButtonColor;
     document.getElementById( "addButton" ).style.backgroundColor = defaultButtonColor;
     document.getElementById( "deleteButton" ).style.backgroundColor = defaultButtonColor;
+    document.getElementById( "tooltip" ).innerHTML = selectionTooltip;
 
     showToolSettings( ToolIDs.BEZIER, false );
     showToolSettings( ToolIDs.HERMITE, false );
@@ -164,24 +173,29 @@ export function makeToolActive( toolID )
         document.getElementById( "bezierButton" ).style.backgroundColor = activeButtonColor;
         showToolSettings( ToolIDs.BEZIER );
         updateBezierToolSettingsUI( bezierTool.curve.settings );
+        document.getElementById( "tooltip" ).innerHTML = bezierTooltip;
     }
     else if( toolID === ToolIDs.HERMITE )
     {
         document.getElementById( "hermiteButton" ).style.backgroundColor = activeButtonColor;
         showToolSettings( ToolIDs.HERMITE );
         updateHermiteToolSettingsUI( hermiteTool.curve.settings );
+        document.getElementById( "tooltip" ).innerHTML = hermiteTooltip;
     }
     else if( toolID === ToolIDs.MOVE )
     {
         document.getElementById( "moveButton" ).style.backgroundColor = activeButtonColor;
+        document.getElementById( "tooltip" ).innerHTML = moveTooltip;
     }
     else if( toolID === ToolIDs.ADD )
     {
         document.getElementById( "addButton" ).style.backgroundColor = activeButtonColor;
+        document.getElementById( "tooltip" ).innerHTML = addTooltip;
     }
     else if( toolID === ToolIDs.DELETE )
     {
         document.getElementById( "deleteButton" ).style.backgroundColor = activeButtonColor;
+        document.getElementById( "tooltip" ).innerHTML = deleteTooltip;
     }
 }
 
