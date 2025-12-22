@@ -328,6 +328,12 @@ function onAxesCheckbox( event )
     }
 }
 
+function onTooltipsCheckbox( event )
+{
+    const displayTooltips = document.getElementById( "tooltipsCheck" ).checked ? "block" : "none";
+    document.getElementById( "tooltip" ).style.display = displayTooltips;
+}
+
 function onKeyPressed( event )
 {
     if ( event.key === "Escape" )
@@ -409,6 +415,7 @@ function main()
     document.getElementById( "deleteButton" ).addEventListener( "click", onDeleteToolButton );
     document.getElementById( "gridCheck" ).addEventListener( "click", onGridCheckbox );
     document.getElementById( "axesCheck" ).addEventListener( "click", onAxesCheckbox );
+    document.getElementById( "tooltipsCheck" ).addEventListener( "click", onTooltipsCheckbox );
     document.getElementById( "lightBackgroundRadio" ).addEventListener( "click", onLightBackgroundRadio );
     document.getElementById( "darkBackgroundRadio" ).addEventListener( "click", onDarkBackgroundRadio );
     document.addEventListener( 'keydown', onKeyPressed );
