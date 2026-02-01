@@ -42,6 +42,16 @@ function init()
     makeToolsInactive();
     hideObjectsSettings();
 
+    const gridChecked = localStorage.getItem( "gridCheck" ); // loaded as strings
+    const axesChecked = localStorage.getItem( "axesCheck" );
+    const tooltipsChecked = localStorage.getItem( "tooltipsCheck" );
+    const isLightBackground = localStorage.getItem( "isLightBackground" );
+    document.getElementById( "gridCheck" ).checked = gridChecked ? gridChecked === "true" : true;
+    document.getElementById( "axesCheck" ).checked = axesChecked ? axesChecked === "true" : true;
+    document.getElementById( "tooltipsCheck" ).checked = tooltipsChecked ? tooltipsChecked === "true" : true;
+    document.getElementById( "lightBackgroundRadio" ).checked = isLightBackground ? isLightBackground === "true" : true;
+    document.getElementById( "darkBackgroundRadio" ).checked = isLightBackground ? isLightBackground === "false" : false;
+
     const canvas = document.getElementById( 'mainCanvas' );
     renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
     const windowH = 0.8 * window.innerHeight;
@@ -49,9 +59,11 @@ function init()
     renderer.setSize( windowW, windowH, true );
     const tooltipPaddingX2 = 40;
     document.getElementById( "tooltip" ).style.width = ( windowW - tooltipPaddingX2 ) + "px";
+    document.getElementById( "tooltip" ).style.display = document.getElementById( "tooltipsCheck" ).checked ? "block" : "none";
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 'white' );
+    const backgroundColor = document.getElementById( "lightBackgroundRadio" ).checked ? 'white' : 'black';
+    scene.background = new THREE.Color( backgroundColor );
 
     const ambLight = new THREE.AmbientLight( 'white', 0.5 );
     scene.add( ambLight );
@@ -298,11 +310,15 @@ function onGridCheckbox( event )
             scene.remove( grid );
         }
     }
+
+    localStorage.setItem( "gridCheck", shouldDrawGrid );
 }
 
 function onAxesCheckbox( event )
 {
-    if( document.getElementById( "axesCheck" ).checked )
+    const shouldDrawAxes = document.getElementById( "axesCheck" ).checked;
+
+    if( shouldDrawAxes )
     {
         if( !axes )
         {
@@ -326,12 +342,16 @@ function onAxesCheckbox( event )
             }
         }
     }
+
+    localStorage.setItem( "axesCheck", shouldDrawAxes );
 }
 
 function onTooltipsCheckbox( event )
 {
-    const displayTooltips = document.getElementById( "tooltipsCheck" ).checked ? "block" : "none";
-    document.getElementById( "tooltip" ).style.display = displayTooltips;
+    const showTooltips = document.getElementById( "tooltipsCheck" ).checked;
+    document.getElementById( "tooltip" ).style.display = showTooltips ? "block" : "none";
+
+    localStorage.setItem( "tooltipsCheck", showTooltips );
 }
 
 function onKeyPressed( event )
@@ -392,11 +412,13 @@ function onKeyPressed( event )
 function onLightBackgroundRadio( event )
 {
     scene.background = new THREE.Color( 'white' );
+    localStorage.setItem( "isLightBackground", "true" );
 }
 
 function onDarkBackgroundRadio( event )
 {
     scene.background = new THREE.Color( 'black' );
+    localStorage.setItem( "isLightBackground", "false" );
 }
 
 function main()
