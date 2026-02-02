@@ -36,6 +36,11 @@ export class BezierCurveTool
     {
         this.curve = new BezierCurveObject();
         this.interactivePoint = null;
+
+        const pointsScale = localStorage.getItem( "bezierPointsScale" );
+        const showControlPoly = localStorage.getItem( "bezierShowControlPoly" );
+        this.curve.settings.pointScale = pointsScale ? parseFloat( pointsScale ) : 1.0;
+        this.curve.settings.showControlPoly = showControlPoly ? showControlPoly === "true" : false;
     }
 
     revert()
@@ -164,6 +169,13 @@ export class HermiteCurveTool
         this.curve = new HermiteCurveObject();
         this.interactivePoint = null;
         this.interactiveVector = null;
+
+        const pointsScale = localStorage.getItem( "hermitePointsScale" );
+        const vectorsScale = localStorage.getItem( "hermiteVectorsScale" );
+        const showControlPoly = localStorage.getItem( "hermiteShowControlPoly" );
+        this.curve.settings.pointScale = pointsScale ? parseFloat( pointsScale ) : 1.0;
+        this.curve.settings.vectorScale = vectorsScale ? parseFloat( vectorsScale ) : 1.0;
+        this.curve.settings.showControlPoly = showControlPoly ? showControlPoly === "true" : false;
     }
 
     revert()

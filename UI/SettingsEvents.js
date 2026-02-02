@@ -1,6 +1,6 @@
 import {activeTool, selectionOutlinePass, selectionTool} from "../CurveCreator.js";
 import {isCurveTool} from "../Tools/ToolsBase.js";
-import {isCurveObj, isHermiteCurveObj, onSphereScaleChange} from "../Objects/CurveObjects.js";
+import {isBezierCurveObj, isCurveObj, isHermiteCurveObj, onSphereScaleChange} from "../Objects/CurveObjects.js";
 import {defaultSphereRadius, getSphereScale, isSphereObj, stickToSphere} from "../Objects/Sphere.js";
 
 
@@ -19,6 +19,9 @@ function onToolShowControlPolygonCheckbox( event )
     {
         activeTool.curve.settings.showControlPoly = document.getElementById( "toolShowControlPolyCheck" ).checked;
         activeTool.curve.redrawPolys();
+
+        const key = isBezierCurveObj( activeTool.curve ) ? "bezierShowControlPoly" : "hermiteShowControlPoly";
+        localStorage.setItem( key, activeTool.curve.settings.showControlPoly );
     }
 }
 
@@ -55,6 +58,9 @@ function onToolPointsScaleEdit( event )
 
         activeTool.curve.redrawPointsAndVectors();
         activeTool.redrawInteractive();
+
+        const key = isBezierCurveObj( activeTool.curve ) ? "bezierPointsScale" : "hermitePointsScale";
+        localStorage.setItem( key, activeTool.curve.settings.pointScale );
     }
 }
 
@@ -83,6 +89,8 @@ function onToolVectorsScaleEdit( event )
 
         activeTool.curve.redrawPointsAndVectors();
         activeTool.redrawInteractive();
+
+        localStorage.setItem( "hermiteVectorsScale", activeTool.curve.settings.vectorScale );
     }
 }
 
