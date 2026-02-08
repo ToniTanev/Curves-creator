@@ -30,6 +30,7 @@ class CurveTool // interface
 
     complete() {}
 }
+
 export class BezierCurveTool
 {
     constructor()

@@ -10,6 +10,25 @@ import {defaultSphereRadius, stickToSphere} from "./Sphere.js";
 export const bezierObjects = [];
 export const hermiteObjects = [];
 
+class CurveObject // interface
+{
+    constructor() {}
+
+    clearPolys() {}
+
+    clearAll() {}
+
+    redrawPointsAndVectors() {}
+
+    redrawPolys() {}
+
+    findIndex( obj ) {}
+
+    highlight( outlinePass ) {}
+
+    filterCurveObjects( intersects ) {}
+}
+
 export class BezierCurveObject
 {
     constructor()

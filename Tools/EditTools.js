@@ -16,6 +16,23 @@ function resetVector( curve, vecInx, startPt, endPt )
     curve.assignAsParentToVector( curve.visualVectors[ vecInx ] );
 }
 
+class EditTool // interface
+{
+    constructor() {}
+
+    clear() {}
+
+    objectPicked( obj ) {}
+
+    pointAdded( mouse ) {}
+
+    onInteractive( mouse ) {}
+
+    complete() {}
+
+    revert() {}
+}
+
 export class MoveTool
 {
     constructor()
