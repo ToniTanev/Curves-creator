@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {hoverOutlinePass} from "../CurveCreator.js";
+import {hoverOutlinePass} from "../main.js";
 import {getMouse, getPlaneAtSpherePoint, intersectPlaneWithMouse, raycastMouse, raycastMouseOnSphere} from "../Math.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj, ToolResult} from "./ToolsBase.js";

@@ -1,6 +1,6 @@
 import {raycastMouse} from "../Math.js";
 import {filterHighlightableIntersects, filterIntersects, highlightVisualVectorObj} from "./ToolsBase.js";
-import {scene, transformControls, sphere, hoverOutlinePass, selectionOutlinePass} from "../CurveCreator.js";
+import {scene, transformControls, sphere, hoverOutlinePass, selectionOutlinePass} from "../main.js";
 import {isCurveObj, isCurveVectorObj} from "../Objects/CurveObjects.js";
 import {hideObjectsSettings, showObjectSettingsByObj, updateObjectSettingsUI} from "../UI/UIHandler.js";
 

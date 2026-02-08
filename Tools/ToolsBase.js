@@ -1,4 +1,4 @@
-import {addTool, bezierTool, deleteTool, hermiteTool, moveTool} from "../CurveCreator.js";
+import {addTool, bezierTool, deleteTool, hermiteTool, moveTool} from "../main.js";
 import {isAxisObj, isGridObj} from "../Objects/GridAndAxes.js";
 
 export function isCurveTool( tool )

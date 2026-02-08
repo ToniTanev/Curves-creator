@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { scene } from "./CurveCreator.js";
+import { scene } from "./main.js";
 import { Line2 } from './three.js-master/examples/jsm/lines/Line2.js'
 import { LineGeometry } from './three.js-master/examples/jsm/lines/LineGeometry.js'
 import { LineMaterial } from './three.js-master/examples/jsm/lines/LineMaterial.js'

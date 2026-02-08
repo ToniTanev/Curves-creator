@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {scene, sphere} from "../CurveCreator.js";
+import {scene, sphere} from "../main.js";
 
 export const defaultSphereRadius = 10;
 

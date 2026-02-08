@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {BezierCurve, CubicHermiteCurves, offsetPoints} from "../Math.js";
 import {defaultPointSize, defaultVectorSize, drawPoint, drawPolygon, drawVector} from "../Visualizer.js";
 import {deleteObject} from "../MemoryManagement.js";
-import {scene} from "../CurveCreator.js";
+import {scene} from "../main.js";
 import {filterIntersects, highlightVisualVectorObj} from "../Tools/ToolsBase.js";
 import {BezierSettings, HermiteSettings} from "../Data/Settings.js";
 import {defaultSphereRadius, stickToSphere} from "./Sphere.js";

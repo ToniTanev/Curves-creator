@@ -1,4 +1,4 @@
-import {activeTool, selectionOutlinePass, selectionTool} from "../CurveCreator.js";
+import {activeTool, selectionOutlinePass, selectionTool} from "../main.js";
 import {isCurveTool} from "../Tools/ToolsBase.js";
 import {isBezierCurveObj, isCurveObj, isHermiteCurveObj, onSphereScaleChange} from "../Objects/CurveObjects.js";
 import {defaultSphereRadius, getSphereScale, isSphereObj, stickToSphere} from "../Objects/Sphere.js";

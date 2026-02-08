@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {camera, renderer, scene} from "./CurveCreator.js";
+import {camera, renderer, scene} from "./main.js";
 import {isSphereObj, stickToSphere} from "./Objects/Sphere.js";
 
 export const vectorEpsilon = 0.0000001;

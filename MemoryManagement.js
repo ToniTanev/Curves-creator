@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {scene} from "./CurveCreator.js";
+import {scene} from "./main.js";
 
 // deletes a Group or an Object3D or a Line2 object
 export function deleteObject( object )

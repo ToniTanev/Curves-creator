@@ -1,6 +1,6 @@
 import {isBezierCurveObj, isHermiteCurveObj} from "../Objects/CurveObjects.js";
 import {getSphereScale, isSphereObj} from "../Objects/Sphere.js";
-import {bezierTool, hermiteTool} from "../CurveCreator.js";
+import {bezierTool, hermiteTool} from "../main.js";
 import {
     addTooltip,
     bezierTooltip,
